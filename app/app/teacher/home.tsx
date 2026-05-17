@@ -12,6 +12,16 @@ export default function TeacherHomeScreen() {
       <AppScreen scrollable>
         <View style={styles.content}>
           <Text style={styles.title}>Teacher Home</Text>
+          <View style={styles.statsRow}>
+            <AppCard style={styles.statCard}>
+              <Text style={styles.statNumber}>22</Text>
+              <Text style={styles.statLabel}>Children</Text>
+            </AppCard>
+            <AppCard style={styles.statCard}>
+              <Text style={styles.statNumber}>16</Text>
+              <Text style={styles.statLabel}>Present Today</Text>
+            </AppCard>
+          </View>
           <AppCard style={styles.card}>
             <Text style={styles.cardTitle}>Today Overview</Text>
             <Text style={styles.cardText}>Attendance and daily actions will appear here.</Text>
@@ -48,5 +58,24 @@ const styles = StyleSheet.create({
   cardText: {
     fontSize: 14,
     color: Colors.textSecondary,
+  },
+  statsRow: {
+    flexDirection: "row",
+    gap: Spacing.md,
+    marginTop: Spacing.lg,
+  },
+  statCard: {
+    flex: 1,
+    alignItems: "center",
+  },
+  statNumber: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: Colors.primary,
+  },
+  statLabel: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    marginTop: Spacing.xs,
   },
 });
