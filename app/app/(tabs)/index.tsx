@@ -1,98 +1,137 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
-
+import { AppButton } from "../../src/components/AppButton";
+import { AppCard } from "../../src/components/AppCard";
+import { AppScreen } from "../../src/components/AppScreen";
+import { Colors } from "../../src/theme/colors";
+import { BorderRadius, Shadow, Spacing } from "../../src/theme/spacing";
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  function handleParentLogin() {
+    console.log("Parent login pressed");
+  }
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  function handleTeacherLogin() {
+    console.log("Teacher login pressed");
+  }
+
+  return (
+    <AppScreen scrollable contentStyle={styles.screenContent}>
+      <View style={styles.heroSection}>
+        <View style={styles.logoCircle}>
+          <Text style={styles.logoText}>נ</Text>
+        </View>
+
+        <Text style={styles.gardenName}>גן נונה בנונה</Text>
+        <Text style={styles.subtitle}>הבית הדיגיטלי החם של הגן</Text>
+      </View>
+
+      <AppCard style={styles.welcomeCard}>
+        <Text style={styles.cardTitle}>ברוכים הבאים</Text>
+
+        <Text style={styles.cardText}>
+          כאן תוכלו לעקוב אחרי היום בגן, לקבל עדכונים, לצפות בהודעות ולנהל מסמכים בצורה פשוטה ונעימה.
+        </Text>
+
+        <View style={styles.actions}>
+          <AppButton title="כניסה להורים" onPress={handleParentLogin} />
+
+          <AppButton
+            title="כניסת צוות הגן"
+            onPress={handleTeacherLogin}
+            variant="outline"
+          />
+        </View>
+      </AppCard>
+
+      <View style={styles.previewSection}>
+        <View style={styles.previewCard}>
+          <Text style={styles.previewTitle}>עדכונים יומיים</Text>
+          <Text style={styles.previewText}>סיכום יום, פעילויות והודעות מהגן</Text>
+        </View>
+
+        <View style={styles.previewCard}>
+          <Text style={styles.previewTitle}>נוכחות ומסמכים</Text>
+          <Text style={styles.previewText}>מעקב נוכחות וניהול חוזים במקום אחד</Text>
+        </View>
+      </View>
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  screenContent: {
+    justifyContent: "center",
+    gap: Spacing.lg,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  heroSection: {
+    alignItems: "center",
+    gap: Spacing.sm,
+    paddingTop: Spacing.xl,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  logoCircle: {
+    width: 96,
+    height: 96,
+    borderRadius: BorderRadius.full,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.secondary,
+    ...Shadow.card,
+  },
+  logoText: {
+    fontSize: 48,
+    fontWeight: "700",
+    color: Colors.primary,
+  },
+  gardenName: {
+    fontSize: 30,
+    fontWeight: "800",
+    color: Colors.textPrimary,
+    textAlign: "center",
+  },
+  subtitle: {
+    fontSize: 16,
+    color: Colors.textSecondary,
+    textAlign: "center",
+  },
+  welcomeCard: {
+    gap: Spacing.md,
+  },
+  cardTitle: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: Colors.textPrimary,
+    textAlign: "right",
+  },
+  cardText: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: Colors.textSecondary,
+    textAlign: "right",
+  },
+  actions: {
+    gap: Spacing.sm,
+    marginTop: Spacing.sm,
+  },
+  previewSection: {
+    gap: Spacing.sm,
+    paddingBottom: Spacing.xl,
+  },
+  previewCard: {
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+  },
+  previewTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: Colors.textPrimary,
+    textAlign: "right",
+    marginBottom: 4,
+  },
+  previewText: {
+    fontSize: 14,
+    color: Colors.textSecondary,
+    textAlign: "right",
   },
 });
