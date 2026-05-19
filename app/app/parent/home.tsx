@@ -16,6 +16,13 @@ export default function ParentHomeScreen() {
             <Text style={styles.cardTitle}>סיכום היום</Text>
             <Text style={styles.cardText}>כאן יופיעו עדכונים יומיים מהגן.</Text>
           </AppCard>
+            <AppCard style={styles.card}>
+    <Text style={styles.cardTitle}>חוזה ממתין לחתימה</Text>
+    <Text style={styles.cardText}>
+      ניתן יהיה לעיין בחוזה ולעבור לחתימה דיגיטלית בהמשך.
+    </Text>
+  </AppCard>
+
         </View>
       </AppScreen>
       <BottomNavBar activeItem="home" />
