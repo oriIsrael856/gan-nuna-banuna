@@ -11,10 +11,10 @@ export default function ParentHomeScreen() {
     <View style={styles.root}>
       <AppScreen scrollable>
         <View style={styles.content}>
-          <Text style={styles.title}>Parent Home</Text>
+          <Text style={styles.title}>שלום רחל</Text>
           <AppCard style={styles.card}>
-            <Text style={styles.cardTitle}>Daily Summary</Text>
-            <Text style={styles.cardText}>Daily updates will appear here.</Text>
+            <Text style={styles.cardTitle}>סיכום היום</Text>
+            <Text style={styles.cardText}>כאן יופיעו עדכונים יומיים מהגן.</Text>
           </AppCard>
         </View>
       </AppScreen>
