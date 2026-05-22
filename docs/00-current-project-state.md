@@ -454,13 +454,15 @@ Current status:
 
 &#x20; - Title and text based on contract status: sent, signed, expired, or no active contract
 
-\- Shows quick actions card:
+\- Shows quick actions card rendered from a local parentQuickActions array in app/app/parent/home.tsx:
 
 &#x20; - סיכום יום
 
 &#x20; - חוזים ומסמכים
 
 &#x20; - יצירת קשר עם הגן
+
+&#x20; - Navigation for these actions has not been implemented yet
 
 \- Uses BottomNavBar
 
@@ -736,7 +738,7 @@ Parent home currently includes:
 
 \- Contract reminder card connected to mockContracts
 
-\- Quick actions card
+\- Quick actions card rendered from the local parentQuickActions array (סיכום יום, חוזים ומסמכים, יצירת קשר עם הגן)
 
 
 
@@ -744,7 +746,7 @@ TypeScript passes with no errors.
 
 
 
-The change was committed and pushed to GitHub.
+The quick actions refactor was committed and pushed to GitHub.
 
 
 
