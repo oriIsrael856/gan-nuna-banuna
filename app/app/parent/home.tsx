@@ -10,6 +10,12 @@ import { mockChildren } from "../../src/data/mockChildren";
 import { mockContracts } from "../../src/data/mockContracts";
 import { mockDailyReportSummary } from "../../src/data/mockDailyReports";
 
+const parentQuickActions = [
+  { id: "daily-summary", label: "סיכום יום" },
+  { id: "contracts", label: "חוזים ומסמכים" },
+  { id: "contact", label: "יצירת קשר עם הגן" },
+];
+
 export default function ParentHomeScreen() {
   const parentChild = mockChildren.find((child) => child.id === mockParentChildId);
   const parentContract = mockContracts.find((contract) => contract.childId === parentChild?.id);
@@ -58,15 +64,11 @@ export default function ParentHomeScreen() {
           <AppCard style={styles.actionsCard}>
             <Text style={styles.actionsTitle}>פעולות מהירות</Text>
             <View style={styles.actionsGrid}>
-              <View style={styles.actionItem}>
-                <Text style={styles.actionText}>סיכום יום</Text>
-              </View>
-              <View style={styles.actionItem}>
-                <Text style={styles.actionText}>חוזים ומסמכים</Text>
-              </View>
-              <View style={styles.actionItem}>
-                <Text style={styles.actionText}>יצירת קשר עם הגן</Text>
-              </View>
+              {parentQuickActions.map((action) => (
+                <View key={action.id} style={styles.actionItem}>
+                  <Text style={styles.actionText}>{action.label}</Text>
+                </View>
+              ))}
             </View>
           </AppCard>
         </View>
