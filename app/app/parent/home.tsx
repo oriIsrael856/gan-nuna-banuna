@@ -8,6 +8,7 @@ import { Spacing } from "../../src/theme/spacing";
 import { mockParent, mockParentChildId } from "../../src/data/mockParent";
 import { mockChildren } from "../../src/data/mockChildren";
 import { mockContracts } from "../../src/data/mockContracts";
+import { mockDailyReportSummary } from "../../src/data/mockDailyReports";
 
 export default function ParentHomeScreen() {
   const parentChild = mockChildren.find((child) => child.id === mockParentChildId);
@@ -27,6 +28,10 @@ export default function ParentHomeScreen() {
     contractText = "יש צורך לחדש את החוזה מול הגן.";
   }
 
+  const dailyActivitiesCount = mockDailyReportSummary.activitiesCount;
+  const dailyMealsCount = mockDailyReportSummary.mealsCount;
+  const dailyMessagesCount = mockDailyReportSummary.messagesCount;
+
   return (
     <View style={styles.root}>
       <AppScreen scrollable>
@@ -40,7 +45,9 @@ export default function ParentHomeScreen() {
 
           <AppCard style={styles.card}>
             <Text style={styles.cardTitle}>סיכום היום</Text>
-            <Text style={styles.cardText}>כאן יופיעו עדכונים יומיים מהגן.</Text>
+            <Text style={styles.cardText}>  היום פורסמו {dailyActivitiesCount} פעילויות, {dailyMealsCount} ארוחות ו-
+                   {dailyMessagesCount} הודעות מהגן.
+            </Text>
           </AppCard>
 
           <AppCard style={styles.card}>
