@@ -444,6 +444,14 @@ Current status:
 
 \- Shows contract reminder card
 
+\- Shows quick actions card:
+
+&#x20; - סיכום יום
+
+&#x20; - חוזים ומסמכים
+
+&#x20; - יצירת קשר עם הגן
+
 \- Uses BottomNavBar
 
 
@@ -630,23 +638,15 @@ Recommended next development steps:
 
 2\. Continue improving Parent Home screen.
 
-3\. Add parent quick action card:
+3\. Connect parent home screen to mock data.
 
-&#x20;  - סיכום יום
+4\. Create parent contract screen.
 
-&#x20;  - חוזים ומסמכים
+5\. Later create daily summary screen.
 
-&#x20;  - יצירת קשר עם הגן
+6\. Later create attendance screens for teacher.
 
-4\. Later connect parent screen to mock data.
-
-5\. Later create parent contract screen.
-
-6\. Later create daily summary screen.
-
-7\. Later create attendance screens for teacher.
-
-8\. Later replace mock data with backend.
+7\. Later replace mock data with backend.
 
 
 
@@ -715,6 +715,8 @@ Parent home currently includes:
 \- Daily summary card
 
 \- Contract reminder card
+
+\- Quick actions card
 
 
 
