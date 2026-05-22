@@ -29,6 +29,21 @@ export default function ParentHomeScreen() {
               ניתן יהיה לעיין בחוזה ולעבור לחתימה דיגיטלית בהמשך.
             </Text>
           </AppCard>
+
+          <AppCard style={styles.actionsCard}>
+            <Text style={styles.actionsTitle}>פעולות מהירות</Text>
+            <View style={styles.actionsGrid}>
+              <View style={styles.actionItem}>
+                <Text style={styles.actionText}>סיכום יום</Text>
+              </View>
+              <View style={styles.actionItem}>
+                <Text style={styles.actionText}>חוזים ומסמכים</Text>
+              </View>
+              <View style={styles.actionItem}>
+                <Text style={styles.actionText}>יצירת קשר עם הגן</Text>
+              </View>
+            </View>
+          </AppCard>
         </View>
       </AppScreen>
 
@@ -76,5 +91,29 @@ const styles = StyleSheet.create({
   cardText: {
     fontSize: 14,
     color: Colors.textSecondary,
+  },
+  actionsCard: {
+    marginTop: Spacing.lg,
+  },
+  actionsTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Colors.textPrimary,
+    marginBottom: Spacing.md,
+  },
+  actionsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.sm,
+  },
+  actionItem: {
+    backgroundColor: Colors.background,
+    borderRadius: 8,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+  },
+  actionText: {
+    fontSize: 14,
+    color: Colors.textPrimary,
   },
 });
