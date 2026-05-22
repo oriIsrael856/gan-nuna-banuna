@@ -440,7 +440,13 @@ Current status:
 
 &#x20; - Kindergarten subtitle is still hardcoded for now
 
-\- Shows daily summary card
+\- Shows daily summary card connected to mockDailyReportSummary from app/src/data/mockDailyReports.ts:
+
+&#x20; - Activity count from mock data
+
+&#x20; - Meal count from mock data
+
+&#x20; - Message count from mock data
 
 \- Shows contract reminder card using mockContracts:
 
@@ -464,9 +470,13 @@ Current limitation:
 
 \- Parent and child names come from mock data
 
+\- Daily summary counts come from mockDailyReportSummary in mockDailyReports.ts
+
 \- Contract reminder content comes from mockContracts
 
 \- Some text is still hardcoded placeholder data
+
+\- No real backend data exists yet
 
 \- Later this data should come from authenticated parent, child profile, daily report data, and contract status data
 
@@ -722,11 +732,19 @@ Parent home currently includes:
 
 \- Parent and child names connected to mock data
 
-\- Daily summary card
+\- Daily summary card connected to mockDailyReportSummary (activity count, meal count, message count)
 
 \- Contract reminder card connected to mockContracts
 
 \- Quick actions card
+
+
+
+TypeScript passes with no errors.
+
+
+
+The change was committed and pushed to GitHub.
 
 
 
