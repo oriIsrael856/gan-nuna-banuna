@@ -1,5 +1,6 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useRouter } from "expo-router";
 import { AppScreen } from "../../src/components/AppScreen";
 import { AppCard } from "../../src/components/AppCard";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
@@ -10,13 +11,14 @@ import { mockChildren } from "../../src/data/mockChildren";
 import { mockContracts } from "../../src/data/mockContracts";
 import { mockDailyReportSummary } from "../../src/data/mockDailyReports";
 
-const parentQuickActions = [
-  { id: "daily-summary", label: "סיכום יום" },
+const parentQuickActions: { id: string; label: string; route?: string }[] = [
+  { id: "daily-summary", label: "סיכום יום", route: "/parent/daily-summary" },
   { id: "contracts", label: "חוזים ומסמכים" },
   { id: "contact", label: "יצירת קשר עם הגן" },
 ];
 
 export default function ParentHomeScreen() {
+  const router = useRouter();
   const parentChild = mockChildren.find((child) => child.id === mockParentChildId);
   const parentContract = mockContracts.find((contract) => contract.childId === parentChild?.id);
 
@@ -65,9 +67,14 @@ export default function ParentHomeScreen() {
             <Text style={styles.actionsTitle}>פעולות מהירות</Text>
             <View style={styles.actionsGrid}>
               {parentQuickActions.map((action) => (
-                <View key={action.id} style={styles.actionItem}>
+                <TouchableOpacity
+                  key={action.id}
+                  style={styles.actionItem}
+                  activeOpacity={action.route ? 0.7 : 1}
+                  onPress={action.route ? () => router.push(action.route as any) : undefined}
+                >
                   <Text style={styles.actionText}>{action.label}</Text>
-                </View>
+                </TouchableOpacity>
               ))}
             </View>
           </AppCard>
