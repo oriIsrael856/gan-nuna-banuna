@@ -4,10 +4,20 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Colors } from "../theme/colors";
 import { BorderRadius, Shadow, Spacing } from "../theme/spacing";
 
-type BottomNavItem = "settings" | "daily" | "home" | "calendar" | "profile";
+export type BottomNavItem =
+  | "home"
+  | "daily"
+  | "absence"
+  | "contracts"
+  | "children"
+  | "attendance"
+  | "settings";
+
+type BottomNavVariant = "parent" | "teacher";
 
 interface BottomNavBarProps {
   activeItem?: BottomNavItem;
+  variant?: BottomNavVariant;
   onItemPress?: (item: BottomNavItem) => void;
 }
 
@@ -17,41 +27,32 @@ interface NavItemConfig {
   icon: string;
 }
 
-const NAV_ITEMS: NavItemConfig[] = [
-  {
-    key: "settings",
-    label: "הגדרות",
-    icon: "⚙",
-  },
-  {
-    key: "daily",
-    label: "תיעוד יומי",
-    icon: "📷",
-  },
-  {
-    key: "home",
-    label: "בית",
-    icon: "⌂",
-  },
-  {
-    key: "calendar",
-    label: "לוח שנה",
-    icon: "□",
-  },
-  {
-    key: "profile",
-    label: "פרופיל",
-    icon: "○",
-  },
+const PARENT_NAV_ITEMS: NavItemConfig[] = [
+  { key: "contracts", label: "חוזים", icon: "□" },
+  { key: "daily", label: "סיכום", icon: "◦" },
+  { key: "home", label: "בית", icon: "⌂" },
+  { key: "absence", label: "היעדרות", icon: "!" },
+  { key: "settings", label: "הגדרות", icon: "*" },
+];
+
+const TEACHER_NAV_ITEMS: NavItemConfig[] = [
+  { key: "contracts", label: "חוזים", icon: "□" },
+  { key: "daily", label: "סיכום", icon: "◦" },
+  { key: "home", label: "בית", icon: "⌂" },
+  { key: "attendance", label: "נוכחות", icon: "+" },
+  { key: "children", label: "ילדים", icon: "○" },
 ];
 
 export function BottomNavBar({
   activeItem = "home",
+  variant = "parent",
   onItemPress,
 }: BottomNavBarProps) {
+  const navItems = variant === "teacher" ? TEACHER_NAV_ITEMS : PARENT_NAV_ITEMS;
+
   return (
     <View style={styles.wrapper}>
-      {NAV_ITEMS.map((item) => {
+      {navItems.map((item) => {
         const isActive = item.key === activeItem;
         const isHome = item.key === "home";
 

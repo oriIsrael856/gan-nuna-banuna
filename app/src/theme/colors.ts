@@ -1,12 +1,14 @@
+import { CLIENT_CONFIG } from "../config/client.config";
+
 export const Colors = {
-  primary: "#7A9A72",
-  secondary: "#F4D6C6",
-  background: "#FFF8F1",
-  cardBackground: "#FFFFFF",
-  textPrimary: "#26382E",
-  textSecondary: "#6B6B6B",
-  warning: "#E8A75D",
-  error: "#D96B6B",
+  primary: CLIENT_CONFIG.primaryColor,
+  secondary: CLIENT_CONFIG.secondaryColor,
+  background: CLIENT_CONFIG.backgroundColor,
+  cardBackground: CLIENT_CONFIG.cardBackgroundColor,
+  textPrimary: CLIENT_CONFIG.textPrimary,
+  textSecondary: CLIENT_CONFIG.textSecondary,
+  warning: CLIENT_CONFIG.warningColor,
+  error: CLIENT_CONFIG.errorColor,
   white: "#FFFFFF",
 
   // Attendance status

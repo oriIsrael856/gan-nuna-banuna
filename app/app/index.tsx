@@ -2,30 +2,32 @@ import React from "react";
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
-import { AppButton } from "../../src/components/AppButton";
-import { AppCard } from "../../src/components/AppCard";
-import { AppScreen } from "../../src/components/AppScreen";
-import { Colors } from "../../src/theme/colors";
-import { BorderRadius, Shadow, Spacing } from "../../src/theme/spacing";
+import { AppButton } from "../src/components/AppButton";
+import { AppCard } from "../src/components/AppCard";
+import { AppScreen } from "../src/components/AppScreen";
+import { CLIENT_CONFIG } from "../src/config/client.config";
+import { Colors } from "../src/theme/colors";
+import { BorderRadius, Shadow, Spacing } from "../src/theme/spacing";
+
 export default function HomeScreen() {
   const router = useRouter();
 
   function handleParentLogin() {
-    router.push("/parent/home" as any);
+    router.push("/parent/home");
   }
 
   function handleTeacherLogin() {
-    router.push("/teacher/home" as any);
+    router.push("/teacher/home");
   }
 
   return (
     <AppScreen scrollable contentStyle={styles.screenContent}>
       <View style={styles.heroSection}>
         <View style={styles.logoCircle}>
-          <Text style={styles.logoText}>נ</Text>
+          <Text style={styles.logoText}>{CLIENT_CONFIG.logoInitial}</Text>
         </View>
 
-        <Text style={styles.gardenName}>גן נונה בנונה</Text>
+        <Text style={styles.gardenName}>{CLIENT_CONFIG.daycareName}</Text>
         <Text style={styles.subtitle}>הבית הדיגיטלי החם של הגן</Text>
       </View>
 

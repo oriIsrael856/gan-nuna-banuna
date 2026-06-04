@@ -16,7 +16,7 @@ export function AppCard({ children, style }: AppCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-backgroundColor: Colors.cardBackground,
+    backgroundColor: Colors.cardBackground,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     ...Shadow.card,

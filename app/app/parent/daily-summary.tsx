@@ -176,7 +176,7 @@ export default function DailySummaryScreen() {
         </View>
       </AppScreen>
 
-      <BottomNavBar activeItem="daily" />
+      <BottomNavBar activeItem="daily" variant="parent" />
     </View>
   );
 }

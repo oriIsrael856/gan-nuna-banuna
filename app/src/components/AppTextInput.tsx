@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   input: {
     minHeight: 48,
     borderWidth: 1,
-borderColor: "#E8DDD2",
+    borderColor: "#E8DDD2",
     borderRadius: BorderRadius.md,
     backgroundColor: Colors.cardBackground,
     paddingHorizontal: Spacing.md,

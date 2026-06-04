@@ -3,16 +3,10 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { Colors } from "../theme/colors";
 import { BorderRadius, Spacing } from "../theme/spacing";
+import type { AttendanceStatus } from "../types/child";
+import type { ContractStatus } from "../types/contract";
 
-type BadgeStatus =
-  | "arrived"
-  | "not_arrived"
-  | "late"
-  | "left_early"
-  | "sent"
-  | "signed"
-  | "expired"
-  | "draft";
+type BadgeStatus = AttendanceStatus | ContractStatus;
 
 interface StatusBadgeProps {
   status: BadgeStatus;
@@ -30,10 +24,16 @@ function getStatusLabel(status: BadgeStatus) {
       return "יצא מוקדם";
     case "sent":
       return "נשלח לחתימה";
+    case "viewed":
+      return "נצפה";
     case "signed":
       return "נחתם";
+    case "declined":
+      return "נדחה";
     case "expired":
       return "פג תוקף";
+    case "error":
+      return "שגיאה";
     case "draft":
       return "טיוטה";
     default:
@@ -64,6 +64,7 @@ function getBadgeColors(status: BadgeStatus) {
         color: Colors.leftEarlyText,
       };
     case "sent":
+    case "viewed":
       return {
         backgroundColor: Colors.sentBackground,
         color: Colors.sentText,
@@ -74,6 +75,8 @@ function getBadgeColors(status: BadgeStatus) {
         color: Colors.signedText,
       };
     case "expired":
+    case "declined":
+    case "error":
       return {
         backgroundColor: Colors.expiredBackground,
         color: Colors.expiredText,

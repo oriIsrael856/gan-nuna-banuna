@@ -1,9 +1,11 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
+import type { Href } from "expo-router";
 import { AppScreen } from "../../src/components/AppScreen";
 import { AppCard } from "../../src/components/AppCard";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
+import { CLIENT_CONFIG } from "../../src/config/client.config";
 import { Colors } from "../../src/theme/colors";
 import { Spacing } from "../../src/theme/spacing";
 import { mockParent, mockParentChildId } from "../../src/data/mockParent";
@@ -11,7 +13,7 @@ import { mockChildren } from "../../src/data/mockChildren";
 import { mockContracts } from "../../src/data/mockContracts";
 import { mockDailyReportSummary } from "../../src/data/mockDailyReports";
 
-const parentQuickActions: { id: string; label: string; route?: string }[] = [
+const parentQuickActions: { id: string; label: string; route?: Href }[] = [
   { id: "daily-summary", label: "סיכום יום", route: "/parent/daily-summary" },
   { id: "contracts", label: "חוזים ומסמכים" },
   { id: "contact", label: "יצירת קשר עם הגן" },
@@ -40,6 +42,12 @@ export default function ParentHomeScreen() {
   const dailyMealsCount = mockDailyReportSummary.mealsCount;
   const dailyMessagesCount = mockDailyReportSummary.messagesCount;
 
+  function handleQuickActionPress(route: Href | undefined) {
+    if (route) {
+      router.push(route);
+    }
+  }
+
   return (
     <View style={styles.root}>
       <AppScreen scrollable>
@@ -48,13 +56,13 @@ export default function ParentHomeScreen() {
 
           <View style={styles.childInfo}>
             <Text style={styles.childName}>{parentChild?.name ?? "ילד/ה"}</Text>
-            <Text style={styles.childSubtitle}>היום בגן נונה בנונה</Text>
+            <Text style={styles.childSubtitle}>היום ב{CLIENT_CONFIG.daycareName}</Text>
           </View>
 
           <AppCard style={styles.card}>
             <Text style={styles.cardTitle}>סיכום היום</Text>
-            <Text style={styles.cardText}>  היום פורסמו {dailyActivitiesCount} פעילויות, {dailyMealsCount} ארוחות ו-
-                   {dailyMessagesCount} הודעות מהגן.
+            <Text style={styles.cardText}>
+              היום פורסמו {dailyActivitiesCount} פעילויות, {dailyMealsCount} ארוחות ו-{dailyMessagesCount} הודעות מהגן.
             </Text>
           </AppCard>
 
@@ -71,7 +79,7 @@ export default function ParentHomeScreen() {
                   key={action.id}
                   style={styles.actionItem}
                   activeOpacity={action.route ? 0.7 : 1}
-                  onPress={action.route ? () => router.push(action.route as any) : undefined}
+                  onPress={() => handleQuickActionPress(action.route)}
                 >
                   <Text style={styles.actionText}>{action.label}</Text>
                 </TouchableOpacity>
@@ -81,7 +89,7 @@ export default function ParentHomeScreen() {
         </View>
       </AppScreen>
 
-      <BottomNavBar activeItem="home" />
+      <BottomNavBar activeItem="home" variant="parent" />
     </View>
   );
 }
