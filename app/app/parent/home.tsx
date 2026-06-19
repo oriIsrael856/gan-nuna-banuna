@@ -1,13 +1,13 @@
 import React from "react";
 import {
   Alert,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import type { Href } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -119,7 +119,12 @@ export default function ParentHomeScreen() {
     <View style={styles.root}>
       <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
         <View style={styles.heroSection}>
-          <Image source={Heroes.parentHome} style={styles.fullHeroImage} resizeMode="cover" />
+          <Image
+            source={Heroes.parentHome}
+            style={styles.fullHeroImage}
+            contentFit="cover"
+            contentPosition="top"
+          />
           <View style={styles.headerOverlay}>
             <AppHeader
               onBellPress={() => router.push("/notifications")}
@@ -381,14 +386,16 @@ const styles = StyleSheet.create({
   },
   heroSection: {
     width: "100%",
+    height: 380,
     position: "relative",
+    backgroundColor: Colors.background,
     borderBottomLeftRadius: BorderRadius.xl,
     borderBottomRightRadius: BorderRadius.xl,
     overflow: "hidden",
   },
   fullHeroImage: {
     width: "100%",
-    height: 400,
+    height: "100%",
   },
   headerOverlay: {
     position: "absolute",

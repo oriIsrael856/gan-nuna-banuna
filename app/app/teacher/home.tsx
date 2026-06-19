@@ -1,5 +1,6 @@
 import React from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import type { Href } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -9,7 +10,6 @@ import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
 import { AppStateCard } from "../../src/components/AppStateCard";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
-import { HeroBanner } from "../../src/components/HeroBanner";
 import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useNotifications } from "../../src/notifications/NotificationsContext";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
@@ -162,20 +162,26 @@ export default function TeacherHomeScreen() {
   return (
     <View style={styles.root}>
       <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
-        <HeroBanner source={Heroes.teacherHome} height={230}>
+        <View style={styles.heroSection}>
+          <Image
+            source={Heroes.teacherHome}
+            style={styles.fullHeroImage}
+            contentFit="cover"
+            contentPosition="top"
+          />
           <View style={styles.headerOverlay}>
             <AppHeader
               onBellPress={() => router.push("/notifications")}
               onLeadingPress={() => router.push("/settings")}
             />
           </View>
+        </View>
+
+        <View style={styles.body}>
           <View style={styles.greetingBlock}>
             <Text style={styles.greeting}>בוקר טוב, {ownerName}</Text>
             <Text style={styles.greetingSubtext}>יום נפלא ב{daycareName}!</Text>
           </View>
-        </HeroBanner>
-
-        <View style={styles.body}>
           {loading ? (
             <AppStateCard
               state="loading"
@@ -262,22 +268,39 @@ const styles = StyleSheet.create({
   screenContent: {
     paddingBottom: Spacing.xxl,
   },
+  heroSection: {
+    width: "100%",
+    height: 360,
+    position: "relative",
+    backgroundColor: Colors.background,
+    borderBottomLeftRadius: BorderRadius.xl,
+    borderBottomRightRadius: BorderRadius.xl,
+    overflow: "hidden",
+  },
+  fullHeroImage: {
+    width: "100%",
+    height: "100%",
+  },
   headerOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
   },
   greetingBlock: {
     alignItems: "center",
-    marginTop: Spacing.sm,
+    marginBottom: Spacing.md,
   },
   greeting: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: "800",
     color: Colors.primary,
     textAlign: "center",
   },
   greetingSubtext: {
-    fontSize: 15,
+    fontSize: 14,
     color: Colors.primary,
     fontWeight: "700",
     marginTop: 2,
@@ -285,7 +308,7 @@ const styles = StyleSheet.create({
   },
   body: {
     paddingHorizontal: Spacing.md,
-    marginTop: -Spacing.xl,
+    marginTop: Spacing.md,
   },
   summaryHeader: {
     flexDirection: "row-reverse",

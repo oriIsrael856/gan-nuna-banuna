@@ -24,6 +24,7 @@ import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
 import { confirmDelete } from "../../src/utils/confirm";
 import { Colors } from "../../src/theme/colors";
 import { Heroes } from "../../src/theme/heroes";
+import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -98,8 +99,8 @@ export default function TeacherDailyReportScreen() {
             />
           </View>
           <View style={styles.titleBlock}>
-            <Text style={styles.title}>סיכום יום</Text>
-            <Text style={styles.subtitle}>{formattedDate}</Text>
+            <Text style={heroOverlayTextStyles.title}>סיכום יום</Text>
+            <Text style={heroOverlayTextStyles.subtitle}>{formattedDate}</Text>
           </View>
         </HeroBanner>
 

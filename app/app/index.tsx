@@ -12,6 +12,7 @@ import { isDemoLoginEnabled } from "../src/config/env";
 import { useAuth } from "../src/auth/AuthContext";
 import { Colors } from "../src/theme/colors";
 import { Heroes } from "../src/theme/heroes";
+import { heroOverlayTextStyles } from "../src/theme/heroOverlay";
 import { BorderRadius, Shadow, Spacing } from "../src/theme/spacing";
 
 export default function HomeScreen() {
@@ -71,8 +72,8 @@ export default function HomeScreen() {
           <View style={styles.logoCircle}>
             <Text style={styles.logoText}>{CLIENT_CONFIG.logoInitial}</Text>
           </View>
-          <Text style={styles.gardenName}>{CLIENT_CONFIG.daycareName}</Text>
-          <Text style={styles.subtitle}>הבית הדיגיטלי החם של הגן</Text>
+          <Text style={heroOverlayTextStyles.titleLarge}>{CLIENT_CONFIG.daycareName}</Text>
+          <Text style={heroOverlayTextStyles.subtitleLarge}>הבית הדיגיטלי החם של הגן</Text>
         </View>
       </HeroBanner>
 

@@ -21,6 +21,7 @@ import { getContractByChildId, getContracts, setContractStatus } from "../../src
 import { getContractSignedUrl } from "../../src/services/storage.service";
 import { Colors } from "../../src/theme/colors";
 import { Heroes } from "../../src/theme/heroes";
+import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
 export default function ParentContractRenewalScreen() {
@@ -101,8 +102,8 @@ export default function ParentContractRenewalScreen() {
             />
           </View>
           <View style={styles.titleBlock}>
-            <Text style={styles.title}>חוזה הגן</Text>
-            <Text style={styles.subtitle}>חידוש / חתימה על חוזה</Text>
+            <Text style={heroOverlayTextStyles.title}>חוזה הגן</Text>
+            <Text style={heroOverlayTextStyles.subtitle}>חידוש / חתימה על חוזה</Text>
           </View>
         </HeroBanner>
 

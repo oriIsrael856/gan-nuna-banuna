@@ -27,6 +27,7 @@ import {
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
 import { Colors } from "../../src/theme/colors";
 import { Heroes } from "../../src/theme/heroes";
+import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
 type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
@@ -106,8 +107,8 @@ export default function DailySummaryScreen() {
             />
           </View>
           <View style={styles.titleBlock}>
-            <Text style={styles.title}>סיכום יום</Text>
-            <Text style={styles.subtitle}>{formatToday()}</Text>
+            <Text style={heroOverlayTextStyles.title}>סיכום יום</Text>
+            <Text style={heroOverlayTextStyles.subtitle}>{formatToday()}</Text>
           </View>
         </HeroBanner>
 

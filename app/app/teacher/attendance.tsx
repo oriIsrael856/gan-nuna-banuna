@@ -18,6 +18,7 @@ import {
 import { getChildren } from "../../src/services/children.service";
 import { Colors } from "../../src/theme/colors";
 import { Heroes } from "../../src/theme/heroes";
+import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 import type { AttendanceStatus } from "../../src/types/child";
 
@@ -97,8 +98,8 @@ export default function AttendanceScreen() {
             />
           </View>
           <View style={styles.titleBlock}>
-            <Text style={styles.title}>נוכחות היום</Text>
-            <Text style={styles.subtitle}>{formattedDate}</Text>
+            <Text style={heroOverlayTextStyles.title}>נוכחות היום</Text>
+            <Text style={heroOverlayTextStyles.subtitle}>{formattedDate}</Text>
           </View>
         </HeroBanner>
 

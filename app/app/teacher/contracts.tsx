@@ -22,6 +22,7 @@ import {
 import { confirmDelete } from "../../src/utils/confirm";
 import { Colors } from "../../src/theme/colors";
 import { Heroes } from "../../src/theme/heroes";
+import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 import type { ContractStatus } from "../../src/types/contract";
 
@@ -75,8 +76,8 @@ export default function TeacherContractsScreen() {
             />
           </View>
           <View style={styles.titleBlock}>
-            <Text style={styles.title}>חוזים</Text>
-            <Text style={styles.subtitle}>ניהול חוזים וחתימות להורים</Text>
+            <Text style={heroOverlayTextStyles.title}>חוזים</Text>
+            <Text style={heroOverlayTextStyles.subtitle}>ניהול חוזים וחתימות להורים</Text>
           </View>
         </HeroBanner>
 

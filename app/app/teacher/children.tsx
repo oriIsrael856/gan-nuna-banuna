@@ -19,6 +19,7 @@ import { deleteChild, getChildren } from "../../src/services/children.service";
 import { confirmDelete } from "../../src/utils/confirm";
 import { Colors } from "../../src/theme/colors";
 import { Heroes } from "../../src/theme/heroes";
+import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
 export default function TeacherChildrenScreen() {
@@ -53,7 +54,7 @@ export default function TeacherChildrenScreen() {
   return (
     <View style={styles.root}>
       <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
-        <HeroBanner source={Heroes.children} height={220}>
+        <HeroBanner source={Heroes.children} height={220} contentPosition="top">
           <View style={styles.headerOverlay}>
             <AppHeader
               onBellPress={() => router.push("/notifications")}
@@ -61,8 +62,8 @@ export default function TeacherChildrenScreen() {
             />
           </View>
           <View style={styles.titleBlock}>
-            <Text style={styles.title}>ילדים בגן</Text>
-            <Text style={styles.subtitle}>רשימת הילדים ב{getCurrentDaycareName()}</Text>
+            <Text style={heroOverlayTextStyles.title}>ילדים בגן</Text>
+            <Text style={heroOverlayTextStyles.subtitle}>רשימת הילדים ב{getCurrentDaycareName()}</Text>
           </View>
         </HeroBanner>
 

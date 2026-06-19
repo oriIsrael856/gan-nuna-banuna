@@ -1,15 +1,18 @@
+import { Image } from "expo-image";
 import React from "react";
-import { ImageBackground, StyleSheet, Text, View } from "react-native";
-import type { ImageSourcePropType } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import type { ImageContentPosition, ImageSource } from "expo-image";
 
 import { Colors } from "../theme/colors";
+import { heroOverlayTextStyles } from "../theme/heroOverlay";
 import { BorderRadius, Spacing } from "../theme/spacing";
 
 interface HeroBannerProps {
-  source: ImageSourcePropType;
+  source: ImageSource;
   title?: string;
   subtitle?: string;
   height?: number;
+  contentPosition?: ImageContentPosition;
   children?: React.ReactNode;
 }
 
@@ -18,51 +21,43 @@ export function HeroBanner({
   title,
   subtitle,
   height = 220,
+  contentPosition = "center",
   children,
 }: HeroBannerProps) {
   return (
-    <ImageBackground
-      source={source}
-      resizeMode="cover"
-      style={[styles.image, { height }]}
-      imageStyle={styles.imageRadius}
-    >
+    <View style={[styles.container, { height }]}>
+      <Image
+        source={source}
+        style={styles.image}
+        contentFit="cover"
+        contentPosition={contentPosition}
+      />
       {title || subtitle ? (
         <View style={styles.textOverlay}>
-          {title ? <Text style={styles.title}>{title}</Text> : null}
-          {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+          {title ? <Text style={heroOverlayTextStyles.title}>{title}</Text> : null}
+          {subtitle ? <Text style={heroOverlayTextStyles.subtitle}>{subtitle}</Text> : null}
         </View>
       ) : null}
       {children}
-    </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  image: {
+  container: {
     width: "100%",
-    justifyContent: "flex-start",
-  },
-  imageRadius: {
+    overflow: "hidden",
     borderBottomLeftRadius: BorderRadius.xl,
     borderBottomRightRadius: BorderRadius.xl,
+    backgroundColor: Colors.background,
+    justifyContent: "flex-start",
+  },
+  image: {
+    ...StyleSheet.absoluteFillObject,
   },
   textOverlay: {
     alignItems: "center",
     paddingTop: Spacing.lg,
     paddingHorizontal: Spacing.md,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: Colors.primary,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: Colors.primary,
-    textAlign: "center",
-    marginTop: 2,
   },
 });

@@ -18,6 +18,7 @@ import { getChildren } from "../../src/services/children.service";
 import { createContract } from "../../src/services/contracts.service";
 import { Colors } from "../../src/theme/colors";
 import { Heroes } from "../../src/theme/heroes";
+import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
 const CONTRACT_TYPES = ["חוזה הרשמה", "חידוש חוזה", "אישור מיוחד", "נספח לחוזה"];
@@ -146,8 +147,8 @@ export default function UploadContractScreen() {
             <AppHeader variant="back" onLeadingPress={handleCancel} onBellPress={() => router.push("/notifications")} />
           </View>
           <View style={styles.titleBlock}>
-            <Text style={styles.title}>העלאת חוזה חדש</Text>
-            <Text style={styles.subtitle}>העלאת חוזה ושליחה להורה לחתימה</Text>
+            <Text style={heroOverlayTextStyles.title}>העלאת חוזה חדש</Text>
+            <Text style={heroOverlayTextStyles.subtitle}>העלאת חוזה ושליחה להורה לחתימה</Text>
           </View>
         </HeroBanner>
 
