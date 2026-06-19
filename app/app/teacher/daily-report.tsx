@@ -1,18 +1,29 @@
 import React from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 import { AppCard } from "../../src/components/AppCard";
+import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
+import { AppStateCard } from "../../src/components/AppStateCard";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
+import { HeroBanner } from "../../src/components/HeroBanner";
+import { useAsyncData } from "../../src/hooks/useAsyncData";
 import {
-  mockDailyActivities,
-  mockDailyMeals,
-  mockDailyMessages,
-  mockDailyNotes,
-  mockDailyReportSummary,
-} from "../../src/data/mockDailyReports";
+  deleteDailyActivity,
+  deleteDailyMeal,
+  deleteDailyNote,
+  getDailyActivities,
+  getDailyMeals,
+  getDailyMessages,
+  getDailyNotes,
+  getDailyReportSummary,
+} from "../../src/services/dailyReports.service";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
+import { confirmDelete } from "../../src/utils/confirm";
 import { Colors } from "../../src/theme/colors";
+import { Heroes } from "../../src/theme/heroes";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -30,7 +41,45 @@ const MEAL_LABELS: Record<string, string> = {
 };
 
 export default function TeacherDailyReportScreen() {
+  const router = useRouter();
   const handleBottomNavPress = useBottomNavPress("teacher");
+  const { data, loading, error, reload } = useAsyncData(async () => {
+    const [summary, activities, meals, messages, notes] = await Promise.all([
+      getDailyReportSummary(),
+      getDailyActivities(),
+      getDailyMeals(),
+      getDailyMessages(),
+      getDailyNotes(),
+    ]);
+    return { summary, activities, meals, messages, notes };
+  }, []);
+
+  const dailyReportSummary = data?.summary;
+  const dailyActivities = data?.activities ?? [];
+  const dailyMeals = data?.meals ?? [];
+  const dailyMessages = data?.messages ?? [];
+  const dailyNotes = data?.notes ?? [];
+
+  function handleDeleteActivity(id: string) {
+    confirmDelete("למחוק את הפעילות?", async () => {
+      await deleteDailyActivity(id);
+      reload();
+    });
+  }
+
+  function handleDeleteMeal(id: string) {
+    confirmDelete("למחוק את הארוחה?", async () => {
+      await deleteDailyMeal(id);
+      reload();
+    });
+  }
+
+  function handleDeleteNote(id: string) {
+    confirmDelete("למחוק את ההערה?", async () => {
+      await deleteDailyNote(id);
+      reload();
+    });
+  }
   const formattedDate = new Date().toLocaleDateString("he-IL", {
     weekday: "long",
     day: "numeric",
@@ -38,54 +87,58 @@ export default function TeacherDailyReportScreen() {
     year: "numeric",
   });
 
-  function showPlaceholder(action: string) {
-    Alert.alert(action, "הפעולה תתחבר בהמשך. בשלב הזה מוצגים נתוני דמו בלבד.");
-  }
-
   return (
     <View style={styles.root}>
-      <AppScreen scrollable contentStyle={styles.screenContent}>
-        <View style={styles.header}>
-          <View style={styles.headerTopRow}>
-            <Text style={styles.iconButton}>☰</Text>
-            <View style={styles.notification}>
-              <Text style={styles.notificationText}>2</Text>
-            </View>
+      <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
+        <HeroBanner source={Heroes.dailySummary} height={220}>
+          <View style={styles.headerOverlay}>
+            <AppHeader
+              onBellPress={() => router.push("/notifications")}
+              onLeadingPress={() => router.push("/settings")}
+            />
           </View>
-
-          <Text style={styles.title}>סיכום יום</Text>
-          <Text style={styles.subtitle}>{formattedDate}</Text>
-
-          <View style={styles.heroCard}>
-            <Text style={styles.heroIcon}>✎</Text>
-            <View style={styles.heroTextBlock}>
-              <Text style={styles.heroTitle}>מה חשוב להורים לדעת?</Text>
-              <Text style={styles.heroText}>
-                ריכוז הפעילויות, הארוחות וההערות שיופיעו בסיכום היום.
-              </Text>
-            </View>
+          <View style={styles.titleBlock}>
+            <Text style={styles.title}>סיכום יום</Text>
+            <Text style={styles.subtitle}>{formattedDate}</Text>
           </View>
-        </View>
+        </HeroBanner>
 
+        <View style={styles.body}>
+        {loading || !dailyReportSummary ? (
+          <AppStateCard
+            state="loading"
+            title="טוען סיכום"
+            message="רגע, טוענים את סיכום היום"
+          />
+        ) : error ? (
+          <AppStateCard
+            state="error"
+            title="לא הצלחנו לטעון"
+            message="אירעה שגיאה בטעינת הסיכום. נסו שוב."
+            actionLabel="נסו שוב"
+            onActionPress={reload}
+          />
+        ) : (
+          <>
         <View style={styles.summaryGrid}>
           <SummaryCard
             label="נוכחות"
-            value={mockDailyReportSummary.presentChildren}
+            value={dailyReportSummary.presentChildren}
             text="ילדים הגיעו"
           />
           <SummaryCard
             label="פעילויות"
-            value={mockDailyReportSummary.activitiesCount}
+            value={dailyReportSummary.activitiesCount}
             text="פעילויות"
           />
           <SummaryCard
             label="ארוחות"
-            value={mockDailyReportSummary.mealsCount}
+            value={dailyReportSummary.mealsCount}
             text="ארוחות"
           />
           <SummaryCard
             label="הודעות להורים"
-            value={mockDailyReportSummary.messagesCount}
+            value={dailyReportSummary.messagesCount}
             text="נשלחו"
           />
         </View>
@@ -93,15 +146,34 @@ export default function TeacherDailyReportScreen() {
         <SectionHeader
           title="פעילויות מרכזיות"
           actionLabel="הוספת פעילות"
-          onPress={() => showPlaceholder("הוספת פעילות")}
+          onPress={() => router.push("/teacher/add-activity")}
         />
 
-        {mockDailyActivities.map((activity) => (
+        {dailyActivities.map((activity) => (
           <AppCard key={activity.id} style={styles.contentCard}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTime}>{activity.time}</Text>
-              <Text style={styles.badge}>{CATEGORY_LABELS[activity.category]}</Text>
+              <View style={styles.itemHeaderRight}>
+                <Text style={styles.badge}>{CATEGORY_LABELS[activity.category]}</Text>
+                <TouchableOpacity
+                  hitSlop={8}
+                  onPress={() => router.push(`/teacher/add-activity?editId=${activity.id}`)}
+                  style={styles.deleteButton}
+                >
+                  <Ionicons name="create-outline" size={18} color={Colors.textSecondary} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  hitSlop={8}
+                  onPress={() => handleDeleteActivity(activity.id)}
+                  style={styles.deleteButton}
+                >
+                  <Ionicons name="trash-outline" size={18} color={Colors.textSecondary} />
+                </TouchableOpacity>
+              </View>
             </View>
+            {activity.imageUrl ? (
+              <Image source={{ uri: activity.imageUrl }} style={styles.activityImage} />
+            ) : null}
             <Text style={styles.itemTitle}>{activity.title}</Text>
             <Text style={styles.itemText}>{activity.description}</Text>
           </AppCard>
@@ -110,16 +182,16 @@ export default function TeacherDailyReportScreen() {
         <SectionHeader
           title="הודעות להורים"
           actionLabel="צפייה בכל ההודעות"
-          onPress={() => showPlaceholder("הודעות להורים")}
+          onPress={() => router.push("/messages")}
         />
 
         <AppCard style={styles.contentCard}>
-          {mockDailyMessages.map((message, index) => (
+          {dailyMessages.map((message, index) => (
             <View
               key={message.id}
               style={[
                 styles.compactItem,
-                index === mockDailyMessages.length - 1 && styles.lastCompactItem,
+                index === dailyMessages.length - 1 && styles.lastCompactItem,
               ]}
             >
               <Text style={styles.itemTime}>{message.time}</Text>
@@ -131,35 +203,74 @@ export default function TeacherDailyReportScreen() {
         <SectionHeader
           title="הערות מהיום"
           actionLabel="הוספת הערה"
-          onPress={() => showPlaceholder("הוספת הערה")}
+          onPress={() => router.push("/teacher/add-note")}
         />
 
         <AppCard style={styles.contentCard}>
-          {mockDailyNotes.map((note, index) => (
+          {dailyNotes.map((note, index) => (
             <View
               key={note.id}
               style={[
                 styles.compactItem,
-                index === mockDailyNotes.length - 1 && styles.lastCompactItem,
+                index === dailyNotes.length - 1 && styles.lastCompactItem,
               ]}
             >
-              <Text style={styles.itemTitle}>{note.childName ?? "הערה כללית"}</Text>
+              <View style={styles.itemHeader}>
+                <Text style={styles.itemTitle}>{note.childName ?? "הערה כללית"}</Text>
+                <TouchableOpacity
+                  hitSlop={8}
+                  onPress={() => router.push(`/teacher/add-note?editId=${note.id}`)}
+                  style={styles.deleteButton}
+                >
+                  <Ionicons name="create-outline" size={18} color={Colors.textSecondary} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  hitSlop={8}
+                  onPress={() => handleDeleteNote(note.id)}
+                  style={styles.deleteButton}
+                >
+                  <Ionicons name="trash-outline" size={18} color={Colors.textSecondary} />
+                </TouchableOpacity>
+              </View>
               <Text style={styles.itemText}>{note.text}</Text>
             </View>
           ))}
         </AppCard>
 
-        <Text style={styles.sectionTitle}>מה אכלנו היום</Text>
-        {mockDailyMeals.map((meal) => (
+        <SectionHeader
+          title="מה אכלנו היום"
+          actionLabel="הוספת ארוחה"
+          onPress={() => router.push("/teacher/add-meal")}
+        />
+        {dailyMeals.map((meal) => (
           <AppCard key={meal.id} style={styles.contentCard}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTime}>{meal.time}</Text>
-              <Text style={styles.badge}>{MEAL_LABELS[meal.mealType]}</Text>
+              <View style={styles.itemHeaderRight}>
+                <Text style={styles.badge}>{MEAL_LABELS[meal.mealType]}</Text>
+                <TouchableOpacity
+                  hitSlop={8}
+                  onPress={() => router.push(`/teacher/add-meal?editId=${meal.id}`)}
+                  style={styles.deleteButton}
+                >
+                  <Ionicons name="create-outline" size={18} color={Colors.textSecondary} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  hitSlop={8}
+                  onPress={() => handleDeleteMeal(meal.id)}
+                  style={styles.deleteButton}
+                >
+                  <Ionicons name="trash-outline" size={18} color={Colors.textSecondary} />
+                </TouchableOpacity>
+              </View>
             </View>
             <Text style={styles.itemTitle}>{meal.title}</Text>
             <Text style={styles.itemText}>{meal.description}</Text>
           </AppCard>
         ))}
+          </>
+        )}
+        </View>
       </AppScreen>
 
       <BottomNavBar
@@ -216,89 +327,35 @@ const styles = StyleSheet.create({
   screenContent: {
     paddingBottom: Spacing.xxl,
   },
-  header: {
-    gap: Spacing.sm,
+  headerOverlay: {
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
   },
-  headerTopRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  titleBlock: {
     alignItems: "center",
-  },
-  iconButton: {
-    width: 36,
-    height: 36,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.cardBackground,
-    color: Colors.textPrimary,
-    fontSize: 18,
-    lineHeight: 36,
-    textAlign: "center",
-  },
-  notification: {
-    minWidth: 30,
-    height: 30,
-    borderRadius: BorderRadius.full,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: Colors.primary,
-  },
-  notificationText: {
-    color: Colors.white,
-    fontSize: 13,
-    fontWeight: "800",
+    marginTop: Spacing.sm,
   },
   title: {
     fontSize: 26,
     fontWeight: "800",
-    color: Colors.textPrimary,
-    textAlign: "right",
+    color: Colors.primary,
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 14,
-    color: Colors.textSecondary,
-    textAlign: "right",
-  },
-  heroCard: {
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    gap: Spacing.md,
-    padding: Spacing.md,
-    borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.secondary,
-    marginTop: Spacing.sm,
-  },
-  heroIcon: {
-    width: 58,
-    height: 58,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.cardBackground,
     color: Colors.primary,
-    fontSize: 28,
-    lineHeight: 58,
-    textAlign: "center",
-    fontWeight: "800",
-  },
-  heroTextBlock: {
-    flex: 1,
-  },
-  heroTitle: {
-    fontSize: 17,
     fontWeight: "700",
-    color: Colors.textPrimary,
-    textAlign: "right",
+    marginTop: 2,
+    textAlign: "center",
   },
-  heroText: {
-    fontSize: 13,
-    lineHeight: 20,
-    color: Colors.textSecondary,
-    textAlign: "right",
-    marginTop: 4,
+  body: {
+    paddingHorizontal: Spacing.md,
+    marginTop: -Spacing.xl,
   },
   summaryGrid: {
     flexDirection: "row-reverse",
     flexWrap: "wrap",
     gap: Spacing.sm,
-    marginTop: Spacing.lg,
   },
   summaryCard: {
     width: "48%",
@@ -351,6 +408,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: Spacing.xs,
   },
+  itemHeaderRight: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  deleteButton: {
+    padding: 2,
+  },
   itemTime: {
     fontSize: 12,
     color: Colors.textSecondary,
@@ -363,6 +428,12 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: BorderRadius.full,
     overflow: "hidden",
+  },
+  activityImage: {
+    width: "100%",
+    height: 140,
+    borderRadius: BorderRadius.md,
+    marginBottom: Spacing.xs,
   },
   itemTitle: {
     fontSize: 15,

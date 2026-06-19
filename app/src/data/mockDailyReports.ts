@@ -4,6 +4,8 @@ export interface DailyActivity {
   description: string;
   time: string;
   category: "learning" | "creative" | "movement" | "story" | "outdoor";
+  imageUrl?: string;
+  catalogId?: string;
 }
 
 export interface DailyMeal {

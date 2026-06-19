@@ -1,181 +1,248 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 import { AppCard } from "../../src/components/AppCard";
+import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
+import { AppStateCard } from "../../src/components/AppStateCard";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
+import { HeroBanner } from "../../src/components/HeroBanner";
+import { useAsyncData } from "../../src/hooks/useAsyncData";
 import {
-  mockDailyActivities,
-  mockDailyMeals,
-  mockDailyMessages,
-  mockDailyNotes,
-  mockDailyReportSummary,
-} from "../../src/data/mockDailyReports";
+  getDailyActivities,
+  getDailyMeals,
+  getDailyMessages,
+  getDailyNotes,
+  getDailyReportSummary,
+} from "../../src/services/dailyReports.service";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
 import { Colors } from "../../src/theme/colors";
-import { Spacing } from "../../src/theme/spacing";
+import { Heroes } from "../../src/theme/heroes";
+import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
-const ACTIVITY_CATEGORY_LABELS: Record<string, string> = {
-  learning: "למידה",
-  creative: "יצירה",
-  movement: "תנועה",
-  story: "סיפור",
-  outdoor: "חצר",
-};
+type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
 
 const MEAL_TYPE_LABELS: Record<string, string> = {
-  breakfast: "בוקר",
-  lunch: "צהריים",
-  snack: "ביניים",
+  breakfast: "ארוחת בוקר",
+  lunch: "ארוחת צהריים",
+  snack: "ארוחת נישנוש",
 };
 
-const NOTE_TYPE_LABELS: Record<string, string> = {
-  general: "כללי",
-  health: "בריאות",
-  behavior: "התנהגות",
-  sleep: "שינה",
-};
+function formatToday() {
+  return new Date().toLocaleDateString("he-IL", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
 
 export default function DailySummaryScreen() {
+  const router = useRouter();
   const handleBottomNavPress = useBottomNavPress("parent");
+  const { data, loading, error, reload } = useAsyncData(async () => {
+    const [summary, activities, meals, messages, notes] = await Promise.all([
+      getDailyReportSummary(),
+      getDailyActivities(),
+      getDailyMeals(),
+      getDailyMessages(),
+      getDailyNotes(),
+    ]);
+    return { summary, activities, meals, messages, notes };
+  }, []);
+
+  const summary = data?.summary;
+  const dailyActivities = data?.activities ?? [];
+  const dailyMeals = data?.meals ?? [];
+  const dailyMessages = data?.messages ?? [];
+  const dailyNotes = data?.notes ?? [];
+
+  const stats: { label: string; value: string; text: string; icon: IoniconName }[] = summary
+    ? [
+        {
+          label: "נוכחות",
+          value: String(summary.presentChildren),
+          text: "ילדים הגיעו",
+          icon: "people-outline",
+        },
+        {
+          label: "פעילויות",
+          value: String(summary.activitiesCount),
+          text: "פעילויות",
+          icon: "color-palette-outline",
+        },
+        {
+          label: "ארוחות",
+          value: String(summary.mealsCount),
+          text: "ארוחות",
+          icon: "restaurant-outline",
+        },
+        {
+          label: "הודעות להורים",
+          value: String(summary.messagesCount),
+          text: "נשלחו",
+          icon: "chatbubble-ellipses-outline",
+        },
+      ]
+    : [];
 
   return (
     <View style={styles.root}>
-      <AppScreen scrollable>
-        <View style={styles.content}>
-          <Text style={styles.title}>סיכום היום</Text>
-          <Text style={styles.subtitle}>עדכונים מהגן להיום</Text>
+      <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
+        <HeroBanner source={Heroes.dailySummary} height={230}>
+          <View style={styles.headerOverlay}>
+            <AppHeader
+              onBellPress={() => router.push("/notifications")}
+              onLeadingPress={() => router.push("/settings")}
+            />
+          </View>
+          <View style={styles.titleBlock}>
+            <Text style={styles.title}>סיכום יום</Text>
+            <Text style={styles.subtitle}>{formatToday()}</Text>
+          </View>
+        </HeroBanner>
 
-          <AppCard style={styles.card}>
-            <Text style={styles.cardTitle}>סיכום כללי</Text>
+        <View style={styles.body}>
+          {loading || !data ? (
+            <AppStateCard
+              state="loading"
+              title="טוען סיכום"
+              message="רגע, טוענים את סיכום היום"
+            />
+          ) : error ? (
+            <AppStateCard
+              state="error"
+              title="לא הצלחנו לטעון"
+              message="אירעה שגיאה בטעינת הסיכום. נסו שוב."
+              actionLabel="נסו שוב"
+              onActionPress={reload}
+            />
+          ) : (
+            <>
+          <View style={styles.statsGrid}>
+            {stats.map((stat) => (
+              <AppCard key={stat.label} style={styles.statCard}>
+                <Text style={styles.statLabel}>{stat.label}</Text>
+                <Ionicons
+                  name={stat.icon}
+                  size={22}
+                  color={Colors.primary}
+                  style={styles.statIcon}
+                />
+                <Text style={styles.statValue}>{stat.value}</Text>
+                <Text style={styles.statText}>{stat.text}</Text>
+              </AppCard>
+            ))}
+          </View>
 
-            <View style={styles.summaryRow}>
-              <View style={styles.summaryItem}>
-                <Text style={styles.summaryNumber}>
-                  {mockDailyReportSummary.presentChildren}/
-                  {mockDailyReportSummary.totalChildren}
-                </Text>
-                <Text style={styles.summaryLabel}>נוכחים</Text>
-              </View>
-
-              <View style={styles.summaryItem}>
-                <Text style={styles.summaryNumber}>
-                  {mockDailyReportSummary.activitiesCount}
-                </Text>
-                <Text style={styles.summaryLabel}>פעילויות</Text>
-              </View>
-
-              <View style={styles.summaryItem}>
-                <Text style={styles.summaryNumber}>
-                  {mockDailyReportSummary.mealsCount}
-                </Text>
-                <Text style={styles.summaryLabel}>ארוחות</Text>
-              </View>
-
-              <View style={styles.summaryItem}>
-                <Text style={styles.summaryNumber}>
-                  {mockDailyReportSummary.messagesCount}
-                </Text>
-                <Text style={styles.summaryLabel}>הודעות</Text>
-              </View>
+          <AppCard style={styles.sectionCard}>
+            <View style={styles.sectionHeader}>
+              <Ionicons name="star" size={18} color={Colors.primary} />
+              <Text style={styles.sectionTitle}>פעילויות מרכזיות</Text>
             </View>
-          </AppCard>
 
-          <AppCard style={styles.card}>
-            <Text style={styles.cardTitle}>פעילויות</Text>
-
-            {mockDailyActivities.map((activity, index) => (
-              <View
-                key={activity.id}
-                style={[
-                  styles.listItem,
-                  index === mockDailyActivities.length - 1 &&
-                    styles.listItemLast,
-                ]}
-              >
-                <View style={styles.listItemHeader}>
-                  <Text style={styles.listItemTime}>{activity.time}</Text>
-                  <Text style={styles.badge}>
-                    {ACTIVITY_CATEGORY_LABELS[activity.category]}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.activitiesScroll}
+            >
+              {dailyActivities.map((activity) => (
+                <View key={activity.id} style={styles.activityCard}>
+                  <Text style={styles.activityTime}>{activity.time}</Text>
+                  <View style={styles.activityThumb}>
+                    {activity.imageUrl ? (
+                      <Image source={{ uri: activity.imageUrl }} style={styles.activityImage} />
+                    ) : (
+                      <Ionicons name="image-outline" size={26} color={Colors.primary} />
+                    )}
+                  </View>
+                  <Text style={styles.activityTitle}>{activity.title}</Text>
+                  <Text style={styles.activityText} numberOfLines={1}>
+                    {activity.description}
                   </Text>
                 </View>
-
-                <Text style={styles.listItemTitle}>{activity.title}</Text>
-                <Text style={styles.listItemText}>{activity.description}</Text>
-              </View>
-            ))}
+              ))}
+            </ScrollView>
           </AppCard>
 
-          <AppCard style={styles.card}>
-            <Text style={styles.cardTitle}>ארוחות</Text>
-
-            {mockDailyMeals.map((meal, index) => (
-              <View
-                key={meal.id}
-                style={[
-                  styles.listItem,
-                  index === mockDailyMeals.length - 1 && styles.listItemLast,
-                ]}
+          <View style={styles.twoColumns}>
+            <AppCard style={styles.columnCard}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="clipboard-outline" size={18} color={Colors.primary} />
+                <Text style={styles.columnTitle}>הערות מהיום</Text>
+              </View>
+              {dailyNotes.map((note) => (
+                <View key={note.id} style={styles.noteRow}>
+                  <Text style={styles.noteBullet}>•</Text>
+                  <Text style={styles.noteText}>{note.text}</Text>
+                </View>
+              ))}
+              <TouchableOpacity
+                activeOpacity={0.75}
+                onPress={() => router.push("/messages")}
+                style={styles.columnButton}
               >
-                <View style={styles.listItemHeader}>
-                  <Text style={styles.listItemTime}>{meal.time}</Text>
-                  <Text style={styles.badge}>
-                    {MEAL_TYPE_LABELS[meal.mealType]}
+                <Ionicons name="add" size={16} color={Colors.primary} />
+                <Text style={styles.columnButtonText}>שליחת הודעה לגננת</Text>
+              </TouchableOpacity>
+            </AppCard>
+
+            <AppCard style={styles.columnCard}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="paper-plane-outline" size={18} color={Colors.primary} />
+                <Text style={styles.columnTitle}>הודעות להורים</Text>
+              </View>
+              {dailyMessages.map((message) => (
+                <View key={message.id} style={styles.messageItem}>
+                  <Text style={styles.messageTime}>{message.time}</Text>
+                  <Text style={styles.messageText} numberOfLines={2}>
+                    {message.text}
                   </Text>
                 </View>
-
-                <Text style={styles.listItemTitle}>{meal.title}</Text>
-                <Text style={styles.listItemText}>{meal.description}</Text>
-              </View>
-            ))}
-          </AppCard>
-
-          <AppCard style={styles.card}>
-            <Text style={styles.cardTitle}>הודעות</Text>
-
-            {mockDailyMessages.map((message, index) => (
-              <View
-                key={message.id}
-                style={[
-                  styles.listItem,
-                  index === mockDailyMessages.length - 1 &&
-                    styles.listItemLast,
-                  !message.isRead && styles.listItemUnread,
-                ]}
+              ))}
+              <TouchableOpacity
+                activeOpacity={0.75}
+                onPress={() => router.push("/messages")}
+                style={styles.columnButton}
               >
-                <View style={styles.listItemHeader}>
-                  <Text style={styles.listItemTime}>{message.time}</Text>
-                  <Text style={styles.listItemTitle}>{message.from}</Text>
+                <Ionicons name="chatbubbles-outline" size={16} color={Colors.primary} />
+                <Text style={styles.columnButtonText}>צפייה בכל ההודעות</Text>
+              </TouchableOpacity>
+            </AppCard>
+          </View>
+
+          <View style={styles.sectionHeaderPlain}>
+            <Ionicons name="restaurant" size={18} color={Colors.primary} />
+            <Text style={styles.sectionTitle}>מה אכלנו היום</Text>
+          </View>
+
+          <View style={styles.mealsRow}>
+            {dailyMeals.map((meal) => (
+              <AppCard key={meal.id} style={styles.mealCard}>
+                <Text style={styles.mealTitle}>
+                  {MEAL_TYPE_LABELS[meal.mealType] ?? meal.title}
+                </Text>
+                <Text style={styles.mealTime}>{meal.time}</Text>
+                <View style={styles.mealThumb}>
+                  <Ionicons name="fast-food-outline" size={22} color={Colors.primary} />
                 </View>
-
-                <Text style={styles.listItemText}>{message.text}</Text>
-              </View>
+                <Text style={styles.mealText} numberOfLines={2}>
+                  {meal.description}
+                </Text>
+              </AppCard>
             ))}
-          </AppCard>
-
-          <AppCard style={styles.card}>
-            <Text style={styles.cardTitle}>הערות</Text>
-
-            {mockDailyNotes.map((note, index) => (
-              <View
-                key={note.id}
-                style={[
-                  styles.listItem,
-                  index === mockDailyNotes.length - 1 && styles.listItemLast,
-                ]}
-              >
-                <View style={styles.listItemHeader}>
-                  <Text style={styles.badge}>{NOTE_TYPE_LABELS[note.type]}</Text>
-
-                  {note.childName != null && (
-                    <Text style={styles.listItemTitle}>{note.childName}</Text>
-                  )}
-                </View>
-
-                <Text style={styles.listItemText}>{note.text}</Text>
-              </View>
-            ))}
-          </AppCard>
+          </View>
+            </>
+          )}
         </View>
       </AppScreen>
 
@@ -193,91 +260,227 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  content: {
-    paddingTop: Spacing.lg,
+  screenContent: {
+    paddingBottom: Spacing.xxl,
+  },
+  headerOverlay: {
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
+  },
+  titleBlock: {
+    alignItems: "center",
+    marginTop: Spacing.sm,
   },
   title: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: Colors.textPrimary,
-    textAlign: "right",
+    fontSize: 26,
+    fontWeight: "800",
+    color: Colors.primary,
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 14,
-    color: Colors.textSecondary,
-    marginTop: Spacing.xs,
-    marginBottom: Spacing.md,
-    textAlign: "right",
-  },
-  card: {
-    marginTop: Spacing.lg,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: Colors.textPrimary,
-    marginBottom: Spacing.sm,
-    textAlign: "right",
-  },
-  summaryRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginTop: Spacing.xs,
-  },
-  summaryItem: {
-    alignItems: "center",
-  },
-  summaryNumber: {
-    fontSize: 20,
+    color: Colors.primary,
     fontWeight: "700",
+    marginTop: 2,
+    textAlign: "center",
+  },
+  body: {
+    paddingHorizontal: Spacing.md,
+    marginTop: -Spacing.xl,
+  },
+  statsGrid: {
+    flexDirection: "row-reverse",
+    flexWrap: "wrap",
+    gap: Spacing.sm,
+  },
+  statCard: {
+    width: "48%",
+    alignItems: "center",
+  },
+  statIcon: {
+    marginVertical: 4,
+  },
+  statValue: {
+    fontSize: 22,
+    fontWeight: "800",
     color: Colors.primary,
   },
-  summaryLabel: {
+  statLabel: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: Colors.textPrimary,
+    textAlign: "center",
+  },
+  statText: {
     fontSize: 12,
     color: Colors.textSecondary,
+    textAlign: "center",
     marginTop: 2,
   },
-  listItem: {
-    paddingVertical: Spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.background,
+  sectionCard: {
+    marginTop: Spacing.md,
   },
-  listItemLast: {
-    borderBottomWidth: 0,
-  },
-  listItemUnread: {
-    backgroundColor: Colors.secondary,
-    borderRadius: 8,
-    paddingHorizontal: Spacing.xs,
-  },
-  listItemHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  sectionHeader: {
+    flexDirection: "row-reverse",
     alignItems: "center",
-    marginBottom: 4,
+    gap: Spacing.xs,
+    marginBottom: Spacing.sm,
   },
-  listItemTime: {
-    fontSize: 12,
-    color: Colors.textSecondary,
+  sectionHeaderPlain: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: Spacing.xs,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.sm,
   },
-  listItemTitle: {
-    fontSize: 14,
-    fontWeight: "600",
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "800",
     color: Colors.textPrimary,
     textAlign: "right",
   },
-  listItemText: {
-    fontSize: 13,
+  activitiesScroll: {
+    flexDirection: "row-reverse",
+    gap: Spacing.sm,
+  },
+  activityCard: {
+    width: 150,
+    padding: Spacing.sm,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.background,
+  },
+  activityTime: {
+    fontSize: 12,
     color: Colors.textSecondary,
-    marginTop: 2,
     textAlign: "right",
   },
-  badge: {
-    fontSize: 11,
-    color: Colors.primary,
+  activityThumb: {
+    height: 80,
+    borderRadius: BorderRadius.md,
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: Colors.secondary,
-    paddingHorizontal: Spacing.xs,
-    paddingVertical: 2,
-    borderRadius: 4,
+    marginVertical: Spacing.xs,
+    overflow: "hidden",
+  },
+  activityImage: {
+    width: "100%",
+    height: "100%",
+  },
+  activityTitle: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: Colors.textPrimary,
+    textAlign: "right",
+  },
+  activityText: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    textAlign: "right",
+    marginTop: 2,
+  },
+  twoColumns: {
+    flexDirection: "row-reverse",
+    gap: Spacing.sm,
+    marginTop: Spacing.md,
+  },
+  columnCard: {
+    flex: 1,
+  },
+  columnTitle: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: "800",
+    color: Colors.textPrimary,
+    textAlign: "right",
+  },
+  noteRow: {
+    flexDirection: "row-reverse",
+    gap: Spacing.xs,
+    marginBottom: Spacing.sm,
+  },
+  noteBullet: {
+    color: Colors.primary,
+    fontSize: 14,
+    fontWeight: "800",
+  },
+  noteText: {
+    flex: 1,
+    fontSize: 12,
+    color: Colors.textSecondary,
+    textAlign: "right",
+    lineHeight: 18,
+  },
+  columnButton: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    borderRadius: BorderRadius.md,
+    paddingVertical: Spacing.xs,
+    marginTop: Spacing.xs,
+  },
+  columnButtonText: {
+    color: Colors.primary,
+    fontSize: 12,
+    fontWeight: "800",
+  },
+  columnAction: {
+    color: Colors.primary,
+    fontSize: 12,
+    fontWeight: "800",
+    textAlign: "right",
+    marginTop: Spacing.sm,
+  },
+  messageItem: {
+    paddingVertical: Spacing.xs,
+    alignItems: "flex-end",
+  },
+  messageTime: {
+    fontSize: 11,
+    color: Colors.textSecondary,
+  },
+  messageText: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    textAlign: "right",
+    lineHeight: 18,
+    marginTop: 2,
+  },
+  mealsRow: {
+    flexDirection: "row-reverse",
+    gap: Spacing.sm,
+  },
+  mealCard: {
+    flex: 1,
+    alignItems: "center",
+  },
+  mealTitle: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: Colors.textPrimary,
+    textAlign: "center",
+  },
+  mealTime: {
+    fontSize: 11,
+    color: Colors.textSecondary,
+    marginTop: 2,
+  },
+  mealThumb: {
+    width: 44,
+    height: 44,
+    borderRadius: BorderRadius.full,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.secondary,
+    marginVertical: Spacing.xs,
+  },
+  mealText: {
+    fontSize: 11,
+    color: Colors.textSecondary,
+    textAlign: "center",
+    lineHeight: 16,
   },
 });

@@ -1,13 +1,23 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useRouter } from "expo-router";
 
 import { AppButton } from "../../src/components/AppButton";
 import { AppCard } from "../../src/components/AppCard";
+import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
+import { AppStateCard } from "../../src/components/AppStateCard";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
-import { mockChildren } from "../../src/data/mockChildren";
+import { HeroBanner } from "../../src/components/HeroBanner";
+import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
+import {
+  getInitialAttendanceByChildId,
+  saveAttendance,
+} from "../../src/services/attendance.service";
+import { getChildren } from "../../src/services/children.service";
 import { Colors } from "../../src/theme/colors";
+import { Heroes } from "../../src/theme/heroes";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 import type { AttendanceStatus } from "../../src/types/child";
 
@@ -19,12 +29,27 @@ const STATUS_OPTIONS: { status: AttendanceStatus; label: string }[] = [
 ];
 
 export default function AttendanceScreen() {
+  const router = useRouter();
   const handleBottomNavPress = useBottomNavPress("teacher");
-  const [attendanceByChildId, setAttendanceByChildId] = useState(() =>
-    Object.fromEntries(
-      mockChildren.map((child) => [child.id, child.attendanceStatus]),
-    ) as Record<string, AttendanceStatus>,
-  );
+  const { data, loading, error, reload } = useAsyncData(async () => {
+    const [children, initialAttendance] = await Promise.all([
+      getChildren(),
+      getInitialAttendanceByChildId(),
+    ]);
+    return { children, initialAttendance };
+  }, []);
+  const children = data?.children ?? [];
+
+  const [attendanceByChildId, setAttendanceByChildId] = useState<
+    Record<string, AttendanceStatus>
+  >({});
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (data?.initialAttendance) {
+      setAttendanceByChildId(data.initialAttendance);
+    }
+  }, [data]);
 
   const summary = useMemo(() => {
     const statuses = Object.values(attendanceByChildId);
@@ -50,79 +75,102 @@ export default function AttendanceScreen() {
     }));
   }
 
-  function handleSave() {
-    Alert.alert("הנוכחות נשמרה בהצלחה", "בשלב הדמו הנתונים נשמרים רק במסך.");
+  async function handleSave() {
+    setSaving(true);
+    const ok = await saveAttendance(attendanceByChildId);
+    setSaving(false);
+    if (ok) {
+      Alert.alert("הנוכחות נשמרה בהצלחה", "הנתונים עודכנו.");
+    } else {
+      Alert.alert("שמירת הנוכחות נכשלה", "אירעה שגיאה. נסו שוב.");
+    }
   }
 
   return (
     <View style={styles.root}>
-      <AppScreen scrollable contentStyle={styles.screenContent}>
-        <View style={styles.header}>
-          <View style={styles.headerTopRow}>
-            <Text style={styles.iconButton}>☰</Text>
-            <View style={styles.notification}>
-              <Text style={styles.notificationText}>!</Text>
-            </View>
+      <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
+        <HeroBanner source={Heroes.attendance} height={220}>
+          <View style={styles.headerOverlay}>
+            <AppHeader
+              onBellPress={() => router.push("/notifications")}
+              onLeadingPress={() => router.push("/settings")}
+            />
           </View>
-
-          <Text style={styles.title}>נוכחות היום</Text>
-          <Text style={styles.subtitle}>{formattedDate}</Text>
-
-          <View style={styles.heroCard}>
-            <Text style={styles.heroIcon}>✓</Text>
-            <View style={styles.heroTextBlock}>
-              <Text style={styles.heroTitle}>סימון מהיר וברור</Text>
-              <Text style={styles.heroText}>
-                עדכנו את מצב הילדים בבוקר ובמהלך היום בלחיצה אחת.
-              </Text>
-            </View>
+          <View style={styles.titleBlock}>
+            <Text style={styles.title}>נוכחות היום</Text>
+            <Text style={styles.subtitle}>{formattedDate}</Text>
           </View>
+        </HeroBanner>
+
+        <View style={styles.body}>
+          {loading ? (
+            <AppStateCard
+              state="loading"
+              title="טוען נתונים"
+              message="רגע, טוענים את רשימת הנוכחות"
+            />
+          ) : error ? (
+            <AppStateCard
+              state="error"
+              title="לא הצלחנו לטעון"
+              message="אירעה שגיאה בטעינת הנתונים. נסו שוב."
+              actionLabel="נסו שוב"
+              onActionPress={reload}
+            />
+          ) : (
+            <>
+          <AppCard style={styles.summaryCard}>
+            <SummaryItem label="הגיעו" value={summary.arrived} tone="success" />
+            <SummaryItem label="מאחרים" value={summary.late} tone="warning" />
+            <SummaryItem label="לא הגיעו" value={summary.notArrived} tone="error" />
+          </AppCard>
+
+          <Text style={styles.sectionTitle}>רשימת ילדים</Text>
+
+          {children.map((child) => {
+            const selectedStatus = attendanceByChildId[child.id];
+
+            return (
+              <AppCard key={child.id} style={styles.childCard}>
+                <View style={styles.childHeader}>
+                  <View style={styles.avatar}>
+                    <Text style={styles.avatarText}>{child.name.slice(0, 1)}</Text>
+                  </View>
+
+                  <View style={styles.childInfo}>
+                    <Text style={styles.childName}>{child.name}</Text>
+                    <Text style={styles.childAge}>{child.age}</Text>
+                  </View>
+                </View>
+
+                <View style={styles.statusGrid}>
+                  {STATUS_OPTIONS.map((option) => (
+                    <StatusChip
+                      key={option.status}
+                      label={option.label}
+                      status={option.status}
+                      active={selectedStatus === option.status}
+                      onPress={() => updateChildStatus(child.id, option.status)}
+                    />
+                  ))}
+                </View>
+              </AppCard>
+            );
+          })}
+
+          <AppButton
+            title={saving ? "שומר..." : "שמור נוכחות"}
+            onPress={handleSave}
+            disabled={saving}
+            style={styles.saveButton}
+          />
+            </>
+          )}
         </View>
-
-        <AppCard style={styles.summaryCard}>
-          <SummaryItem label="הגיעו" value={summary.arrived} tone="success" />
-          <SummaryItem label="מאחרים" value={summary.late} tone="warning" />
-          <SummaryItem label="לא הגיעו" value={summary.notArrived} tone="error" />
-        </AppCard>
-
-        <Text style={styles.sectionTitle}>רשימת ילדים</Text>
-
-        {mockChildren.map((child) => {
-          const selectedStatus = attendanceByChildId[child.id];
-
-          return (
-            <AppCard key={child.id} style={styles.childCard}>
-              <View style={styles.childHeader}>
-                <View style={styles.avatar}>
-                  <Text style={styles.avatarText}>{child.name.slice(0, 1)}</Text>
-                </View>
-
-                <View style={styles.childInfo}>
-                  <Text style={styles.childName}>{child.name}</Text>
-                  <Text style={styles.childAge}>{child.age}</Text>
-                </View>
-              </View>
-
-              <View style={styles.statusGrid}>
-                {STATUS_OPTIONS.map((option) => (
-                  <StatusChip
-                    key={option.status}
-                    label={option.label}
-                    status={option.status}
-                    active={selectedStatus === option.status}
-                    onPress={() => updateChildStatus(child.id, option.status)}
-                  />
-                ))}
-              </View>
-            </AppCard>
-          );
-        })}
-
-        <AppButton title="שמור נוכחות" onPress={handleSave} style={styles.saveButton} />
       </AppScreen>
 
       <BottomNavBar
-        activeItem="attendance"
+        activeItem="home"
         variant="teacher"
         onItemPress={handleBottomNavPress}
       />
@@ -208,88 +256,34 @@ const styles = StyleSheet.create({
   screenContent: {
     paddingBottom: Spacing.xxl,
   },
-  header: {
-    gap: Spacing.sm,
+  headerOverlay: {
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
   },
-  headerTopRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  titleBlock: {
     alignItems: "center",
-  },
-  iconButton: {
-    width: 36,
-    height: 36,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.cardBackground,
-    color: Colors.textPrimary,
-    fontSize: 18,
-    lineHeight: 36,
-    textAlign: "center",
-  },
-  notification: {
-    width: 30,
-    height: 30,
-    borderRadius: BorderRadius.full,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: Colors.secondary,
-  },
-  notificationText: {
-    color: Colors.primary,
-    fontSize: 16,
-    fontWeight: "800",
+    marginTop: Spacing.sm,
   },
   title: {
     fontSize: 26,
     fontWeight: "800",
-    color: Colors.textPrimary,
-    textAlign: "right",
+    color: Colors.primary,
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 14,
-    color: Colors.textSecondary,
-    textAlign: "right",
-  },
-  heroCard: {
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    gap: Spacing.md,
-    padding: Spacing.md,
-    borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.secondary,
-    marginTop: Spacing.sm,
-  },
-  heroIcon: {
-    width: 58,
-    height: 58,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.cardBackground,
-    color: Colors.presentText,
-    fontSize: 28,
-    lineHeight: 58,
-    textAlign: "center",
-    fontWeight: "800",
-  },
-  heroTextBlock: {
-    flex: 1,
-  },
-  heroTitle: {
-    fontSize: 17,
+    color: Colors.primary,
     fontWeight: "700",
-    color: Colors.textPrimary,
-    textAlign: "right",
+    marginTop: 2,
+    textAlign: "center",
   },
-  heroText: {
-    fontSize: 13,
-    lineHeight: 20,
-    color: Colors.textSecondary,
-    textAlign: "right",
-    marginTop: 4,
+  body: {
+    paddingHorizontal: Spacing.md,
+    marginTop: -Spacing.xl,
   },
   summaryCard: {
     flexDirection: "row-reverse",
     justifyContent: "space-between",
-    marginTop: Spacing.lg,
   },
   summaryItem: {
     flex: 1,

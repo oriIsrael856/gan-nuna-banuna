@@ -8,16 +8,17 @@ type BottomNavVariant = "parent" | "teacher";
 const PARENT_ROUTES: Partial<Record<BottomNavItem, Href>> = {
   home: "/parent/home",
   daily: "/parent/daily-summary",
-  absence: "/parent/absence-report",
-  contracts: "/parent/contract-renewal",
+  calendar: "/calendar",
+  profile: "/profile",
+  settings: "/settings",
 };
 
 const TEACHER_ROUTES: Partial<Record<BottomNavItem, Href>> = {
   home: "/teacher/home",
   daily: "/teacher/daily-report",
-  attendance: "/teacher/attendance",
-  children: "/teacher/children",
-  contracts: "/teacher/contracts",
+  calendar: "/calendar",
+  profile: "/profile",
+  settings: "/settings",
 };
 
 export function useBottomNavPress(variant: BottomNavVariant) {

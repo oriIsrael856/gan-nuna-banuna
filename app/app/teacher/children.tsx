@@ -1,130 +1,169 @@
 import React, { useMemo, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 import { AppButton } from "../../src/components/AppButton";
 import { AppCard } from "../../src/components/AppCard";
+import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
+import { AppStateCard } from "../../src/components/AppStateCard";
 import { AppTextInput } from "../../src/components/AppTextInput";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
+import { HeroBanner } from "../../src/components/HeroBanner";
 import { StatusBadge } from "../../src/components/StatusBadge";
-import { CLIENT_CONFIG } from "../../src/config/client.config";
-import { mockChildren } from "../../src/data/mockChildren";
+import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
+import { getCurrentDaycareName } from "../../src/services/auth.service";
+import { deleteChild, getChildren } from "../../src/services/children.service";
+import { confirmDelete } from "../../src/utils/confirm";
 import { Colors } from "../../src/theme/colors";
+import { Heroes } from "../../src/theme/heroes";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
 export default function TeacherChildrenScreen() {
   const router = useRouter();
   const handleBottomNavPress = useBottomNavPress("teacher");
   const [searchText, setSearchText] = useState("");
+  const { data, loading, error, reload } = useAsyncData(() => getChildren(), []);
+  const children = useMemo(() => data ?? [], [data]);
 
   const filteredChildren = useMemo(() => {
     const query = searchText.trim();
 
     if (!query) {
-      return mockChildren;
+      return children;
     }
 
-    return mockChildren.filter((child) => child.name.includes(query));
-  }, [searchText]);
+    return children.filter((child) => child.name.includes(query));
+  }, [children, searchText]);
 
-  const presentCount = mockChildren.filter(
+  const presentCount = children.filter(
     (child) => child.attendanceStatus === "arrived",
   ).length;
-  const absentCount = mockChildren.length - presentCount;
+  const absentCount = children.length - presentCount;
+
+  function handleDeleteChild(id: string, name: string) {
+    confirmDelete(`למחוק את ${name} מהרשימה?`, async () => {
+      await deleteChild(id);
+      reload();
+    });
+  }
 
   return (
     <View style={styles.root}>
-      <AppScreen scrollable contentStyle={styles.screenContent}>
-        <View style={styles.header}>
-          <View style={styles.headerTopRow}>
-            <Text style={styles.iconButton}>☰</Text>
-            <View style={styles.notification}>
-              <Text style={styles.notificationText}>3</Text>
-            </View>
+      <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
+        <HeroBanner source={Heroes.children} height={220}>
+          <View style={styles.headerOverlay}>
+            <AppHeader
+              onBellPress={() => router.push("/notifications")}
+              onLeadingPress={() => router.push("/settings")}
+            />
+          </View>
+          <View style={styles.titleBlock}>
+            <Text style={styles.title}>ילדים בגן</Text>
+            <Text style={styles.subtitle}>רשימת הילדים ב{getCurrentDaycareName()}</Text>
+          </View>
+        </HeroBanner>
+
+        <View style={styles.body}>
+          <View style={styles.searchRow}>
+            <AppTextInput
+              value={searchText}
+              onChangeText={setSearchText}
+              placeholder="חיפוש ילד..."
+              style={styles.searchInput}
+            />
+
+            <TouchableOpacity activeOpacity={0.75} style={styles.filterButton}>
+              <Ionicons name="options-outline" size={22} color={Colors.primary} />
+            </TouchableOpacity>
           </View>
 
-          <Text style={styles.title}>ילדים בגן</Text>
-          <Text style={styles.subtitle}>
-            רשימת הילדים ב{CLIENT_CONFIG.daycareName}
-          </Text>
-
-          <View style={styles.heroCard}>
-            <Text style={styles.heroIcon}>◦</Text>
-            <View style={styles.heroTextBlock}>
-              <Text style={styles.heroTitle}>היום בגן</Text>
-              <Text style={styles.heroText}>
-                תמונת מצב מהירה של הילדים, הנוכחות והחוזים.
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.searchRow}>
-          <AppTextInput
-            value={searchText}
-            onChangeText={setSearchText}
-            placeholder="חיפוש ילד..."
-            style={styles.searchInput}
-          />
-
-          <TouchableOpacity activeOpacity={0.75} style={styles.filterButton}>
-            <Text style={styles.filterText}>סינון</Text>
-          </TouchableOpacity>
-        </View>
-
-        <AppCard style={styles.summaryCard}>
-          <SummaryItem label="סה״כ ילדים" value={mockChildren.length} />
-          <SummaryItem label="נוכחים היום" value={presentCount} />
-          <SummaryItem label="נעדרים היום" value={absentCount} />
-        </AppCard>
-
-        <View style={styles.listHeader}>
-          <Text style={styles.sectionTitle}>רשימת ילדים</Text>
-          <Text style={styles.sectionMeta}>{filteredChildren.length} מוצגים</Text>
-        </View>
-
-        {filteredChildren.length === 0 ? (
-          <AppCard style={styles.emptyCard}>
-            <Text style={styles.emptyTitle}>לא נמצאו ילדים</Text>
-            <Text style={styles.emptyText}>נסו לחפש שם אחר או לנקות את החיפוש.</Text>
+          <AppCard style={styles.summaryCard}>
+            <SummaryItem label="סה״כ ילדים" value={children.length} />
+            <SummaryItem label="נוכחים היום" value={presentCount} />
+            <SummaryItem label="נעדרים היום" value={absentCount} />
           </AppCard>
-        ) : (
-          filteredChildren.map((child) => (
-            <AppCard key={child.id} style={styles.childCard}>
-              <View style={styles.childMain}>
-                <View style={styles.avatar}>
-                  <Text style={styles.avatarText}>{child.name.slice(0, 1)}</Text>
-                </View>
 
-                <View style={styles.childInfo}>
-                  <Text style={styles.childName}>{child.name}</Text>
-                  <Text style={styles.childAge}>{child.age}</Text>
+          <View style={styles.listHeader}>
+            <Text style={styles.sectionTitle}>רשימת ילדים</Text>
+            <Text style={styles.sectionMeta}>{filteredChildren.length} מוצגים</Text>
+          </View>
 
-                  <View style={styles.badgeRow}>
-                    <StatusBadge status={child.attendanceStatus} />
-                    {child.contractStatus ? (
-                      <StatusBadge status={child.contractStatus} />
-                    ) : null}
-                  </View>
-                </View>
-
-                <Text style={styles.detailsArrow}>‹</Text>
-              </View>
+          {loading ? (
+            <AppStateCard
+              state="loading"
+              title="טוען ילדים"
+              message="רגע, טוענים את רשימת הילדים"
+            />
+          ) : error ? (
+            <AppStateCard
+              state="error"
+              title="לא הצלחנו לטעון"
+              message="אירעה שגיאה בטעינת הרשימה. נסו שוב."
+              actionLabel="נסו שוב"
+              onActionPress={reload}
+            />
+          ) : filteredChildren.length === 0 ? (
+            <AppCard style={styles.emptyCard}>
+              <Text style={styles.emptyTitle}>לא נמצאו ילדים</Text>
+              <Text style={styles.emptyText}>נסו לחפש שם אחר או לנקות את החיפוש.</Text>
             </AppCard>
-          ))
-        )}
+          ) : (
+            filteredChildren.map((child) => (
+              <TouchableOpacity
+                key={child.id}
+                activeOpacity={0.85}
+                onPress={() => router.push(`/teacher/child/${child.id}`)}
+                onLongPress={() => handleDeleteChild(child.id, child.name)}
+              >
+                <AppCard style={styles.childCard}>
+                <View style={styles.childMain}>
+                  <View style={styles.avatar}>
+                    <Text style={styles.avatarText}>{child.name.slice(0, 1)}</Text>
+                  </View>
 
-        <AppButton
-          title="הוספת ילד"
-          onPress={() => router.push("/teacher/add-child")}
-          style={styles.addButton}
-        />
+                  <View style={styles.childInfo}>
+                    <Text style={styles.childName}>{child.name}</Text>
+                    <Text style={styles.childAge}>{child.age}</Text>
+
+                    <View style={styles.badgeRow}>
+                      <StatusBadge status={child.attendanceStatus} />
+                      {child.contractStatus ? (
+                        <StatusBadge status={child.contractStatus} />
+                      ) : null}
+                      {child.guardians?.[0] ? (
+                        <View style={styles.guardianBadge}>
+                          <Text style={styles.guardianBadgeText}>
+                            {child.guardians[0].isLinked
+                              ? "הורה מחובר"
+                              : child.guardians[0].email
+                                ? "הורה מוזמן"
+                                : "ללא אימייל"}
+                          </Text>
+                        </View>
+                      ) : null}
+                    </View>
+                  </View>
+
+                  <Ionicons name="chevron-back" size={22} color={Colors.textSecondary} />
+                </View>
+                </AppCard>
+              </TouchableOpacity>
+            ))
+          )}
+
+          <AppButton
+            title="הוספת ילד"
+            onPress={() => router.push("/teacher/add-child")}
+            style={styles.addButton}
+          />
+        </View>
       </AppScreen>
 
       <BottomNavBar
-        activeItem="children"
+        activeItem="home"
         variant="teacher"
         onItemPress={handleBottomNavPress}
       />
@@ -149,103 +188,47 @@ const styles = StyleSheet.create({
   screenContent: {
     paddingBottom: Spacing.xxl,
   },
-  header: {
-    gap: Spacing.sm,
+  headerOverlay: {
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
   },
-  headerTopRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  titleBlock: {
     alignItems: "center",
-  },
-  iconButton: {
-    width: 36,
-    height: 36,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.cardBackground,
-    color: Colors.textPrimary,
-    fontSize: 18,
-    lineHeight: 36,
-    textAlign: "center",
-  },
-  notification: {
-    minWidth: 30,
-    height: 30,
-    borderRadius: BorderRadius.full,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: Colors.primary,
-  },
-  notificationText: {
-    color: Colors.white,
-    fontSize: 13,
-    fontWeight: "700",
+    marginTop: Spacing.sm,
   },
   title: {
     fontSize: 26,
     fontWeight: "800",
-    color: Colors.textPrimary,
-    textAlign: "right",
+    color: Colors.primary,
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 14,
-    color: Colors.textSecondary,
-    textAlign: "right",
-  },
-  heroCard: {
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    gap: Spacing.md,
-    padding: Spacing.md,
-    borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.secondary,
-    marginTop: Spacing.sm,
-  },
-  heroIcon: {
-    width: 58,
-    height: 58,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.cardBackground,
     color: Colors.primary,
-    fontSize: 34,
-    lineHeight: 58,
+    fontWeight: "700",
+    marginTop: 2,
     textAlign: "center",
   },
-  heroTextBlock: {
-    flex: 1,
-  },
-  heroTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: Colors.textPrimary,
-    textAlign: "right",
-  },
-  heroText: {
-    fontSize: 13,
-    lineHeight: 20,
-    color: Colors.textSecondary,
-    textAlign: "right",
-    marginTop: 4,
+  body: {
+    paddingHorizontal: Spacing.md,
+    marginTop: -Spacing.xl,
   },
   searchRow: {
     flexDirection: "row-reverse",
     gap: Spacing.sm,
-    marginTop: Spacing.lg,
   },
   searchInput: {
     flex: 1,
   },
   filterButton: {
     minHeight: 48,
+    width: 48,
+    alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
     borderColor: Colors.primary,
     backgroundColor: Colors.cardBackground,
-  },
-  filterText: {
-    color: Colors.primary,
-    fontWeight: "700",
   },
   summaryCard: {
     flexDirection: "row-reverse",
@@ -325,10 +308,18 @@ const styles = StyleSheet.create({
     flexDirection: "row-reverse",
     gap: Spacing.xs,
     marginTop: Spacing.sm,
+    flexWrap: "wrap",
   },
-  detailsArrow: {
-    color: Colors.textSecondary,
-    fontSize: 28,
+  guardianBadge: {
+    backgroundColor: Colors.secondary,
+    borderRadius: BorderRadius.full,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  guardianBadgeText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: Colors.primary,
   },
   emptyCard: {
     alignItems: "center",

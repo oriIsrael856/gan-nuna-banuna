@@ -1,63 +1,135 @@
-import React from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { Alert, Linking, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 
 import { AppButton } from "../../src/components/AppButton";
 import { AppCard } from "../../src/components/AppCard";
+import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
+import { AppStateCard } from "../../src/components/AppStateCard";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
+import { HeroBanner } from "../../src/components/HeroBanner";
 import { StatusBadge } from "../../src/components/StatusBadge";
-import { CLIENT_CONFIG } from "../../src/config/client.config";
-import { mockChildren } from "../../src/data/mockChildren";
-import { mockContracts } from "../../src/data/mockContracts";
-import { mockParentChildId } from "../../src/data/mockParent";
+import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
+import {
+  getCurrentDaycareName,
+  getCurrentParentChildId,
+} from "../../src/services/auth.service";
+import { getChildById } from "../../src/services/children.service";
+import { getContractByChildId, getContracts, setContractStatus } from "../../src/services/contracts.service";
+import { getContractSignedUrl } from "../../src/services/storage.service";
 import { Colors } from "../../src/theme/colors";
+import { Heroes } from "../../src/theme/heroes";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
 export default function ParentContractRenewalScreen() {
   const router = useRouter();
   const handleBottomNavPress = useBottomNavPress("parent");
-  const child = mockChildren.find((item) => item.id === mockParentChildId);
-  const contract =
-    mockContracts.find((item) => item.childId === mockParentChildId && item.status === "sent") ??
-    mockContracts.find((item) => item.childId === mockParentChildId);
+  const parentChildId = getCurrentParentChildId();
+  const { data, loading, error, reload } = useAsyncData(async () => {
+    const [child, contracts, fallbackContract] = await Promise.all([
+      getChildById(parentChildId),
+      getContracts(),
+      getContractByChildId(parentChildId),
+    ]);
+    const contract =
+      contracts.find((item) => item.childId === parentChildId && item.status === "sent") ??
+      fallbackContract;
+    return { child, contract };
+  }, [parentChildId]);
+  const child = data?.child;
+  const contract = data?.contract;
+  const [opening, setOpening] = useState(false);
+  const [signing, setSigning] = useState(false);
 
-  function showPlaceholder(title: string, message: string) {
-    Alert.alert(title, message);
+  async function handleSignContract() {
+    if (!contract || contract.status === "signed") {
+      return;
+    }
+
+    Alert.alert(
+      "אישור חתימה",
+      "לאחר שקראתם את החוזה, לאשר שאתם מסכימים לתנאיו?",
+      [
+        { text: "ביטול", style: "cancel" },
+        {
+          text: "מאשר/ת חתימה",
+          onPress: async () => {
+            setSigning(true);
+            const ok = await setContractStatus(contract.id, "signed");
+            setSigning(false);
+            if (ok) {
+              Alert.alert("החוזה נחתם", "תודה! החוזה סומן כחתום.");
+              reload();
+            } else {
+              Alert.alert("שגיאה", "לא הצלחנו לעדכן את סטטוס החוזה.");
+            }
+          },
+        },
+      ],
+    );
+  }
+
+  async function handleViewDocument() {
+    if (!contract?.filePath) {
+      Alert.alert("אין מסמך לצפייה", "המסמך עדיין לא הועלה על ידי הגן.");
+      return;
+    }
+
+    setOpening(true);
+    const url = await getContractSignedUrl(contract.filePath);
+    setOpening(false);
+
+    if (!url) {
+      Alert.alert("שגיאה", "לא הצלחנו לפתוח את המסמך. נסו שוב מאוחר יותר.");
+      return;
+    }
+
+    await Linking.openURL(url);
   }
 
   return (
     <View style={styles.root}>
-      <AppScreen scrollable contentStyle={styles.screenContent}>
-        <View style={styles.headerRow}>
-          <TouchableOpacity activeOpacity={0.75} onPress={() => router.push("/parent/home")}>
-            <Text style={styles.backButton}>‹</Text>
-          </TouchableOpacity>
-          <View style={styles.headerTextBlock}>
+      <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
+        <HeroBanner source={Heroes.parentContract} height={220}>
+          <View style={styles.headerOverlay}>
+            <AppHeader
+              variant="back"
+              onLeadingPress={() => router.push("/parent/home")}
+              onBellPress={() => router.push("/notifications")}
+            />
+          </View>
+          <View style={styles.titleBlock}>
             <Text style={styles.title}>חוזה הגן</Text>
             <Text style={styles.subtitle}>חידוש / חתימה על חוזה</Text>
           </View>
-          <View style={styles.notificationDot} />
-        </View>
+        </HeroBanner>
 
-        <View style={styles.heroCard}>
-          <Text style={styles.heroIcon}>✎</Text>
-          <View style={styles.heroTextBlock}>
-            <Text style={styles.heroTitle}>חתימה רגועה וברורה</Text>
-            <Text style={styles.heroText}>
-              אפשר לעיין בפרטי החוזה לפני מעבר לחתימה דיגיטלית.
-            </Text>
-          </View>
-        </View>
-
+        <View style={styles.body}>
+        {loading ? (
+          <AppStateCard
+            state="loading"
+            title="טוען חוזה"
+            message="רגע, טוענים את פרטי החוזה"
+          />
+        ) : error ? (
+          <AppStateCard
+            state="error"
+            title="לא הצלחנו לטעון"
+            message="אירעה שגיאה בטעינת החוזה. נסו שוב."
+            actionLabel="נסו שוב"
+            onActionPress={reload}
+          />
+        ) : (
+          <>
         <AppCard style={styles.childCard}>
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>{child?.name.slice(0, 1) ?? "י"}</Text>
           </View>
           <View style={styles.childInfo}>
             <Text style={styles.childName}>{child?.name ?? contract?.childName ?? "ילד/ה"}</Text>
-            <Text style={styles.childSubtext}>{CLIENT_CONFIG.daycareName}</Text>
+            <Text style={styles.childSubtext}>{getCurrentDaycareName()}</Text>
           </View>
         </AppCard>
 
@@ -93,11 +165,10 @@ export default function ParentContractRenewalScreen() {
               <Text style={styles.fileName}>{contract.fileName}</Text>
               <Text style={styles.fileSize}>{contract.fileSize ?? "PDF"}</Text>
               <AppButton
-                title="צפייה במסמך"
+                title={opening ? "פותח..." : "צפייה במסמך"}
                 variant="outline"
-                onPress={() =>
-                  showPlaceholder("צפייה במסמך", "צפייה במסמך PDF תתווסף בהמשך.")
-                }
+                onPress={handleViewDocument}
+                disabled={opening}
                 style={styles.cardButton}
               />
             </AppCard>
@@ -105,16 +176,13 @@ export default function ParentContractRenewalScreen() {
             <AppCard style={styles.signatureCard}>
               <Text style={styles.sectionTitle}>חתימה על החוזה</Text>
               <Text style={styles.cardText}>
-                לאחר קריאת החוזה, ניתן לחתום עליו דיגיטלית דרך ספק חתימה חיצוני.
+                לאחר קריאת החוזה, ניתן לאשר את החתימה. לחתימה דיגיטלית מלאה יתווסף בעתיד ספק
+                חיצוני.
               </Text>
               <AppButton
-                title="חתום על החוזה"
-                onPress={() =>
-                  showPlaceholder(
-                    "חתימה דיגיטלית",
-                    "החתימה הדיגיטלית תיפתח בעתיד דרך ספק חתימה חיצוני.",
-                  )
-                }
+                title={signing ? "שומר..." : contract.status === "signed" ? "החוזה חתום" : "אישור חתימה"}
+                onPress={handleSignContract}
+                disabled={signing || contract.status === "signed"}
                 style={styles.cardButton}
               />
             </AppCard>
@@ -134,16 +202,17 @@ export default function ParentContractRenewalScreen() {
           <AppButton
             title="צור קשר עם הגן"
             variant="outline"
-            onPress={() =>
-              showPlaceholder("יצירת קשר", "אפשרויות יצירת קשר יתווספו בהמשך.")
-            }
+            onPress={() => router.push("/parent/contact")}
             style={styles.cardButton}
           />
         </AppCard>
+          </>
+        )}
+        </View>
       </AppScreen>
 
       <BottomNavBar
-        activeItem="contracts"
+        activeItem="home"
         variant="parent"
         onItemPress={handleBottomNavPress}
       />
@@ -175,77 +244,32 @@ const styles = StyleSheet.create({
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
-    gap: Spacing.lg,
   },
-  headerRow: {
-    flexDirection: "row",
+  headerOverlay: {
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
+  },
+  titleBlock: {
     alignItems: "center",
-    justifyContent: "space-between",
-  },
-  backButton: {
-    width: 38,
-    height: 38,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.cardBackground,
-    color: Colors.primary,
-    fontSize: 30,
-    lineHeight: 35,
-    textAlign: "center",
-  },
-  headerTextBlock: {
-    flex: 1,
-    alignItems: "center",
+    marginTop: Spacing.sm,
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "800",
-    color: Colors.textPrimary,
+    color: Colors.primary,
+    textAlign: "center",
   },
   subtitle: {
-    fontSize: 13,
-    color: Colors.textSecondary,
-    marginTop: 2,
-  },
-  notificationDot: {
-    width: 14,
-    height: 14,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.warning,
-  },
-  heroCard: {
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    gap: Spacing.md,
-    padding: Spacing.md,
-    borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.secondary,
-  },
-  heroIcon: {
-    width: 58,
-    height: 58,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.cardBackground,
+    fontSize: 14,
     color: Colors.primary,
-    fontSize: 28,
-    lineHeight: 58,
+    fontWeight: "700",
+    marginTop: 2,
     textAlign: "center",
-    fontWeight: "800",
   },
-  heroTextBlock: {
-    flex: 1,
-  },
-  heroTitle: {
-    fontSize: 17,
-    fontWeight: "800",
-    color: Colors.textPrimary,
-    textAlign: "right",
-  },
-  heroText: {
-    fontSize: 13,
-    lineHeight: 20,
-    color: Colors.textSecondary,
-    marginTop: 4,
-    textAlign: "right",
+  body: {
+    paddingHorizontal: Spacing.md,
+    marginTop: -Spacing.xl,
+    gap: Spacing.lg,
   },
   childCard: {
     flexDirection: "row-reverse",

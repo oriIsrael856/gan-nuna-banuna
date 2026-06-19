@@ -2,6 +2,8 @@ export const CLIENT_CONFIG = {
   clientId: "nuna-banuna",
   appName: "גן נונה בנונה",
   daycareName: "גן נונה בנונה",
+  homeSubtitle: "האפליקציה האישית של הגן",
+  homeTagline: "כל מה שהגננת וההורים צריכים, במקום אחד",
   ownerName: "נונה",
   logoInitial: "נ",
   primaryColor: "#7A9A72",
@@ -12,8 +14,10 @@ export const CLIENT_CONFIG = {
   textSecondary: "#6B6B6B",
   warningColor: "#E8A75D",
   errorColor: "#D96B6B",
-  supportPhone: "",
-  supportEmail: "",
+  supportPhone: "03-1234567",
+  supportEmail: "info@gan-nuna.co.il",
+  privacyPolicyUrl: "",
+  termsUrl: "",
 } as const;
 
 export type ClientConfig = typeof CLIENT_CONFIG;

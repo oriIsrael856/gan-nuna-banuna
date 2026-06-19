@@ -9,6 +9,8 @@ export interface Guardian {
   email?: string;
   relationshipType: string;
   isPrimaryContact: boolean;
+  profileId?: string | null;
+  isLinked: boolean;
 }
 
 export interface Child {

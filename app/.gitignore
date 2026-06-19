@@ -31,7 +31,24 @@ yarn-error.*
 *.pem
 
 # local env files
+.env
 .env*.local
+.env.*
+!.env.example
+
+# EAS
+credentials.json
+
+# Firebase / push
+google-services.json
+GoogleService-Info.plist
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# logs
+*.log
 
 # typescript
 *.tsbuildinfo

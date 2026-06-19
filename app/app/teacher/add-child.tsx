@@ -1,15 +1,26 @@
-import React, { useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { Alert, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import DateTimePicker from "@react-native-community/datetimepicker";
+
+import { Ionicons } from "@expo/vector-icons";
 
 import { AppButton } from "../../src/components/AppButton";
 import { AppCard } from "../../src/components/AppCard";
+import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
 import { AppTextInput } from "../../src/components/AppTextInput";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
+import {
+  addChild,
+  getChildById,
+  updateChild,
+  updateGuardian,
+} from "../../src/services/children.service";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { isBlank, isValidEmail, isValidPhone } from "../../src/utils/validation";
 
 type Gender = "male" | "female";
 
@@ -17,66 +28,164 @@ const RELATIONSHIP_OPTIONS = ["אמא", "אבא", "סבתא", "סבא", "אפו�
 
 export default function AddChildScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams<{ editId?: string }>();
+  const editId = params.editId;
+  const isEdit = Boolean(editId);
   const handleBottomNavPress = useBottomNavPress("teacher");
   const [childName, setChildName] = useState("");
   const [birthDate, setBirthDate] = useState("");
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [gender, setGender] = useState<Gender>("male");
   const [relationshipType, setRelationshipType] = useState("אמא");
   const [parentFullName, setParentFullName] = useState("");
   const [parentPhone, setParentPhone] = useState("");
   const [parentEmail, setParentEmail] = useState("");
   const [notes, setNotes] = useState("");
+  const [guardianId, setGuardianId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!editId) {
+      return;
+    }
+    let active = true;
+    getChildById(editId).then((child) => {
+      if (!active || !child) {
+        return;
+      }
+      setChildName(child.name);
+      setBirthDate(child.birthDate ?? "");
+      setGender(child.gender === "female" ? "female" : "male");
+      setNotes(child.notes ?? "");
+      const primary = child.guardians?.find((g) => g.isPrimaryContact) ?? child.guardians?.[0];
+      if (primary) {
+        setGuardianId(primary.id);
+        setParentFullName(primary.fullName);
+        setParentPhone(primary.phone ?? "");
+        setParentEmail(primary.email ?? "");
+        setRelationshipType(primary.relationshipType);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [editId]);
 
   function handleCancel() {
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
     router.push("/teacher/children");
   }
 
-  function handleSave() {
-    if (!childName.trim()) {
+  async function handleSave() {
+    if (isBlank(childName)) {
       setErrorMessage("יש להזין את שם הילד");
       return;
     }
 
-    if (!birthDate.trim()) {
+    if (isBlank(birthDate)) {
       setErrorMessage("יש לבחור תאריך לידה");
       return;
     }
 
-    if (!relationshipType.trim()) {
+    if (isBlank(relationshipType)) {
       setErrorMessage("יש לבחור סוג קשר");
       return;
     }
 
-    if (!parentFullName.trim()) {
+    if (isBlank(parentFullName)) {
       setErrorMessage("יש להזין שם הורה / אפוטרופוס");
       return;
     }
 
-    if (!parentPhone.trim()) {
+    if (isBlank(parentPhone)) {
       setErrorMessage("יש להזין מספר טלפון");
       return;
     }
 
+    if (!isValidPhone(parentPhone)) {
+      setErrorMessage("יש להזין מספר טלפון תקין");
+      return;
+    }
+
+    if (!isValidEmail(parentEmail)) {
+      setErrorMessage("יש להזין כתובת אימייל תקינה או להשאיר את השדה ריק");
+      return;
+    }
+
     setErrorMessage("");
-    Alert.alert("הילד נוסף בהצלחה", "בשלב הדמו הפרטים לא נשמרים בבסיס נתונים.", [
-      {
-        text: "חזרה לרשימה",
-        onPress: () => router.push("/teacher/children"),
-      },
+    setSaving(true);
+
+    if (isEdit && editId) {
+      const ok = await updateChild(editId, {
+        fullName: childName.trim(),
+        birthDate: birthDate.trim() || null,
+        gender,
+        notes: notes.trim() || null,
+      });
+      if (ok && guardianId) {
+        await updateGuardian(guardianId, {
+          fullName: parentFullName.trim(),
+          phone: parentPhone.trim() || null,
+          email: parentEmail.trim() || null,
+          relationshipType,
+        });
+      }
+      setSaving(false);
+      if (ok) {
+        Alert.alert("הפרטים עודכנו", "הפרטים נשמרו.", [
+          { text: "אישור", onPress: () => router.push("/teacher/children") },
+        ]);
+      } else {
+        setErrorMessage("שמירה נכשלה. נסו שוב.");
+      }
+      return;
+    }
+
+    const result = await addChild({
+      fullName: childName.trim(),
+      birthDate: birthDate.trim() || undefined,
+      gender,
+      notes: notes.trim() || undefined,
+      guardians: [
+        {
+          fullName: parentFullName.trim(),
+          phone: parentPhone.trim() || undefined,
+          email: parentEmail.trim() || undefined,
+          relationshipType,
+          isPrimaryContact: true,
+        },
+      ],
+    });
+    setSaving(false);
+
+    if (!result.ok) {
+      setErrorMessage("שמירה נכשלה. נסו שוב.");
+      return;
+    }
+
+    let message = "הילד נוסף בהצלחה.";
+    if (result.invite?.status === "invited") {
+      message = `הילד נוסף והזמנה נשלחה להורה ב-${parentEmail.trim()}.`;
+    } else if (result.invite?.status === "already_exists") {
+      message = `הילד נוסף וההורה כבר קיים במערכת — חובר לחשבון ${parentEmail.trim()}.`;
+    } else if (result.invite?.status === "failed") {
+      message = `הילד נוסף, אך שליחת ההזמנה נכשלה: ${result.invite.error ?? "שגיאה"}.`;
+    }
+
+    Alert.alert("נשמר בהצלחה", message, [
+      { text: "אישור", onPress: () => router.push("/teacher/children") },
     ]);
   }
 
   return (
     <View style={styles.root}>
       <AppScreen scrollable contentStyle={styles.screenContent}>
-        <View style={styles.headerRow}>
-          <TouchableOpacity activeOpacity={0.75} onPress={handleCancel}>
-            <Text style={styles.backButton}>‹</Text>
-          </TouchableOpacity>
-          <Text style={styles.title}>הוספת ילד</Text>
-          <View style={styles.notificationDot} />
-        </View>
+        <AppHeader variant="back" onLeadingPress={handleCancel} onBellPress={() => router.push("/notifications")} />
+        <Text style={styles.title}>{isEdit ? "עריכת ילד" : "הוספת ילד"}</Text>
 
         <AppCard style={styles.noticeCard}>
           <Text style={styles.noticeTitle}>מידע רגיש</Text>
@@ -89,7 +198,7 @@ export default function AddChildScreen() {
           <Text style={styles.sectionTitle}>פרטי הילד</Text>
 
           <TouchableOpacity activeOpacity={0.75} style={styles.photoPlaceholder}>
-            <Text style={styles.photoIcon}>+</Text>
+            <Ionicons name="camera-outline" size={28} color={Colors.primary} />
             <Text style={styles.photoText}>הוספת תמונה</Text>
             <Text style={styles.photoSubtext}>אופציונלי</Text>
           </TouchableOpacity>
@@ -101,12 +210,30 @@ export default function AddChildScreen() {
             placeholder="הזן שם הילד"
           />
 
-          <AppTextInput
-            label="תאריך לידה *"
-            value={birthDate}
-            onChangeText={setBirthDate}
-            placeholder="בחר תאריך"
-          />
+          <Text style={styles.fieldLabel}>תאריך לידה *</Text>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.dateButton}
+            onPress={() => setShowDatePicker(true)}
+          >
+            <Text style={styles.dateButtonText}>
+              {birthDate || "בחר תאריך לידה"}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker ? (
+            <DateTimePicker
+              value={birthDate ? new Date(birthDate) : new Date()}
+              mode="date"
+              display={Platform.OS === "ios" ? "spinner" : "default"}
+              maximumDate={new Date()}
+              onChange={(_event, date) => {
+                setShowDatePicker(Platform.OS === "ios");
+                if (date) {
+                  setBirthDate(date.toISOString().slice(0, 10));
+                }
+              }}
+            />
+          ) : null}
 
           <Text style={styles.fieldLabel}>מין</Text>
           <View style={styles.optionRow}>
@@ -180,13 +307,13 @@ export default function AddChildScreen() {
         {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
         <View style={styles.actions}>
-          <AppButton title="שמירה" onPress={handleSave} />
+          <AppButton title={saving ? "שומר..." : "שמירה"} onPress={handleSave} disabled={saving} />
           <AppButton title="ביטול" onPress={handleCancel} variant="outline" />
         </View>
       </AppScreen>
 
       <BottomNavBar
-        activeItem="children"
+        activeItem="home"
         variant="teacher"
         onItemPress={handleBottomNavPress}
       />
@@ -225,32 +352,11 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.xxl,
     gap: Spacing.lg,
   },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  backButton: {
-    width: 38,
-    height: 38,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.cardBackground,
-    color: Colors.primary,
-    fontSize: 30,
-    lineHeight: 35,
-    textAlign: "center",
-  },
   title: {
     fontSize: 24,
     fontWeight: "800",
     color: Colors.textPrimary,
-    textAlign: "center",
-  },
-  notificationDot: {
-    width: 14,
-    height: 14,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.primary,
+    textAlign: "right",
   },
   noticeCard: {
     backgroundColor: Colors.secondary,
@@ -297,11 +403,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.secondary,
   },
-  photoIcon: {
-    fontSize: 28,
-    color: Colors.primary,
-    fontWeight: "800",
-  },
   photoText: {
     fontSize: 13,
     color: Colors.textPrimary,
@@ -316,6 +417,20 @@ const styles = StyleSheet.create({
   fieldLabel: {
     fontSize: 14,
     fontWeight: "600",
+    color: Colors.textPrimary,
+    textAlign: "right",
+  },
+  dateButton: {
+    minHeight: 48,
+    justifyContent: "center",
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.md,
+    backgroundColor: Colors.background,
+    borderWidth: 1,
+    borderColor: Colors.secondary,
+  },
+  dateButtonText: {
+    fontSize: 15,
     color: Colors.textPrimary,
     textAlign: "right",
   },

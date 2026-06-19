@@ -1,14 +1,23 @@
 import React, { useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
+import * as DocumentPicker from "expo-document-picker";
+
+import { Ionicons } from "@expo/vector-icons";
 
 import { AppButton } from "../../src/components/AppButton";
 import { AppCard } from "../../src/components/AppCard";
+import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
 import { AppTextInput } from "../../src/components/AppTextInput";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
+import { HeroBanner } from "../../src/components/HeroBanner";
+import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
+import { getChildren } from "../../src/services/children.service";
+import { createContract } from "../../src/services/contracts.service";
 import { Colors } from "../../src/theme/colors";
+import { Heroes } from "../../src/theme/heroes";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
 const CONTRACT_TYPES = ["חוזה הרשמה", "חידוש חוזה", "אישור מיוחד", "נספח לחוזה"];
@@ -17,82 +26,154 @@ const STEPS = ["פרטי חוזה", "בחירת הורה", "תצוגה מקדי�
 export default function UploadContractScreen() {
   const router = useRouter();
   const handleBottomNavPress = useBottomNavPress("teacher");
+  const { data } = useAsyncData(() => getChildren(), []);
+  const children = data ?? [];
+  const [currentStep, setCurrentStep] = useState(0);
   const [contractName, setContractName] = useState("");
   const [contractType, setContractType] = useState(CONTRACT_TYPES[0]);
   const [contractDate, setContractDate] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [notes, setNotes] = useState("");
   const [fileName, setFileName] = useState("");
+  const [fileUri, setFileUri] = useState<string | null>(null);
+  const [fileMimeType, setFileMimeType] = useState<string | undefined>(undefined);
+  const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const selectedChild = children.find((child) => child.id === selectedChildId);
+  const selectedGuardian =
+    selectedChild?.guardians?.find((guardian) => guardian.isPrimaryContact) ??
+    selectedChild?.guardians?.[0];
 
   function handleCancel() {
     router.push("/teacher/contracts");
   }
 
-  function handleChooseFile() {
-    setFileName("contract-demo.pdf");
-    Alert.alert("קובץ דמו צורף", "בחירת קובץ אמיתית תתווסף בהמשך.");
+  async function handleChooseFile() {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: "application/pdf",
+      copyToCacheDirectory: true,
+    });
+
+    if (result.canceled || !result.assets?.length) {
+      return;
+    }
+
+    const asset = result.assets[0];
+    setFileName(asset.name || "contract.pdf");
+    setFileUri(asset.uri);
+    setFileMimeType(asset.mimeType ?? "application/pdf");
+    setErrorMessage("");
   }
 
-  function handleContinue() {
-    if (!contractName.trim()) {
-      setErrorMessage("יש להזין שם חוזה");
+  function handleBackStep() {
+    setErrorMessage("");
+    if (currentStep === 0) {
+      handleCancel();
+      return;
+    }
+    setCurrentStep((step) => step - 1);
+  }
+
+  async function handleContinue() {
+    if (currentStep === 0) {
+      if (!contractName.trim()) {
+        setErrorMessage("יש להזין שם חוזה");
+        return;
+      }
+      if (!contractType.trim()) {
+        setErrorMessage("יש לבחור סוג חוזה");
+        return;
+      }
+      if (!contractDate.trim()) {
+        setErrorMessage("יש לבחור תאריך חוזה");
+        return;
+      }
+      if (!fileName.trim()) {
+        setErrorMessage("יש לצרף קובץ PDF");
+        return;
+      }
+      setErrorMessage("");
+      setCurrentStep(1);
       return;
     }
 
-    if (!contractType.trim()) {
-      setErrorMessage("יש לבחור סוג חוזה");
+    if (currentStep === 1) {
+      if (!selectedChildId) {
+        setErrorMessage("יש לבחור ילד/ה לשליחת החוזה");
+        return;
+      }
+      setErrorMessage("");
+      setCurrentStep(2);
       return;
     }
 
-    if (!contractDate.trim()) {
-      setErrorMessage("יש לבחור תאריך חוזה");
-      return;
-    }
-
-    if (!fileName.trim()) {
-      setErrorMessage("יש לצרף קובץ PDF");
+    if (!selectedChildId) {
+      setErrorMessage("יש לבחור ילד/ה לשליחת החוזה");
       return;
     }
 
     setErrorMessage("");
-    Alert.alert("השלב הבא: בחירת הורה", "בשלב הדמו המשך התהליך יוצג בהמשך.");
+    setSaving(true);
+    const ok = await createContract({
+      childId: selectedChildId,
+      fileName: fileName || `${contractName}.pdf`,
+      expiryDate: expiryDate.trim() || undefined,
+      fileUri: fileUri ?? undefined,
+      mimeType: fileMimeType,
+    });
+    setSaving(false);
+
+    if (!ok) {
+      setErrorMessage("שליחת החוזה נכשלה. נסו שוב.");
+      return;
+    }
+
+    setCurrentStep(3);
+    Alert.alert(
+      "החוזה נשלח",
+      `החוזה "${contractName}" נשלח אל ${selectedGuardian?.fullName ?? "ההורה"} לחתימה דיגיטלית.`,
+      [{ text: "סגירה", onPress: () => router.push("/teacher/contracts") }],
+    );
   }
 
   return (
     <View style={styles.root}>
-      <AppScreen scrollable contentStyle={styles.screenContent}>
-        <View style={styles.headerRow}>
-          <TouchableOpacity activeOpacity={0.75} onPress={handleCancel}>
-            <Text style={styles.backButton}>‹</Text>
-          </TouchableOpacity>
-          <View style={styles.headerTextBlock}>
+      <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
+        <HeroBanner source={Heroes.uploadContract} height={210}>
+          <View style={styles.headerOverlay}>
+            <AppHeader variant="back" onLeadingPress={handleCancel} onBellPress={() => router.push("/notifications")} />
+          </View>
+          <View style={styles.titleBlock}>
             <Text style={styles.title}>העלאת חוזה חדש</Text>
             <Text style={styles.subtitle}>העלאת חוזה ושליחה להורה לחתימה</Text>
           </View>
-          <View style={styles.notificationDot} />
-        </View>
+        </HeroBanner>
 
-        <View style={styles.heroCard}>
-          <Text style={styles.heroIcon}>□</Text>
-          <View style={styles.heroTextBlock}>
-            <Text style={styles.heroTitle}>תהליך מסודר ובטוח</Text>
-            <Text style={styles.heroText}>
-              בשלב הראשון ממלאים פרטים ומצרפים PDF דמה בלבד.
-            </Text>
-          </View>
-        </View>
-
+        <View style={styles.body}>
         <AppCard style={styles.stepperCard}>
           {STEPS.map((step, index) => {
-            const isActive = index === 0;
+            const isActive = index === currentStep;
+            const isDone = index < currentStep;
 
             return (
               <View key={step} style={styles.stepItem}>
-                <View style={[styles.stepNumber, isActive && styles.stepNumberActive]}>
-                  <Text style={[styles.stepNumberText, isActive && styles.stepNumberTextActive]}>
-                    {index + 1}
-                  </Text>
+                <View
+                  style={[
+                    styles.stepNumber,
+                    (isActive || isDone) && styles.stepNumberActive,
+                  ]}
+                >
+                  {isDone ? (
+                    <Ionicons name="checkmark" size={16} color={Colors.white} />
+                  ) : (
+                    <Text
+                      style={[styles.stepNumberText, isActive && styles.stepNumberTextActive]}
+                    >
+                      {index + 1}
+                    </Text>
+                  )}
                 </View>
                 <Text style={[styles.stepLabel, isActive && styles.stepLabelActive]}>{step}</Text>
               </View>
@@ -100,6 +181,8 @@ export default function UploadContractScreen() {
           })}
         </AppCard>
 
+        {currentStep === 0 ? (
+        <>
         <AppCard style={styles.formCard}>
           <Text style={styles.sectionTitle}>פרטי חוזה</Text>
 
@@ -158,7 +241,7 @@ export default function UploadContractScreen() {
           <Text style={styles.sectionTitle}>קובץ החוזה</Text>
 
           <TouchableOpacity activeOpacity={0.75} onPress={handleChooseFile} style={styles.uploadBox}>
-            <Text style={styles.uploadIcon}>+</Text>
+            <Ionicons name="cloud-upload-outline" size={34} color={Colors.primary} />
             <Text style={styles.uploadTitle}>
               {fileName ? fileName : "גרור קובץ לכאן או לחץ לבחירה"}
             </Text>
@@ -171,20 +254,95 @@ export default function UploadContractScreen() {
             </Text>
           </View>
         </AppCard>
+        </>
+        ) : null}
+
+        {currentStep === 1 ? (
+          <AppCard style={styles.formCard}>
+            <Text style={styles.sectionTitle}>בחירת הורה</Text>
+            <Text style={styles.helperText}>בחר/י את הילד/ה שאליו ישויך החוזה</Text>
+
+            {children.map((child) => {
+              const selected = selectedChildId === child.id;
+              const guardian =
+                child.guardians?.find((item) => item.isPrimaryContact) ??
+                child.guardians?.[0];
+
+              return (
+                <TouchableOpacity
+                  key={child.id}
+                  activeOpacity={0.8}
+                  onPress={() => setSelectedChildId(child.id)}
+                  style={[styles.childRow, selected && styles.childRowActive]}
+                >
+                  <View
+                    style={[styles.radio, selected && styles.radioActive]}
+                  >
+                    {selected ? (
+                      <Ionicons name="checkmark" size={14} color={Colors.white} />
+                    ) : null}
+                  </View>
+                  <View style={styles.childRowInfo}>
+                    <Text style={styles.childRowName}>{child.name}</Text>
+                    <Text style={styles.childRowMeta}>
+                      {guardian ? `${guardian.relationshipType}: ${guardian.fullName}` : child.age}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </AppCard>
+        ) : null}
+
+        {currentStep >= 2 ? (
+          <AppCard style={styles.formCard}>
+            <Text style={styles.sectionTitle}>תצוגה מקדימה</Text>
+            <PreviewRow label="שם החוזה" value={contractName} />
+            <PreviewRow label="סוג" value={contractType} />
+            <PreviewRow label="תאריך" value={contractDate} />
+            {expiryDate ? <PreviewRow label="תוקף" value={expiryDate} /> : null}
+            <PreviewRow label="קובץ" value={fileName} />
+            <PreviewRow label="ילד/ה" value={selectedChild?.name ?? "-"} />
+            <PreviewRow label="נמען" value={selectedGuardian?.fullName ?? "-"} />
+            {notes ? <PreviewRow label="הערות" value={notes} /> : null}
+
+            <View style={styles.securityNotice}>
+              <Text style={styles.securityText}>
+                בלחיצה על שליחה, החוזה יישלח להורה לחתימה דיגיטלית.
+              </Text>
+            </View>
+          </AppCard>
+        ) : null}
 
         {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
         <View style={styles.actions}>
-          <AppButton title="המשך" onPress={handleContinue} />
-          <AppButton title="ביטול" onPress={handleCancel} variant="outline" />
+          <AppButton
+            title={
+              currentStep === 2 ? (saving ? "שולח..." : "שליחה לחתימה") : "המשך"
+            }
+            onPress={handleContinue}
+            disabled={saving}
+          />
+          <AppButton title="חזרה" onPress={handleBackStep} variant="outline" />
+        </View>
         </View>
       </AppScreen>
 
       <BottomNavBar
-        activeItem="contracts"
+        activeItem="home"
         variant="teacher"
         onItemPress={handleBottomNavPress}
       />
+    </View>
+  );
+}
+
+function PreviewRow({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={styles.previewRow}>
+      <Text style={styles.previewValue}>{value}</Text>
+      <Text style={styles.previewLabel}>{label}</Text>
     </View>
   );
 }
@@ -196,78 +354,32 @@ const styles = StyleSheet.create({
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
-    gap: Spacing.lg,
   },
-  headerRow: {
-    flexDirection: "row",
+  headerOverlay: {
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
+  },
+  titleBlock: {
     alignItems: "center",
-    justifyContent: "space-between",
-  },
-  backButton: {
-    width: 38,
-    height: 38,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.cardBackground,
-    color: Colors.primary,
-    fontSize: 30,
-    lineHeight: 35,
-    textAlign: "center",
-  },
-  headerTextBlock: {
-    flex: 1,
-    alignItems: "center",
+    marginTop: Spacing.sm,
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "800",
-    color: Colors.textPrimary,
+    color: Colors.primary,
     textAlign: "center",
   },
   subtitle: {
     fontSize: 13,
-    color: Colors.textSecondary,
+    color: Colors.primary,
+    fontWeight: "700",
     marginTop: 2,
     textAlign: "center",
   },
-  notificationDot: {
-    width: 14,
-    height: 14,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.primary,
-  },
-  heroCard: {
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    gap: Spacing.md,
-    padding: Spacing.md,
-    borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.secondary,
-  },
-  heroIcon: {
-    width: 58,
-    height: 58,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.cardBackground,
-    color: Colors.primary,
-    fontSize: 30,
-    lineHeight: 58,
-    textAlign: "center",
-  },
-  heroTextBlock: {
-    flex: 1,
-  },
-  heroTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: Colors.textPrimary,
-    textAlign: "right",
-  },
-  heroText: {
-    fontSize: 13,
-    lineHeight: 20,
-    color: Colors.textSecondary,
-    textAlign: "right",
-    marginTop: 4,
+  body: {
+    paddingHorizontal: Spacing.md,
+    marginTop: -Spacing.xl,
+    gap: Spacing.lg,
   },
   stepperCard: {
     flexDirection: "row-reverse",
@@ -353,11 +465,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     padding: Spacing.md,
   },
-  uploadIcon: {
-    fontSize: 30,
-    color: Colors.primary,
-    fontWeight: "800",
-  },
   uploadTitle: {
     fontSize: 15,
     color: Colors.textPrimary,
@@ -390,5 +497,72 @@ const styles = StyleSheet.create({
   },
   actions: {
     gap: Spacing.sm,
+  },
+  helperText: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    textAlign: "right",
+  },
+  childRow: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: Spacing.md,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    borderColor: "#E8DDD2",
+  },
+  childRowActive: {
+    borderColor: Colors.primary,
+    backgroundColor: Colors.presentBackground,
+  },
+  radio: {
+    width: 24,
+    height: 24,
+    borderRadius: BorderRadius.full,
+    borderWidth: 2,
+    borderColor: "#D8D8D8",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  radioActive: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+  },
+  childRowInfo: {
+    flex: 1,
+    alignItems: "flex-end",
+  },
+  childRowName: {
+    fontSize: 15,
+    fontWeight: "800",
+    color: Colors.textPrimary,
+    textAlign: "right",
+  },
+  childRowMeta: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    textAlign: "right",
+    marginTop: 2,
+  },
+  previewRow: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: Spacing.xs,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.background,
+  },
+  previewLabel: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+  },
+  previewValue: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: Colors.textPrimary,
+    flex: 1,
+    textAlign: "left",
   },
 });

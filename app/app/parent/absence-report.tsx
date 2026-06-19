@@ -4,12 +4,15 @@ import { useRouter } from "expo-router";
 
 import { AppButton } from "../../src/components/AppButton";
 import { AppCard } from "../../src/components/AppCard";
+import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
 import { AppTextInput } from "../../src/components/AppTextInput";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
-import { mockChildren } from "../../src/data/mockChildren";
-import { mockParentChildId } from "../../src/data/mockParent";
+import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
+import { getCurrentParentChildId } from "../../src/services/auth.service";
+import { getChildById } from "../../src/services/children.service";
+import { submitAbsenceReport } from "../../src/services/absence.service";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
@@ -23,9 +26,10 @@ const REPORT_OPTIONS = [
 export default function ParentAbsenceReportScreen() {
   const router = useRouter();
   const handleBottomNavPress = useBottomNavPress("parent");
-  const child = mockChildren.find((item) => item.id === mockParentChildId);
+  const { data: child } = useAsyncData(() => getChildById(getCurrentParentChildId()), []);
   const [selectedReport, setSelectedReport] = useState(REPORT_OPTIONS[0]);
   const [note, setNote] = useState("");
+  const [sending, setSending] = useState(false);
 
   const formattedDate = new Date().toLocaleDateString("he-IL", {
     weekday: "long",
@@ -34,24 +38,40 @@ export default function ParentAbsenceReportScreen() {
     year: "numeric",
   });
 
-  function handleSend() {
-    Alert.alert(
-      "הדיווח נשלח לגננת",
-      "בשלב הדמו לא נשלחת הודעה אמיתית. בעתיד הדיווח יחובר למסך הנוכחות.",
-      [{ text: "חזרה לבית", onPress: () => router.push("/parent/home") }],
-    );
+  async function handleSend() {
+    const childId = getCurrentParentChildId();
+    if (!childId) {
+      Alert.alert("שגיאה", "לא נמצא ילד מקושר לחשבון.");
+      return;
+    }
+
+    setSending(true);
+    const ok = await submitAbsenceReport({
+      childId,
+      reportType: selectedReport,
+      note,
+    });
+    setSending(false);
+
+    if (!ok) {
+      Alert.alert("שגיאה", "לא הצלחנו לשלוח את הדיווח. נסו שוב.");
+      return;
+    }
+
+    Alert.alert("הדיווח נשלח לגננת", "הגננת תקבל התראה ותעדכן את הנוכחות.", [
+      { text: "חזרה לבית", onPress: () => router.push("/parent/home") },
+    ]);
   }
 
   return (
     <View style={styles.root}>
       <AppScreen scrollable contentStyle={styles.screenContent}>
-        <View style={styles.headerRow}>
-          <TouchableOpacity activeOpacity={0.75} onPress={() => router.push("/parent/home")}>
-            <Text style={styles.backButton}>‹</Text>
-          </TouchableOpacity>
-          <Text style={styles.title}>דיווח מהיר לגננת</Text>
-          <View style={styles.headerSpacer} />
-        </View>
+        <AppHeader
+          variant="back"
+          onLeadingPress={() => router.push("/parent/home")}
+          onBellPress={() => router.push("/notifications")}
+        />
+        <Text style={styles.title}>דיווח מהיר לגננת</Text>
 
         <AppCard style={styles.contextCard}>
           <Text style={styles.childName}>{child?.name ?? "ילד/ה"}</Text>
@@ -96,11 +116,11 @@ export default function ParentAbsenceReportScreen() {
           />
         </AppCard>
 
-        <AppButton title="שליחת דיווח" onPress={handleSend} />
+        <AppButton title={sending ? "שולח..." : "שליחת דיווח"} onPress={handleSend} disabled={sending} />
       </AppScreen>
 
       <BottomNavBar
-        activeItem="absence"
+        activeItem="home"
         variant="parent"
         onItemPress={handleBottomNavPress}
       />
@@ -117,29 +137,11 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.xxl,
     gap: Spacing.lg,
   },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  backButton: {
-    width: 38,
-    height: 38,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.cardBackground,
-    color: Colors.primary,
-    fontSize: 30,
-    lineHeight: 35,
-    textAlign: "center",
-  },
   title: {
     fontSize: 23,
     fontWeight: "800",
     color: Colors.textPrimary,
-    textAlign: "center",
-  },
-  headerSpacer: {
-    width: 38,
+    textAlign: "right",
   },
   contextCard: {
     backgroundColor: Colors.secondary,

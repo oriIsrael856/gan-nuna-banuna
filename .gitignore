@@ -1,0 +1,16 @@
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# env (any folder)
+.env
+.env.*
+!.env.example
+
+# Supabase local
+supabase/.branches
+supabase/.temp
+
+# IDE
+.idea/

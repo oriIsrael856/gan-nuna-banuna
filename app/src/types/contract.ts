@@ -22,4 +22,5 @@ export interface Contract {
   periodEnd?: string;
   activityDaysPerWeek?: number;
   fileSize?: string;
+  filePath?: string;
 }
