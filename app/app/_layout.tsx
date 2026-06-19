@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import * as Linking from 'expo-linking';
 import { isRunningInExpoGo } from 'expo';
 import { I18nManager } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import 'react-native-reanimated';
 
 import { AuthProvider } from '../src/auth/AuthContext';
@@ -56,12 +57,14 @@ function AppEffects() {
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <NotificationsProvider>
-        <AppEffects />
-        <Stack screenOptions={{ headerShown: false }} />
-        <StatusBar style="dark" />
-      </NotificationsProvider>
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <NotificationsProvider>
+          <AppEffects />
+          <Stack screenOptions={{ headerShown: false }} />
+          <StatusBar style="dark" />
+        </NotificationsProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }

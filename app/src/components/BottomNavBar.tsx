@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Colors } from "../theme/colors";
 import { BorderRadius, Shadow, Spacing } from "../theme/spacing";
@@ -49,10 +50,11 @@ export function BottomNavBar({
   variant = "parent",
   onItemPress,
 }: BottomNavBarProps) {
+  const insets = useSafeAreaInsets();
   const navItems = variant === "teacher" ? TEACHER_NAV_ITEMS : PARENT_NAV_ITEMS;
 
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, { paddingBottom: Spacing.md + insets.bottom }]}>
       {navItems.map((item) => {
         const isActive = item.key === activeItem;
         const isHome = item.key === "home";
@@ -104,7 +106,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: BorderRadius.xl,
     paddingHorizontal: Spacing.sm,
     paddingTop: Spacing.sm,
-    paddingBottom: Spacing.md,
     ...Shadow.card,
   },
   item: {
