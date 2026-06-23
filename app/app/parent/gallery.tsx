@@ -1,23 +1,33 @@
-import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useCallback, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import type { Href } from "expo-router";
-import { Video, ResizeMode } from "expo-av";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
 import { AppStateCard } from "../../src/components/AppStateCard";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
+import { GalleryMediaViewer } from "../../src/components/GalleryMediaViewer";
+import { GalleryPhotoTile } from "../../src/components/GalleryPhotoTile";
 import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
-import { getGalleryPhotos } from "../../src/services/gallery.service";
+import { getGalleryPhotos, type GalleryPhoto } from "../../src/services/gallery.service";
 import { Colors } from "../../src/theme/colors";
-import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Spacing } from "../../src/theme/spacing";
 
 export default function ParentGalleryScreen() {
   const router = useRouter();
   const handleBottomNavPress = useBottomNavPress("parent");
+  const [selectedPhoto, setSelectedPhoto] = useState<GalleryPhoto | null>(null);
   const { data, loading, error, reload } = useAsyncData(() => getGalleryPhotos(), []);
+
+  useFocusEffect(
+    useCallback(() => {
+      reload();
+    }, [reload]),
+  );
+
   const photos = data ?? [];
 
   function handleBack() {
@@ -62,28 +72,21 @@ export default function ParentGalleryScreen() {
         ) : (
           <View style={styles.grid}>
             {photos.map((photo) => (
-              <View key={photo.id} style={styles.tile}>
-                {photo.mediaType === "video" ? (
-                  <View style={styles.videoWrap}>
-                    <Video
-                      source={{ uri: photo.imageUrl }}
-                      style={styles.tileImage}
-                      resizeMode={ResizeMode.COVER}
-                      useNativeControls
-                      shouldPlay={false}
-                    />
-                  </View>
-                ) : (
-                  <Image source={{ uri: photo.imageUrl }} style={styles.tileImage} />
-                )}
-                <Text style={styles.tileLabel} numberOfLines={1}>
-                  {photo.mediaType === "video" ? `▶ ${photo.label}` : photo.label}
-                </Text>
-              </View>
+              <GalleryPhotoTile
+                key={photo.id}
+                photo={photo}
+                onPress={() => setSelectedPhoto(photo)}
+              />
             ))}
           </View>
         )}
       </AppScreen>
+
+      <GalleryMediaViewer
+        photo={selectedPhoto}
+        visible={selectedPhoto !== null}
+        onClose={() => setSelectedPhoto(null)}
+      />
 
       <BottomNavBar activeItem="home" variant="parent" onItemPress={handleBottomNavPress} />
     </View>
@@ -118,29 +121,6 @@ const styles = StyleSheet.create({
     flexDirection: "row-reverse",
     flexWrap: "wrap",
     gap: Spacing.sm,
-  },
-  tile: {
-    width: "31.5%",
-    aspectRatio: 1,
-    borderRadius: BorderRadius.lg,
-    overflow: "hidden",
-    backgroundColor: Colors.secondary,
-  },
-  videoWrap: {
-    width: "100%",
-    height: "78%",
-  },
-  tileImage: {
-    width: "100%",
-    height: "78%",
-  },
-  tileLabel: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: Colors.primary,
-    textAlign: "center",
-    paddingVertical: 4,
-    paddingHorizontal: 2,
   },
 });
 
