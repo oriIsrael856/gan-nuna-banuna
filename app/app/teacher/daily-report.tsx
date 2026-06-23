@@ -106,6 +106,25 @@ export default function TeacherDailyReportScreen() {
         </HeroBanner>
 
         <View style={styles.body}>
+        <View style={styles.captureSection}>
+          <View style={styles.captureHeader}>
+            <Ionicons name="camera" size={22} color={Colors.primary} />
+            <Text style={styles.captureTitle}>צילום לגלריה</Text>
+          </View>
+          <Text style={styles.captureHint}>צלמו תמונה או סרטון — יופיע אצל ההורים בגלריה</Text>
+          <GalleryCaptureButtons
+            defaultLabel="מהיום בגן"
+            onUploaded={() => router.push("/teacher/gallery")}
+          />
+          <TouchableOpacity
+            activeOpacity={0.75}
+            onPress={() => router.push("/teacher/gallery")}
+            style={styles.galleryLink}
+          >
+            <Text style={styles.galleryLinkText}>לגלריה המלאה ›</Text>
+          </TouchableOpacity>
+        </View>
+
         {loading || !dailyReportSummary ? (
           <AppStateCard
             state="loading"
@@ -144,20 +163,6 @@ export default function TeacherDailyReportScreen() {
             text="נשלחו"
           />
         </View>
-
-        <SectionHeader
-          title="גלריה מהיום"
-          actionLabel="לגלריה המלאה"
-          onPress={() => router.push("/teacher/gallery")}
-        />
-        <AppCard style={styles.captureCard}>
-          <Text style={styles.captureHint}>צלמו תמונה או סרטון ישירות לגלריית ההורים</Text>
-          <GalleryCaptureButtons
-            compact
-            defaultLabel="מהיום בגן"
-            onUploaded={() => router.push("/teacher/gallery")}
-          />
-        </AppCard>
 
         <SectionHeader
           title="פעילויות מרכזיות"
@@ -418,14 +423,40 @@ const styles = StyleSheet.create({
   contentCard: {
     marginBottom: Spacing.sm,
   },
-  captureCard: {
-    marginBottom: Spacing.sm,
+  captureSection: {
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+    marginBottom: Spacing.md,
     gap: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Colors.secondary,
+  },
+  captureHeader: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: Spacing.xs,
+  },
+  captureTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: Colors.textPrimary,
+    textAlign: "right",
   },
   captureHint: {
     fontSize: 13,
     color: Colors.textSecondary,
     textAlign: "right",
+    lineHeight: 20,
+  },
+  galleryLink: {
+    alignSelf: "flex-end",
+    paddingVertical: Spacing.xs,
+  },
+  galleryLinkText: {
+    color: Colors.primary,
+    fontSize: 13,
+    fontWeight: "700",
   },
   itemHeader: {
     flexDirection: "row-reverse",
