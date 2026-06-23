@@ -37,14 +37,14 @@ export function GalleryCaptureButtons({
           : "תמונה מהגן";
 
     setUploading(true);
-    const ok = await uploadGalleryMedia(
+    const result = await uploadGalleryMedia(
       media.uri,
       label.trim() || media.fileName || fallbackLabel,
       media.mimeType,
     );
     setUploading(false);
 
-    if (ok) {
+    if (result.ok) {
       setLabel(defaultLabel);
       onUploaded?.();
       Alert.alert(
@@ -52,7 +52,7 @@ export function GalleryCaptureButtons({
         media.mediaType === "video" ? "הסרטון נוסף לגלריה." : "התמונה נוספה לגלריה.",
       );
     } else {
-      Alert.alert("שגיאה", "לא הצלחנו להעלות את הקובץ. נסו שוב.");
+      Alert.alert("שגיאה", result.error ?? "לא הצלחנו להעלות את הקובץ. נסו שוב.");
     }
   }
 

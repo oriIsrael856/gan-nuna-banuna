@@ -1,7 +1,13 @@
 import { decode } from "base64-arraybuffer";
+import { Platform } from "react-native";
 
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import { getCurrentDaycareId, getCurrentUser } from "./auth.service";
+
+export interface GalleryUploadResult {
+  ok: boolean;
+  error?: string;
+}
 
 const GALLERY_BUCKET = "gallery";
 
@@ -41,9 +47,18 @@ function extensionForMime(mimeType: string): string {
 }
 
 async function readUploadBody(uri: string, mimeType: string): Promise<ArrayBuffer | Blob> {
-  if (mimeType.startsWith("video/")) {
+  const useFetch =
+    Platform.OS === "web" ||
+    !uri.startsWith("file://") ||
+    mimeType.startsWith("video/");
+
+  if (useFetch) {
     const response = await fetch(uri);
-    return await response.blob();
+    if (!response.ok) {
+      throw new Error(`Failed to read media (${response.status})`);
+    }
+    const blob = await response.blob();
+    return mimeType.startsWith("video/") ? blob : await blob.arrayBuffer();
   }
 
   const FileSystem = await import("expo-file-system/legacy");
@@ -51,6 +66,12 @@ async function readUploadBody(uri: string, mimeType: string): Promise<ArrayBuffe
     encoding: FileSystem.EncodingType.Base64,
   });
   return decode(base64);
+}
+
+function profileIdForUpload(userId: string): string | null {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)
+    ? userId
+    : null;
 }
 
 export async function getGalleryPhotos(): Promise<GalleryPhoto[]> {
@@ -94,15 +115,15 @@ export async function uploadGalleryMedia(
   fileUri: string,
   label: string,
   mimeType = "image/jpeg",
-): Promise<boolean> {
+): Promise<GalleryUploadResult> {
   if (!isSupabaseConfigured || !supabase) {
-    return false;
+    return { ok: false, error: "Supabase לא מוגדר" };
   }
 
   const daycareId = getCurrentDaycareId();
   const userId = getCurrentUser().id;
   if (!daycareId) {
-    return false;
+    return { ok: false, error: "לא נמצא גן מחובר לחשבון" };
   }
 
   try {
@@ -115,7 +136,7 @@ export async function uploadGalleryMedia(
       .upload(path, body, { contentType: mimeType, upsert: false });
 
     if (uploadError) {
-      return false;
+      return { ok: false, error: uploadError.message };
     }
 
     const defaultLabel = mimeType.startsWith("video/") ? "סרטון" : "תמונה";
@@ -123,12 +144,18 @@ export async function uploadGalleryMedia(
       daycare_id: daycareId,
       image_path: path,
       label: label.trim() || defaultLabel,
-      uploaded_by: userId,
+      uploaded_by: profileIdForUpload(userId),
     });
 
-    return !error;
-  } catch {
-    return false;
+    if (error) {
+      await supabase.storage.from(GALLERY_BUCKET).remove([path]);
+      return { ok: false, error: error.message };
+    }
+
+    return { ok: true };
+  } catch (cause) {
+    const message = cause instanceof Error ? cause.message : "שגיאה לא ידועה";
+    return { ok: false, error: message };
   }
 }
 
@@ -138,7 +165,7 @@ export async function uploadGalleryPhoto(
   label: string,
   mimeType = "image/jpeg",
 ): Promise<boolean> {
-  return uploadGalleryMedia(fileUri, label, mimeType);
+  return (await uploadGalleryMedia(fileUri, label, mimeType)).ok;
 }
 
 export async function deleteGalleryPhoto(photoId: string): Promise<boolean> {

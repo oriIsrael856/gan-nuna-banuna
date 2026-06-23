@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   Image,
   StyleSheet,
@@ -54,6 +55,12 @@ export default function TeacherGalleryScreen() {
   const handleBottomNavPress = useBottomNavPress("teacher");
 
   const { data, loading, error, reload } = useAsyncData(() => getGalleryPhotos(), []);
+
+  useFocusEffect(
+    useCallback(() => {
+      reload();
+    }, [reload]),
+  );
 
   const photos = data ?? [];
 
