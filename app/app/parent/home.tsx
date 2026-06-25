@@ -23,7 +23,8 @@ import { StatusBadge } from "../../src/components/StatusBadge";
 import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useHero } from "../../src/daycare/DaycareBrandingContext";
 import { Colors } from "../../src/theme/colors";
-import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
+import { BorderRadius, Shadow, Spacing } from "../../src/theme/spacing";
 import {
   getCurrentDaycareName,
   getCurrentParentChildId,
@@ -134,19 +135,20 @@ export default function ParentHomeScreen() {
             contentFit="cover"
             contentPosition="top"
           />
+          <View style={styles.heroGradient} />
           <View style={styles.headerOverlay}>
             <AppHeader
               onBellPress={() => router.push("/notifications")}
               onLeadingPress={() => router.push("/settings")}
             />
           </View>
+          <View style={styles.heroGreeting}>
+            <Text style={styles.greeting}>שלום, {parent.name} ♥</Text>
+            <Text style={styles.greetingSubtext}>כיף שבאת הביתה</Text>
+          </View>
         </View>
 
         <View style={styles.body}>
-          <View style={styles.greetingBlock}>
-            <Text style={styles.greeting}>שלום, {parent.name}!</Text>
-            <Text style={styles.greetingSubtext}>♥ כיף שבאת הביתה</Text>
-          </View>
           {loading || !data ? (
             <AppStateCard
               state="loading"
@@ -395,7 +397,7 @@ const styles = StyleSheet.create({
   },
   heroSection: {
     width: "100%",
-    height: 380,
+    height: 340,
     position: "relative",
     backgroundColor: Colors.background,
     borderBottomLeftRadius: BorderRadius.xl,
@@ -406,6 +408,14 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  heroGradient: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 120,
+    backgroundColor: "rgba(0,0,0,0.28)",
+  },
   headerOverlay: {
     position: "absolute",
     top: 0,
@@ -414,26 +424,35 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
   },
+  heroGreeting: {
+    position: "absolute",
+    bottom: Spacing.lg,
+    left: Spacing.md,
+    right: Spacing.md,
+    alignItems: "flex-end",
+  },
   greetingBlock: {
     alignItems: "center",
     marginBottom: Spacing.md,
   },
   greeting: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: Colors.primary,
-    textAlign: "center",
+    ...Typography.titleLarge,
+    color: "#FFFFFF",
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
+    textAlign: "right",
   },
   greetingSubtext: {
-    fontSize: 14,
-    color: Colors.primary,
-    fontWeight: "700",
+    ...Typography.bodyMedium,
+    color: "rgba(255,255,255,0.85)",
+    textAlign: "right",
     marginTop: 2,
-    textAlign: "center",
   },
   body: {
     paddingHorizontal: Spacing.md,
-    marginTop: Spacing.md,
+    paddingTop: Spacing.lg,
+    gap: Spacing.md,
   },
   childPicker: {
     flexDirection: "row-reverse",
@@ -475,22 +494,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
   },
   avatarText: {
+    ...Typography.titleLarge,
     color: Colors.primary,
-    fontSize: 20,
-    fontWeight: "800",
   },
   childTextBlock: {
     flex: 1,
     alignItems: "flex-end",
   },
   childName: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
   },
   childSubtitle: {
-    fontSize: 14,
+    ...Typography.caption,
     color: Colors.textSecondary,
     marginTop: 2,
     textAlign: "right",
@@ -499,7 +516,6 @@ const styles = StyleSheet.create({
     flexDirection: "row-reverse",
     flexWrap: "wrap",
     gap: Spacing.sm,
-    marginTop: Spacing.md,
   },
   statPressable: {
     width: "48%",
@@ -512,25 +528,23 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   statValue: {
-    fontSize: 23,
-    fontWeight: "800",
+    ...Typography.display,
     color: Colors.primary,
   },
   statLabel: {
-    fontSize: 13,
-    fontWeight: "700",
+    ...Typography.captionMedium,
     color: Colors.textPrimary,
     textAlign: "center",
   },
   statText: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
     textAlign: "center",
     marginTop: 2,
   },
   contractAlert: {
-    marginTop: Spacing.md,
     backgroundColor: Colors.sentBackground,
+    borderColor: "rgba(192,120,32,0.2)",
   },
   contractHeader: {
     flexDirection: "row-reverse",
@@ -540,24 +554,20 @@ const styles = StyleSheet.create({
   },
   contractTitle: {
     flex: 1,
-    fontSize: 17,
-    fontWeight: "800",
+    ...Typography.subtitle,
     color: Colors.textPrimary,
     textAlign: "right",
   },
   contractText: {
     color: Colors.sentText,
-    fontSize: 14,
-    lineHeight: 21,
+    ...Typography.body,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
   contractButton: {
     marginTop: Spacing.md,
   },
-  sectionCard: {
-    marginTop: Spacing.md,
-  },
+  sectionCard: {},
   sectionHeader: {
     flexDirection: "row-reverse",
     alignItems: "center",
@@ -565,8 +575,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    flex: 1,
+    ...Typography.subtitle,
     color: Colors.textPrimary,
     textAlign: "right",
   },
@@ -581,7 +591,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   activityTime: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
     textAlign: "right",
   },
@@ -599,13 +609,12 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   activityTitle: {
-    fontSize: 14,
-    fontWeight: "800",
+    ...Typography.bodyMedium,
     color: Colors.textPrimary,
     textAlign: "right",
   },
   activityText: {
-    fontSize: 12,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
@@ -613,7 +622,6 @@ const styles = StyleSheet.create({
   twoColumns: {
     flexDirection: "row-reverse",
     gap: Spacing.sm,
-    marginTop: Spacing.md,
   },
   columnPressable: {
     flex: 1,
@@ -623,15 +631,13 @@ const styles = StyleSheet.create({
   },
   columnTitle: {
     flex: 1,
-    fontSize: 15,
-    fontWeight: "800",
+    ...Typography.bodyMedium,
     color: Colors.textPrimary,
     textAlign: "right",
   },
   columnAction: {
     color: Colors.primary,
-    fontSize: 12,
-    fontWeight: "800",
+    ...Typography.labelBold,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
@@ -663,27 +669,25 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   messageDate: {
-    fontSize: 11,
+    ...Typography.label,
     color: Colors.textSecondary,
   },
   messageTitle: {
-    fontSize: 14,
-    fontWeight: "800",
+    ...Typography.captionMedium,
     color: Colors.textPrimary,
     marginTop: 2,
     textAlign: "right",
   },
   messageText: {
-    fontSize: 12,
+    ...Typography.caption,
     color: Colors.textSecondary,
     marginTop: 2,
     textAlign: "right",
-    lineHeight: 18,
   },
   quickActionsRow: {
     flexDirection: "row-reverse",
     justifyContent: "space-between",
-    marginTop: Spacing.lg,
+    marginTop: Spacing.sm,
   },
   quickAction: {
     flex: 1,
@@ -696,12 +700,12 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.full,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Colors.cardBackground,
+    backgroundColor: Colors.secondary,
+    ...Shadow.subtle,
   },
   quickActionLabel: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textPrimary,
-    fontWeight: "700",
     textAlign: "center",
   },
 });

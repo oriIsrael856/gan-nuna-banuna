@@ -19,7 +19,8 @@ import { getContractsByStatus } from "../../src/services/contracts.service";
 import { getDailyReportSummary } from "../../src/services/dailyReports.service";
 import { useHero } from "../../src/daycare/DaycareBrandingContext";
 import { Colors } from "../../src/theme/colors";
-import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
+import { BorderRadius, Shadow, Spacing } from "../../src/theme/spacing";
 
 type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -72,7 +73,13 @@ const teacherQuickActions: {
     icon: "chatbubbles-outline",
     route: "/messages",
   },
-  { id: "gallery", label: "גלריה", description: "העלאת תמונות מהגן", icon: "images-outline", route: "/teacher/gallery" },
+  {
+    id: "gallery",
+    label: "גלריה",
+    description: "העלאת תמונות מהגן",
+    icon: "images-outline",
+    route: "/teacher/gallery",
+  },
   {
     id: "cameras",
     label: "מצלמות לייב",
@@ -158,9 +165,9 @@ export default function TeacherHomeScreen() {
           },
           { label: "התראות חדשות", value: unreadCount, text: "שלא נקראו", icon: "mail-outline" },
           {
-            label: "חוזים להורים",
+            label: "חוזים ממתינים",
             value: pendingContractsCount,
-            text: "ממתינים לחתימה",
+            text: "לחתימה",
             icon: "document-text-outline",
           },
         ]
@@ -171,13 +178,13 @@ export default function TeacherHomeScreen() {
       router.push(route);
       return;
     }
-
     Alert.alert("בקרוב", "הפעולה הזו תתווסף בהמשך.");
   }
 
   return (
     <View style={styles.root}>
       <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
+        {/* Hero */}
         <View style={styles.heroSection}>
           <Image
             source={teacherHomeHero}
@@ -185,19 +192,22 @@ export default function TeacherHomeScreen() {
             contentFit="cover"
             contentPosition="top"
           />
+          <View style={styles.heroGradient} />
           <View style={styles.headerOverlay}>
             <AppHeader
               onBellPress={() => router.push("/notifications")}
               onLeadingPress={() => router.push("/settings")}
             />
           </View>
+          {/* Greeting inside hero */}
+          <View style={styles.heroGreeting}>
+            <Text style={styles.greeting}>בוקר טוב, {ownerName} ☀️</Text>
+            <Text style={styles.greetingSubtext}>יום נפלא ב{daycareName}</Text>
+          </View>
         </View>
 
         <View style={styles.body}>
-          <View style={styles.greetingBlock}>
-            <Text style={styles.greeting}>בוקר טוב, {ownerName}</Text>
-            <Text style={styles.greetingSubtext}>יום נפלא ב{daycareName}!</Text>
-          </View>
+          {/* Summary card */}
           {loading ? (
             <AppStateCard
               state="loading"
@@ -218,11 +228,19 @@ export default function TeacherHomeScreen() {
                 <Text style={styles.summaryTitle}>סיכום היום</Text>
                 <Text style={styles.summaryDate}>{formattedDate}</Text>
               </View>
-
               <View style={styles.summaryGrid}>
-                {summaryItems.map((item) => (
-                  <View key={item.label} style={styles.summaryItem}>
-                    <Ionicons name={item.icon} size={20} color={Colors.primary} />
+                {summaryItems.map((item, index) => (
+                  <View
+                    key={item.label}
+                    style={[
+                      styles.summaryItem,
+                      index < summaryItems.length - 2 && styles.summaryItemBorderBottom,
+                      index % 2 === 0 && styles.summaryItemBorderStart,
+                    ]}
+                  >
+                    <View style={styles.summaryIconWrap}>
+                      <Ionicons name={item.icon} size={18} color={Colors.primary} />
+                    </View>
                     <Text style={styles.summaryValue}>{item.value}</Text>
                     <Text style={styles.summaryLabel}>{item.label}</Text>
                     {item.text ? <Text style={styles.summaryText}>{item.text}</Text> : null}
@@ -232,12 +250,36 @@ export default function TeacherHomeScreen() {
             </AppCard>
           )}
 
+          {/* Pending contracts banner */}
+          {pendingContractsCount > 0 && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => router.push("/teacher/contracts")}
+            >
+              <AppCard style={styles.reminderCard}>
+                <View style={styles.reminderRow}>
+                  <View style={styles.reminderIconWrap}>
+                    <Ionicons name="alert-circle" size={20} color={Colors.warningColor ?? "#C07820"} />
+                  </View>
+                  <View style={styles.reminderTextBlock}>
+                    <Text style={styles.reminderTitle}>
+                      {pendingContractsCount} חוזים ממתינים לחתימה
+                    </Text>
+                    <Text style={styles.reminderText}>לחצו לעיון ומעקב אחר ההורים</Text>
+                  </View>
+                  <Ionicons name="chevron-back" size={18} color={Colors.textSecondary} />
+                </View>
+              </AppCard>
+            </TouchableOpacity>
+          )}
+
+          {/* Quick actions */}
           <Text style={styles.actionsTitle}>פעולות מרכזיות</Text>
           <View style={styles.actionsGrid}>
             {teacherQuickActions.map((action) => (
               <TouchableOpacity
                 key={action.id}
-                activeOpacity={0.75}
+                activeOpacity={0.7}
                 onPress={() => handleActionPress(action.route)}
                 style={styles.actionItem}
               >
@@ -249,24 +291,9 @@ export default function TeacherHomeScreen() {
               </TouchableOpacity>
             ))}
           </View>
-
-          {pendingContractsCount > 0 && (
-            <AppCard style={styles.reminderCard}>
-              <Text style={styles.reminderTitle}>לתשומת ליבך</Text>
-              <Text style={styles.reminderText}>
-                {pendingContractsCount} חוזים ממתינים לחתימה. כדאי לעקוב ולעדכן את ההורים.
-              </Text>
-              <TouchableOpacity
-                activeOpacity={0.75}
-                onPress={() => router.push("/teacher/contracts")}
-                style={styles.reminderAction}
-              >
-                <Text style={styles.reminderActionText}>לעיון בחוזים ‹</Text>
-              </TouchableOpacity>
-            </AppCard>
-          )}
         </View>
       </AppScreen>
+
       <BottomNavBar
         activeItem="home"
         variant="teacher"
@@ -286,7 +313,7 @@ const styles = StyleSheet.create({
   },
   heroSection: {
     width: "100%",
-    height: 360,
+    height: 340,
     position: "relative",
     backgroundColor: Colors.background,
     borderBottomLeftRadius: BorderRadius.xl,
@@ -297,6 +324,15 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  heroGradient: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 120,
+    // Simulated gradient via opacity layering
+    backgroundColor: "rgba(0,0,0,0.28)",
+  },
   headerOverlay: {
     position: "absolute",
     top: 0,
@@ -305,26 +341,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
   },
-  greetingBlock: {
-    alignItems: "center",
-    marginBottom: Spacing.md,
+  heroGreeting: {
+    position: "absolute",
+    bottom: Spacing.lg,
+    left: Spacing.md,
+    right: Spacing.md,
+    alignItems: "flex-end",
   },
   greeting: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: Colors.primary,
-    textAlign: "center",
+    ...Typography.titleLarge,
+    color: "#FFFFFF",
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
+    textAlign: "right",
   },
   greetingSubtext: {
-    fontSize: 14,
-    color: Colors.primary,
-    fontWeight: "700",
+    ...Typography.bodyMedium,
+    color: "rgba(255,255,255,0.85)",
+    textAlign: "right",
     marginTop: 2,
-    textAlign: "center",
   },
   body: {
     paddingHorizontal: Spacing.md,
-    marginTop: Spacing.md,
+    paddingTop: Spacing.lg,
+    gap: Spacing.md,
   },
   summaryHeader: {
     flexDirection: "row-reverse",
@@ -333,53 +374,91 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   summaryTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
-    textAlign: "right",
   },
   summaryDate: {
-    fontSize: 12,
+    ...Typography.caption,
     color: Colors.textSecondary,
   },
   summaryGrid: {
     flexDirection: "row-reverse",
     flexWrap: "wrap",
-    gap: Spacing.sm,
   },
   summaryItem: {
-    width: "48%",
+    width: "50%",
     alignItems: "center",
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background,
+    paddingVertical: Spacing.md,
+  },
+  summaryItemBorderBottom: {
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0,0,0,0.06)",
+  },
+  summaryItemBorderStart: {
+    borderStartWidth: 1,
+    borderStartColor: "rgba(0,0,0,0.06)",
+  },
+  summaryIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: BorderRadius.full,
+    backgroundColor: Colors.secondary,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: Spacing.xs,
   },
   summaryValue: {
-    fontSize: 24,
-    fontWeight: "800",
+    ...Typography.display,
     color: Colors.primary,
-    marginTop: 2,
+    lineHeight: 34,
   },
   summaryLabel: {
-    fontSize: 13,
-    fontWeight: "700",
+    ...Typography.captionMedium,
     color: Colors.textPrimary,
-    marginTop: 2,
     textAlign: "center",
+    marginTop: 2,
   },
   summaryText: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
-    marginTop: 2,
     textAlign: "center",
+    marginTop: 2,
+  },
+  reminderCard: {
+    backgroundColor: Colors.sentBackground,
+    borderColor: "rgba(192,120,32,0.2)",
+  },
+  reminderRow: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  reminderIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: BorderRadius.full,
+    backgroundColor: "rgba(192,120,32,0.12)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  reminderTextBlock: {
+    flex: 1,
+    alignItems: "flex-end",
+  },
+  reminderTitle: {
+    ...Typography.subtitle,
+    color: Colors.textPrimary,
+  },
+  reminderText: {
+    ...Typography.caption,
+    color: Colors.sentText ?? Colors.textSecondary,
+    marginTop: 2,
   },
   actionsTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
-    marginTop: Spacing.lg,
-    marginBottom: Spacing.sm,
+    marginTop: Spacing.sm,
   },
   actionsGrid: {
     flexDirection: "row-reverse",
@@ -393,6 +472,9 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.md,
     alignItems: "flex-end",
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.055)",
+    ...Shadow.subtle,
   },
   actionIcon: {
     width: 44,
@@ -401,43 +483,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: Colors.secondary,
-    marginBottom: Spacing.xs,
+    marginBottom: Spacing.sm,
   },
   actionText: {
-    fontSize: 15,
+    ...Typography.subtitle,
     color: Colors.textPrimary,
-    fontWeight: "800",
     textAlign: "right",
   },
   actionDescription: {
-    fontSize: 12,
+    ...Typography.caption,
     color: Colors.textSecondary,
-    marginTop: 4,
+    marginTop: 2,
     textAlign: "right",
-  },
-  reminderCard: {
-    marginTop: Spacing.lg,
-    backgroundColor: Colors.sentBackground,
-  },
-  reminderTitle: {
-    fontSize: 17,
-    fontWeight: "800",
-    color: Colors.textPrimary,
-    textAlign: "right",
-  },
-  reminderText: {
-    fontSize: 14,
-    lineHeight: 21,
-    color: Colors.sentText,
-    textAlign: "right",
-    marginTop: Spacing.xs,
-  },
-  reminderAction: {
-    alignSelf: "flex-end",
-    marginTop: Spacing.md,
-  },
-  reminderActionText: {
-    color: Colors.primary,
-    fontWeight: "800",
   },
 });
