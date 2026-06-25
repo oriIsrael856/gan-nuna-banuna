@@ -111,10 +111,7 @@ export default function TeacherDailyReportScreen() {
             <Text style={styles.captureTitle}>צילום לגלריה</Text>
           </View>
           <Text style={styles.captureHint}>צלמו תמונה או סרטון — יופיע אצל ההורים בגלריה</Text>
-          <GalleryCaptureButtons
-            defaultLabel="מהיום בגן"
-            onUploaded={() => router.push("/teacher/gallery")}
-          />
+          <GalleryCaptureButtons defaultLabel="מהיום בגן" quietSuccess />
           <TouchableOpacity
             activeOpacity={0.75}
             onPress={() => router.push("/teacher/gallery")}

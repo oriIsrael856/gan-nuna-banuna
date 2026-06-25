@@ -13,15 +13,19 @@ interface GalleryCaptureButtonsProps {
   defaultLabel?: string;
   onUploaded?: () => void;
   compact?: boolean;
+  /** When true, show inline success instead of alert — better for multiple uploads in a row */
+  quietSuccess?: boolean;
 }
 
 export function GalleryCaptureButtons({
   defaultLabel = "",
   onUploaded,
   compact = false,
+  quietSuccess = false,
 }: GalleryCaptureButtonsProps) {
   const [label, setLabel] = useState(defaultLabel);
   const [uploading, setUploading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   async function handleCapture(mode: GalleryCaptureMode) {
     const media = await pickGalleryMedia(mode);
@@ -47,10 +51,14 @@ export function GalleryCaptureButtons({
     if (result.ok) {
       setLabel(defaultLabel);
       onUploaded?.();
-      Alert.alert(
-        "הועלה בהצלחה",
-        media.mediaType === "video" ? "הסרטון נוסף לגלריה." : "התמונה נוספה לגלריה.",
-      );
+      const message =
+        media.mediaType === "video" ? "הסרטון נוסף לגלריה" : "התמונה נוספה לגלריה";
+      if (quietSuccess) {
+        setSuccessMessage(message);
+        setTimeout(() => setSuccessMessage(null), 3000);
+      } else {
+        Alert.alert("הועלה בהצלחה", `${message}.`);
+      }
     } else {
       Alert.alert("שגיאה", result.error ?? "לא הצלחנו להעלות את הקובץ. נסו שוב.");
     }
@@ -58,7 +66,11 @@ export function GalleryCaptureButtons({
 
   if (compact) {
     return (
-      <View style={styles.compactRow}>
+      <View style={styles.compactBlock}>
+        {successMessage ? (
+          <Text style={styles.successText}>{successMessage}</Text>
+        ) : null}
+        <View style={styles.compactRow}>
         <CaptureChip
           icon="camera-outline"
           label="צילום"
@@ -77,12 +89,16 @@ export function GalleryCaptureButtons({
           disabled={uploading}
           onPress={() => handleCapture("library")}
         />
+        </View>
       </View>
     );
   }
 
   return (
     <View style={styles.block}>
+      {successMessage ? (
+        <Text style={styles.successText}>{successMessage}</Text>
+      ) : null}
       <AppTextInput
         value={label}
         onChangeText={setLabel}
@@ -168,5 +184,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "700",
     color: Colors.primary,
+  },
+  compactBlock: {
+    gap: Spacing.xs,
+  },
+  successText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: Colors.presentText,
+    textAlign: "right",
   },
 });
