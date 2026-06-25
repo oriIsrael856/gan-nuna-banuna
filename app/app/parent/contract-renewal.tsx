@@ -8,7 +8,7 @@ import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
 import { AppStateCard } from "../../src/components/AppStateCard";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
-import { HeroBanner } from "../../src/components/HeroBanner";
+import { BrandedHeroBanner } from "../../src/components/BrandedHeroBanner";
 import { StatusBadge } from "../../src/components/StatusBadge";
 import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
@@ -20,7 +20,6 @@ import { getChildById } from "../../src/services/children.service";
 import { getContractByChildId, getContracts, setContractStatus } from "../../src/services/contracts.service";
 import { getContractSignedUrl } from "../../src/services/storage.service";
 import { Colors } from "../../src/theme/colors";
-import { Heroes } from "../../src/theme/heroes";
 import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
@@ -93,7 +92,7 @@ export default function ParentContractRenewalScreen() {
   return (
     <View style={styles.root}>
       <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
-        <HeroBanner source={Heroes.parentContract} height={220}>
+        <BrandedHeroBanner heroKey="parentContract" height={220}>
           <View style={styles.headerOverlay}>
             <AppHeader
               variant="back"
@@ -105,7 +104,7 @@ export default function ParentContractRenewalScreen() {
             <Text style={heroOverlayTextStyles.title}>חוזה הגן</Text>
             <Text style={heroOverlayTextStyles.subtitle}>חידוש / חתימה על חוזה</Text>
           </View>
-        </HeroBanner>
+        </BrandedHeroBanner>
 
         <View style={styles.body}>
         {loading ? (

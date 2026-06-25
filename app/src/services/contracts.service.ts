@@ -199,6 +199,16 @@ export async function deleteContract(contractId: string): Promise<boolean> {
     return true;
   }
 
+  const { data: row } = await supabase
+    .from("contracts")
+    .select("file_path")
+    .eq("id", contractId)
+    .maybeSingle();
+
+  if (row?.file_path) {
+    await supabase.storage.from("contracts").remove([row.file_path]);
+  }
+
   const { error } = await supabase.from("contracts").delete().eq("id", contractId);
   return !error;
 }

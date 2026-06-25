@@ -33,8 +33,11 @@ In the dashboard open SQL Editor > New query, then run these files in order (cop
 6. `supabase/migrations/0006_storage_contracts.sql`
 7. `supabase/migrations/0007_live_cameras.sql`
 8. `supabase/migrations/0008_albums_event_suggestions.sql`
+9. `supabase/migrations/0009_daycare_setup.sql`
 
 After step 3 you have the Gan Nuna Banuna daycare, 7 children, guardians, contracts, today's attendance + daily report, a message thread, notifications, and calendar events.
+
+After step 9 you also have: `daycare_settings` and `daycare_hero_images` for per-gan branding, the public `daycare-branding` storage bucket, admin update policies on `daycares`, and pilot `daycare_settings` marked as setup-complete.
 
 After step 4 you also have: activity catalog (16 pre-seeded activities), private/broadcast messaging columns, tightened parent thread visibility, per-recipient notification read policies, and the public `activity-images` storage bucket.
 
@@ -151,3 +154,48 @@ In **Authentication → URL Configuration**, add redirect URLs:
 - **Parent invite:** teachers add children with email → `invite-parent` edge function sends auth invite. No manual SQL for new parents.
 - **Password reset:** forgot-password sends email with deep link to `reset-password` screen.
 - **Realtime messaging:** enable replication for `messages` in Dashboard (see section 6).
+
+## 8. Provision a new daycare (multi-gan)
+
+Use the `provision-daycare` Edge Function (platform operator only — not exposed in the app UI):
+
+```bash
+supabase functions deploy provision-daycare
+supabase functions deploy invite-teacher
+```
+
+Set secrets for `provision-daycare`:
+
+- `PROVISION_SECRET` — a long random string; pass it as header `x-provision-secret` on each call.
+
+Example request (curl):
+
+```bash
+curl -X POST "$SUPABASE_URL/functions/v1/provision-daycare" \
+  -H "Content-Type: application/json" \
+  -H "x-provision-secret: YOUR_PROVISION_SECRET" \
+  -d '{
+    "clientId": "gan-example",
+    "name": "גן דוגמה",
+    "adminEmail": "admin@example.com",
+    "adminFullName": "שירה כהן",
+    "adminPassword": "choose-a-strong-password"
+  }'
+```
+
+This creates:
+
+1. A `daycares` row with the given `client_id`
+2. Default `daycare_settings` (`setup_completed = false`)
+3. An auth user + `profiles` row with `role = admin`
+
+The admin logs into the app (build with matching `CLIENT_CONFIG.clientId`) and is guided through `/setup/*` — daycare details, branding, hero images, first child, optional contract.
+
+After setup, ongoing management is under **Settings → ניהול הגן** (`/admin/*`): edit branding, heroes, staff (via `invite-teacher`), children, and contracts.
+
+For the pilot user, change `role` from `teacher` to `admin` in SQL if you want to test the admin panel:
+
+```sql
+update public.profiles set role = 'admin'
+where id = (select id from auth.users where email = 'teacher@gan-nuna.co.il');
+```

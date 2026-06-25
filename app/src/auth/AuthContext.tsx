@@ -37,6 +37,7 @@ interface AuthContextValue {
   signInAsRole: (role: UserRole) => void;
   resetPassword: (email: string) => Promise<SignInResult>;
   setParentChildId: (childId: string) => void;
+  refreshProfile: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -49,6 +50,7 @@ function buildMockProfile(role: UserRole): SessionProfile {
       role: "teacher",
       daycareId: null,
       daycareName: CLIENT_CONFIG.daycareName,
+      setupCompleted: true,
       fullName: CLIENT_CONFIG.ownerName || "נונה",
       phone: null,
       email: null,
@@ -62,6 +64,7 @@ function buildMockProfile(role: UserRole): SessionProfile {
     role: "parent",
     daycareId: null,
     daycareName: CLIENT_CONFIG.daycareName,
+    setupCompleted: true,
     fullName: "רחל כהן",
     phone: "050-1234567",
     email: "rachel.cohen@example.com",
@@ -90,13 +93,24 @@ async function loadProfileForUser(
   }
 
   let daycareName: string | null = null;
+  let setupCompleted = true;
   if (profileRow.daycare_id) {
-    const { data: daycareRow } = await supabase
-      .from("daycares")
-      .select("name")
-      .eq("id", profileRow.daycare_id)
-      .single();
-    daycareName = daycareRow?.name ?? null;
+    const [daycareResult, settingsResult] = await Promise.all([
+      supabase
+        .from("daycares")
+        .select("name")
+        .eq("id", profileRow.daycare_id)
+        .single(),
+      supabase
+        .from("daycare_settings")
+        .select("setup_completed")
+        .eq("daycare_id", profileRow.daycare_id)
+        .maybeSingle(),
+    ]);
+    daycareName = daycareResult.data?.name ?? null;
+    if (settingsResult.data) {
+      setupCompleted = settingsResult.data.setup_completed;
+    }
   }
 
   let parentChildIds: string[] = [];
@@ -131,6 +145,7 @@ async function loadProfileForUser(
     role: profileRow.role,
     daycareId: profileRow.daycare_id,
     daycareName,
+    setupCompleted,
     fullName: profileRow.full_name,
     phone: profileRow.phone,
     email,
@@ -285,6 +300,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [applyProfile],
   );
 
+  const refreshProfile = useCallback(async () => {
+    if (!supabase) {
+      return;
+    }
+    const { data } = await supabase.auth.getSession();
+    const session = data.session;
+    if (!session?.user) {
+      return;
+    }
+    const savedChildId = (await loadSavedParentChildId(session.user.id)) ?? undefined;
+    const loaded = await loadProfileForUser(
+      session.user.id,
+      session.user.email ?? null,
+      savedChildId,
+    );
+    if (loaded) {
+      applyProfile(loaded);
+    }
+  }, [applyProfile]);
+
   const signOut = useCallback(async () => {
     const current = getSessionProfile();
     if (current?.role === "parent") {
@@ -306,9 +341,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signInAsRole,
       resetPassword,
       setParentChildId,
+      refreshProfile,
       signOut,
     }),
-    [profile, initializing, signIn, signInAsRole, resetPassword, setParentChildId, signOut],
+    [profile, initializing, signIn, signInAsRole, resetPassword, setParentChildId, refreshProfile, signOut],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -5,12 +5,13 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { AppButton } from "../../src/components/AppButton";
 import { AppCard } from "../../src/components/AppCard";
+import { BrandedHeroBanner } from "../../src/components/BrandedHeroBanner";
 import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
 import { AppStateCard } from "../../src/components/AppStateCard";
 import { AppTextInput } from "../../src/components/AppTextInput";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
-import { HeroBanner } from "../../src/components/HeroBanner";
+
 import { StatusBadge } from "../../src/components/StatusBadge";
 import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
@@ -21,7 +22,6 @@ import {
 } from "../../src/services/contracts.service";
 import { confirmDelete } from "../../src/utils/confirm";
 import { Colors } from "../../src/theme/colors";
-import { Heroes } from "../../src/theme/heroes";
 import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 import type { ContractStatus } from "../../src/types/contract";
@@ -68,7 +68,7 @@ export default function TeacherContractsScreen() {
   return (
     <View style={styles.root}>
       <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
-        <HeroBanner source={Heroes.teacherContracts} height={220}>
+        <BrandedHeroBanner heroKey="teacherContracts" height={220}>
           <View style={styles.headerOverlay}>
             <AppHeader
               onBellPress={() => router.push("/notifications")}
@@ -79,7 +79,7 @@ export default function TeacherContractsScreen() {
             <Text style={heroOverlayTextStyles.title}>חוזים</Text>
             <Text style={heroOverlayTextStyles.subtitle}>ניהול חוזים וחתימות להורים</Text>
           </View>
-        </HeroBanner>
+        </BrandedHeroBanner>
 
         <View style={styles.body}>
           <View style={styles.summaryGrid}>

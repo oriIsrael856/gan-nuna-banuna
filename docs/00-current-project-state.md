@@ -64,7 +64,24 @@ app/
       upload-contract.tsx
       child/
         [id].tsx
+    setup/
+      daycare-details.tsx
+      branding.tsx
+      heroes.tsx
+      first-child.tsx
+      first-contract.tsx
+      complete.tsx
+    admin/
+      index.tsx
+      daycare-details.tsx
+      branding.tsx
+      heroes.tsx
+      staff/
+        index.tsx
+        invite.tsx
   src/
+    daycare/
+      DaycareBrandingContext.tsx
     components/
     config/
       client.config.ts
@@ -91,6 +108,7 @@ Current rule:
 
 - Screens must read client-specific branding from `CLIENT_CONFIG`.
 - Screens should not hardcode the daycare name, owner name, or brand colors.
+- When Supabase is configured, runtime branding (name, colors, hero images) is loaded from `daycare_settings` / `daycare_hero_images` via `DaycareBrandingContext`, with `CLIENT_CONFIG` as fallback.
 - `app/src/theme/colors.ts` reads brand colors from `CLIENT_CONFIG` and remains the style API used by components.
 
 ## Existing Components
@@ -116,7 +134,8 @@ Current component notes:
 - `useBottomNavPress` centralizes bottom navigation routes for parent and teacher screens, including the shared `calendar`, `profile`, and `settings` destinations.
 - `ChildProfile` renders the full child card (avatar, status badges, details, guardians with quick-call) and is shared by the parent child screen and the teacher child screen.
 - `AppHeader` renders the top menu/back button plus the notification bell with a badge, used as an overlay on top of `HeroBanner`.
-- `HeroBanner` renders a full-width hero illustration with optional title/subtitle and overlay children, sourced from `app/src/theme/heroes.ts`.
+- `HeroBanner` renders a full-width hero illustration with optional title/subtitle and overlay children, sourced from `app/src/theme/heroes.ts` or remote URLs via `BrandedHeroBanner` / `useHero`.
+- `SetupStepLayout` and `HeroImageEditor` support the daycare onboarding and admin branding flows.
 
 ## Hero Assets
 
@@ -151,6 +170,8 @@ Screen data access now goes through services under:
 - `app/src/services/push.service.ts`
 - `app/src/services/invite.service.ts`
 - `app/src/services/parentHome.service.ts`
+- `app/src/services/daycareSetup.service.ts`
+- `app/src/services/staff.service.ts`
 - `app/src/services/pilot.service.ts`
 - `app/src/services/notifications.service.ts`
 - `app/src/services/messages.service.ts`
@@ -160,8 +181,10 @@ Supabase setup files:
 
 - `app/src/lib/supabase.ts`
 - `app/.env.example`
-- `supabase/migrations/0001_pilot_foundation.sql` through `0006_storage_contracts.sql`
+- `supabase/migrations/0001_pilot_foundation.sql` through `0009_daycare_setup.sql`
 - `supabase/functions/invite-parent/`
+- `supabase/functions/invite-teacher/`
+- `supabase/functions/provision-daycare/`
 - `supabase/functions/send-push-notification/`
 
 Shared types live under:
@@ -191,6 +214,13 @@ Status:
 - Wired to Supabase via services (child, contract, activities, stats, photos, messages).
 - Child picker when parent has multiple linked children (persisted in AsyncStorage).
 - Quick actions: contact, contracts, calendar, profile.
+
+### Daycare setup and admin (multi-gan)
+
+- **First-time setup** (`/setup/*`): shown to admin/teacher when `daycare_settings.setup_completed = false`. Steps: daycare details, branding, hero images, first child, optional contract, completion.
+- **Admin panel** (`/admin/*`): admin-only. Manage daycare details, branding, hero images, staff invites, links to children/contracts CRUD.
+- **Edge functions:** `provision-daycare` (platform operator creates a new gan + admin user), `invite-teacher` (admin invites additional teachers).
+- **Dynamic branding:** `DaycareBrandingProvider` loads settings and hero URLs from Supabase; hero screens use `BrandedHeroBanner`.
 
 ### Teacher flows (high level)
 

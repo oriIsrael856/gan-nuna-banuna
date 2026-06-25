@@ -150,6 +150,18 @@ export default function SettingsScreen() {
           </AppCard>
         )}
 
+        {variant === "teacher" && profile?.role === "admin" ? (
+          <AppCard style={styles.card}>
+            <Text style={styles.sectionTitle}>ניהול הגן</Text>
+            <LinkRow
+              icon="business-outline"
+              label="פתיחה וניהול הגן"
+              onPress={() => router.push("/admin" as Href)}
+              isLast
+            />
+          </AppCard>
+        ) : null}
+
         <AppCard style={styles.card}>
           <Text style={styles.sectionTitle}>כללי</Text>
           <LinkRow icon="language-outline" label="שפה" value="עברית" />

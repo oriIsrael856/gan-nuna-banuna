@@ -83,13 +83,21 @@ export function GalleryMediaViewer({
             )}
           </View>
 
-          <TouchableOpacity
-            style={[styles.closeBar, { paddingBottom: insets.bottom + Spacing.md }]}
-            onPress={onClose}
-            activeOpacity={0.85}
-          >
-            <Text style={styles.closeBarText}>סגירה</Text>
-          </TouchableOpacity>
+          <View style={[styles.footer, { paddingBottom: insets.bottom + Spacing.md }]}>
+            {onDelete ? (
+              <TouchableOpacity
+                onPress={onDelete}
+                style={styles.deleteBar}
+                activeOpacity={0.85}
+              >
+                <Ionicons name="trash-outline" size={18} color={Colors.white} />
+                <Text style={styles.deleteBarText}>מחק מהגלריה</Text>
+              </TouchableOpacity>
+            ) : null}
+            <TouchableOpacity onPress={onClose} style={styles.closeBar} activeOpacity={0.85}>
+              <Text style={styles.closeBarText}>סגירה</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       ) : null}
     </Modal>
@@ -133,7 +141,27 @@ const styles = StyleSheet.create({
   },
   closeBar: {
     alignItems: "center",
+    paddingVertical: Spacing.sm,
+  },
+  footer: {
+    alignItems: "center",
+    gap: Spacing.sm,
     paddingTop: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+  },
+  deleteBar: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: Spacing.xs,
+    backgroundColor: Colors.error,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+  },
+  deleteBarText: {
+    color: Colors.white,
+    fontSize: 15,
+    fontWeight: "700",
   },
   closeBarText: {
     color: Colors.white,

@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
+import type { Href } from "expo-router";
 import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { AppButton } from "../src/components/AppButton";
 import { AppCard } from "../src/components/AppCard";
 import { AppScreen } from "../src/components/AppScreen";
 import { AppTextInput } from "../src/components/AppTextInput";
-import { HeroBanner } from "../src/components/HeroBanner";
+import { BrandedHeroBanner } from "../src/components/BrandedHeroBanner";
 import { CLIENT_CONFIG } from "../src/config/client.config";
 import { isDemoLoginEnabled } from "../src/config/env";
 import { useAuth } from "../src/auth/AuthContext";
+import { useDaycareSettings } from "../src/daycare/DaycareBrandingContext";
 import { Colors } from "../src/theme/colors";
-import { Heroes } from "../src/theme/heroes";
 import { heroOverlayTextStyles } from "../src/theme/heroOverlay";
 import { BorderRadius, Shadow, Spacing } from "../src/theme/spacing";
 
 export default function HomeScreen() {
   const router = useRouter();
   const { profile, initializing, isConfigured, signIn, signInAsRole, resetPassword } = useAuth();
+  const daycareSettings = useDaycareSettings();
   const showDemoLogin = !isConfigured && isDemoLoginEnabled;
   const showConfigError = !isConfigured && !isDemoLoginEnabled;
 
@@ -27,9 +29,18 @@ export default function HomeScreen() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (profile) {
-      router.replace(profile.role === "teacher" ? "/teacher/home" : "/parent/home");
+    if (!profile) {
+      return;
     }
+    if (profile.role === "parent") {
+      router.replace("/parent/home");
+      return;
+    }
+    if (!profile.setupCompleted && (profile.role === "admin" || profile.role === "teacher")) {
+      router.replace("/setup/daycare-details" as Href);
+      return;
+    }
+    router.replace("/teacher/home");
   }, [profile, router]);
 
   async function handleForgotPassword() {
@@ -67,15 +78,15 @@ export default function HomeScreen() {
 
   return (
     <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
-      <HeroBanner source={Heroes.login} height={280}>
+      <BrandedHeroBanner heroKey="login" height={280}>
         <View style={styles.heroOverlay}>
           <View style={styles.logoCircle}>
             <Text style={styles.logoText}>{CLIENT_CONFIG.logoInitial}</Text>
           </View>
-          <Text style={heroOverlayTextStyles.titleLarge}>{CLIENT_CONFIG.daycareName}</Text>
+          <Text style={heroOverlayTextStyles.titleLarge}>{daycareSettings.daycareName}</Text>
           <Text style={heroOverlayTextStyles.subtitleLarge}>הבית הדיגיטלי החם של הגן</Text>
         </View>
-      </HeroBanner>
+      </BrandedHeroBanner>
 
       <View style={styles.body}>
         <AppCard style={styles.welcomeCard}>

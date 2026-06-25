@@ -17,8 +17,8 @@ import { getCurrentDaycareName, getCurrentUser } from "../../src/services/auth.s
 import { getChildren } from "../../src/services/children.service";
 import { getContractsByStatus } from "../../src/services/contracts.service";
 import { getDailyReportSummary } from "../../src/services/dailyReports.service";
+import { useHero } from "../../src/daycare/DaycareBrandingContext";
 import { Colors } from "../../src/theme/colors";
-import { Heroes } from "../../src/theme/heroes";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
 type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
@@ -115,6 +115,7 @@ export default function TeacherHomeScreen() {
   const handleBottomNavPress = useBottomNavPress("teacher");
   const ownerName = getCurrentUser().name;
   const daycareName = getCurrentDaycareName();
+  const teacherHomeHero = useHero("teacherHome");
   const { unreadCount } = useNotifications();
 
   const { data, loading, error, reload } = useAsyncData(async () => {
@@ -179,7 +180,7 @@ export default function TeacherHomeScreen() {
       <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
         <View style={styles.heroSection}>
           <Image
-            source={Heroes.teacherHome}
+            source={teacherHomeHero}
             style={styles.fullHeroImage}
             contentFit="cover"
             contentPosition="top"

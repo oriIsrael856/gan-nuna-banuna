@@ -21,8 +21,8 @@ import { AppStateCard } from "../../src/components/AppStateCard";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
 import { StatusBadge } from "../../src/components/StatusBadge";
 import { useAsyncData } from "../../src/hooks/useAsyncData";
+import { useHero } from "../../src/daycare/DaycareBrandingContext";
 import { Colors } from "../../src/theme/colors";
-import { Heroes } from "../../src/theme/heroes";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 import {
   getCurrentDaycareName,
@@ -113,6 +113,7 @@ export default function ParentHomeScreen() {
   const parentStats = data?.stats ?? [];
   const parentPhotos = data?.photos ?? [];
   const parentMessages = data?.messages ?? [];
+  const parentHomeHero = useHero("parentHome");
 
   function handleQuickActionPress(route: Href | undefined) {
     if (route) {
@@ -128,7 +129,7 @@ export default function ParentHomeScreen() {
       <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
         <View style={styles.heroSection}>
           <Image
-            source={Heroes.parentHome}
+            source={parentHomeHero}
             style={styles.fullHeroImage}
             contentFit="cover"
             contentPosition="top"

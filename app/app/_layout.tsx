@@ -9,7 +9,9 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import 'react-native-reanimated';
 
 import { AuthProvider } from '../src/auth/AuthContext';
+import { DaycareBrandingProvider } from '../src/daycare/DaycareBrandingContext';
 import { NotificationsProvider, useNotifications } from '../src/notifications/NotificationsContext';
+import { SetupGate } from '../src/navigation/SetupGate';
 import { supabase } from '../src/lib/supabase';
 
 I18nManager.forceRTL(true);
@@ -59,11 +61,14 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <NotificationsProvider>
-          <AppEffects />
-          <Stack screenOptions={{ headerShown: false }} />
-          <StatusBar style="dark" />
-        </NotificationsProvider>
+        <DaycareBrandingProvider>
+          <NotificationsProvider>
+            <AppEffects />
+            <SetupGate />
+            <Stack screenOptions={{ headerShown: false }} />
+            <StatusBar style="dark" />
+          </NotificationsProvider>
+        </DaycareBrandingProvider>
       </AuthProvider>
     </SafeAreaProvider>
   );

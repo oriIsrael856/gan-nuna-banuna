@@ -5,6 +5,7 @@ export interface SessionProfile {
   role: UserRole;
   daycareId: string | null;
   daycareName: string | null;
+  setupCompleted: boolean;
   fullName: string;
   phone: string | null;
   email: string | null;

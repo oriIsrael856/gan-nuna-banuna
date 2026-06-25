@@ -11,13 +11,12 @@ import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
 import { AppTextInput } from "../../src/components/AppTextInput";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
-import { HeroBanner } from "../../src/components/HeroBanner";
+import { BrandedHeroBanner } from "../../src/components/BrandedHeroBanner";
 import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
 import { getChildren } from "../../src/services/children.service";
 import { createContract } from "../../src/services/contracts.service";
 import { Colors } from "../../src/theme/colors";
-import { Heroes } from "../../src/theme/heroes";
 import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
@@ -142,7 +141,7 @@ export default function UploadContractScreen() {
   return (
     <View style={styles.root}>
       <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
-        <HeroBanner source={Heroes.uploadContract} height={210}>
+        <BrandedHeroBanner heroKey="uploadContract" height={210}>
           <View style={styles.headerOverlay}>
             <AppHeader variant="back" onLeadingPress={handleCancel} onBellPress={() => router.push("/notifications")} />
           </View>
@@ -150,7 +149,7 @@ export default function UploadContractScreen() {
             <Text style={heroOverlayTextStyles.title}>העלאת חוזה חדש</Text>
             <Text style={heroOverlayTextStyles.subtitle}>העלאת חוזה ושליחה להורה לחתימה</Text>
           </View>
-        </HeroBanner>
+        </BrandedHeroBanner>
 
         <View style={styles.body}>
         <AppCard style={styles.stepperCard}>

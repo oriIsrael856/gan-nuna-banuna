@@ -10,7 +10,7 @@ import { AppScreen } from "../../src/components/AppScreen";
 import { AppStateCard } from "../../src/components/AppStateCard";
 import { AppTextInput } from "../../src/components/AppTextInput";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
-import { HeroBanner } from "../../src/components/HeroBanner";
+import { BrandedHeroBanner } from "../../src/components/BrandedHeroBanner";
 import { StatusBadge } from "../../src/components/StatusBadge";
 import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
@@ -18,7 +18,6 @@ import { getCurrentDaycareName } from "../../src/services/auth.service";
 import { deleteChild, getChildren } from "../../src/services/children.service";
 import { confirmDelete } from "../../src/utils/confirm";
 import { Colors } from "../../src/theme/colors";
-import { Heroes } from "../../src/theme/heroes";
 import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
@@ -54,7 +53,7 @@ export default function TeacherChildrenScreen() {
   return (
     <View style={styles.root}>
       <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
-        <HeroBanner source={Heroes.children} height={220} contentPosition="top">
+        <BrandedHeroBanner heroKey="children" height={220} contentPosition="top">
           <View style={styles.headerOverlay}>
             <AppHeader
               onBellPress={() => router.push("/notifications")}
@@ -65,7 +64,7 @@ export default function TeacherChildrenScreen() {
             <Text style={heroOverlayTextStyles.title}>ילדים בגן</Text>
             <Text style={heroOverlayTextStyles.subtitle}>רשימת הילדים ב{getCurrentDaycareName()}</Text>
           </View>
-        </HeroBanner>
+        </BrandedHeroBanner>
 
         <View style={styles.body}>
           <View style={styles.searchRow}>

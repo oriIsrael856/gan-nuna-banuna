@@ -15,7 +15,7 @@ import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
 import { AppStateCard } from "../../src/components/AppStateCard";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
-import { HeroBanner } from "../../src/components/HeroBanner";
+import { BrandedHeroBanner } from "../../src/components/BrandedHeroBanner";
 import { useAsyncData } from "../../src/hooks/useAsyncData";
 import {
   getDailyActivities,
@@ -26,7 +26,6 @@ import {
 } from "../../src/services/dailyReports.service";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
 import { Colors } from "../../src/theme/colors";
-import { Heroes } from "../../src/theme/heroes";
 import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
@@ -99,7 +98,7 @@ export default function DailySummaryScreen() {
   return (
     <View style={styles.root}>
       <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
-        <HeroBanner source={Heroes.dailySummary} height={230}>
+        <BrandedHeroBanner heroKey="dailySummary" height={230}>
           <View style={styles.headerOverlay}>
             <AppHeader
               onBellPress={() => router.push("/notifications")}
@@ -110,7 +109,7 @@ export default function DailySummaryScreen() {
             <Text style={heroOverlayTextStyles.title}>סיכום יום</Text>
             <Text style={heroOverlayTextStyles.subtitle}>{formatToday()}</Text>
           </View>
-        </HeroBanner>
+        </BrandedHeroBanner>
 
         <View style={styles.body}>
           {loading || !data ? (

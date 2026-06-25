@@ -20,6 +20,81 @@ export interface Database {
         Update: { id?: string; name?: string; client_id?: string; created_at?: string };
         Relationships: [];
       };
+      daycare_settings: {
+        Row: {
+          daycare_id: string;
+          owner_name: string | null;
+          tagline: string | null;
+          subtitle: string | null;
+          primary_color: string | null;
+          secondary_color: string | null;
+          background_color: string | null;
+          card_background_color: string | null;
+          text_primary_color: string | null;
+          text_secondary_color: string | null;
+          support_phone: string | null;
+          support_email: string | null;
+          logo_url: string | null;
+          setup_completed: boolean;
+          setup_completed_at: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          daycare_id: string;
+          owner_name?: string | null;
+          tagline?: string | null;
+          subtitle?: string | null;
+          primary_color?: string | null;
+          secondary_color?: string | null;
+          background_color?: string | null;
+          card_background_color?: string | null;
+          text_primary_color?: string | null;
+          text_secondary_color?: string | null;
+          support_phone?: string | null;
+          support_email?: string | null;
+          logo_url?: string | null;
+          setup_completed?: boolean;
+          setup_completed_at?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          owner_name?: string | null;
+          tagline?: string | null;
+          subtitle?: string | null;
+          primary_color?: string | null;
+          secondary_color?: string | null;
+          background_color?: string | null;
+          card_background_color?: string | null;
+          text_primary_color?: string | null;
+          text_secondary_color?: string | null;
+          support_phone?: string | null;
+          support_email?: string | null;
+          logo_url?: string | null;
+          setup_completed?: boolean;
+          setup_completed_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      daycare_hero_images: {
+        Row: {
+          daycare_id: string;
+          hero_key: string;
+          storage_path: string;
+          updated_at: string;
+        };
+        Insert: {
+          daycare_id: string;
+          hero_key: string;
+          storage_path: string;
+          updated_at?: string;
+        };
+        Update: {
+          storage_path?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           id: string;

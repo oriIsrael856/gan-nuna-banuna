@@ -10,41 +10,48 @@ import { BorderRadius } from "../theme/spacing";
 interface GalleryPhotoTileProps {
   photo: GalleryPhoto;
   onPress: () => void;
-  showDeleteHint?: boolean;
+  onDelete?: () => void;
 }
 
 export function GalleryPhotoTile({
   photo,
   onPress,
-  showDeleteHint = false,
+  onDelete,
 }: GalleryPhotoTileProps) {
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={onPress} style={styles.tile}>
-      {photo.mediaType === "video" ? (
-        <View style={styles.mediaWrap}>
-          <Video
-            source={{ uri: photo.imageUrl }}
-            style={styles.tileImage}
-            resizeMode={ResizeMode.COVER}
-            useNativeControls={false}
-            shouldPlay={false}
-          />
-          <View style={styles.videoBadge}>
-            <Ionicons name="play-circle" size={28} color={Colors.white} />
+    <View style={styles.tile}>
+      <TouchableOpacity activeOpacity={0.85} onPress={onPress} style={styles.mediaButton}>
+        {photo.mediaType === "video" ? (
+          <View style={styles.mediaWrap}>
+            <Video
+              source={{ uri: photo.imageUrl }}
+              style={styles.tileImage}
+              resizeMode={ResizeMode.COVER}
+              useNativeControls={false}
+              shouldPlay={false}
+            />
+            <View style={styles.videoBadge}>
+              <Ionicons name="play-circle" size={28} color={Colors.white} />
+            </View>
           </View>
-        </View>
-      ) : (
-        <Image source={{ uri: photo.imageUrl }} style={styles.tileImage} />
-      )}
+        ) : (
+          <Image source={{ uri: photo.imageUrl }} style={styles.tileImage} />
+        )}
+      </TouchableOpacity>
       <Text style={styles.tileLabel} numberOfLines={1}>
         {photo.label}
       </Text>
-      {showDeleteHint ? (
-        <View style={styles.deleteHint}>
-          <Ionicons name="trash-outline" size={12} color={Colors.textSecondary} />
-        </View>
+      {onDelete ? (
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={onDelete}
+          hitSlop={8}
+          accessibilityLabel="מחיקה"
+        >
+          <Ionicons name="trash-outline" size={14} color={Colors.error} />
+        </TouchableOpacity>
       ) : null}
-    </TouchableOpacity>
+    </View>
   );
 }
 
@@ -56,14 +63,18 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: Colors.secondary,
   },
-  mediaWrap: {
+  mediaButton: {
     width: "100%",
     height: "72%",
+  },
+  mediaWrap: {
+    width: "100%",
+    height: "100%",
     position: "relative",
   },
   tileImage: {
     width: "100%",
-    height: "72%",
+    height: "100%",
   },
   videoBadge: {
     ...StyleSheet.absoluteFillObject,
@@ -79,12 +90,12 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 2,
   },
-  deleteHint: {
+  deleteButton: {
     position: "absolute",
     top: 4,
     left: 4,
     backgroundColor: Colors.cardBackground,
     borderRadius: BorderRadius.full,
-    padding: 2,
+    padding: 4,
   },
 });

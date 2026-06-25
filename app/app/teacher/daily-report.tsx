@@ -9,7 +9,7 @@ import { AppScreen } from "../../src/components/AppScreen";
 import { AppStateCard } from "../../src/components/AppStateCard";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
 import { GalleryCaptureButtons } from "../../src/components/GalleryCaptureButtons";
-import { HeroBanner } from "../../src/components/HeroBanner";
+import { BrandedHeroBanner } from "../../src/components/BrandedHeroBanner";
 import { useAsyncData } from "../../src/hooks/useAsyncData";
 import {
   deleteDailyActivity,
@@ -24,7 +24,6 @@ import {
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
 import { confirmDelete } from "../../src/utils/confirm";
 import { Colors } from "../../src/theme/colors";
-import { Heroes } from "../../src/theme/heroes";
 import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 
@@ -92,7 +91,7 @@ export default function TeacherDailyReportScreen() {
   return (
     <View style={styles.root}>
       <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
-        <HeroBanner source={Heroes.dailySummary} height={220}>
+        <BrandedHeroBanner heroKey="dailySummary" height={220}>
           <View style={styles.headerOverlay}>
             <AppHeader
               onBellPress={() => router.push("/notifications")}
@@ -103,7 +102,7 @@ export default function TeacherDailyReportScreen() {
             <Text style={heroOverlayTextStyles.title}>סיכום יום</Text>
             <Text style={heroOverlayTextStyles.subtitle}>{formattedDate}</Text>
           </View>
-        </HeroBanner>
+        </BrandedHeroBanner>
 
         <View style={styles.body}>
         <View style={styles.captureSection}>

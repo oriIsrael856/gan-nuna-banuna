@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import type { Href } from "expo-router";
 
@@ -40,9 +40,13 @@ export default function TeacherGalleryScreen() {
 
   function handleDelete(photoId: string) {
     confirmDelete("למחוק מהגלריה?", async () => {
-      await deleteGalleryPhoto(photoId);
-      setSelectedPhoto(null);
-      reload();
+      const ok = await deleteGalleryPhoto(photoId);
+      if (ok) {
+        setSelectedPhoto(null);
+        reload();
+      } else {
+        Alert.alert("שגיאה", "לא הצלחנו למחוק. נסו שוב.");
+      }
     });
   }
 
@@ -84,8 +88,8 @@ export default function TeacherGalleryScreen() {
               <GalleryPhotoTile
                 key={photo.id}
                 photo={photo}
-                showDeleteHint
                 onPress={() => setSelectedPhoto(photo)}
+                onDelete={() => handleDelete(photo.id)}
               />
             ))}
           </View>
