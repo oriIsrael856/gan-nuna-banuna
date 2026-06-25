@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import type { Href } from "expo-router";
-import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image } from "expo-image";
 
 import { AppButton } from "../src/components/AppButton";
 import { AppCard } from "../src/components/AppCard";
 import { AppScreen } from "../src/components/AppScreen";
+import { AppText } from "../src/components/AppText";
 import { AppTextInput } from "../src/components/AppTextInput";
-import { BrandedHeroBanner } from "../src/components/BrandedHeroBanner";
 import { CLIENT_CONFIG } from "../src/config/client.config";
 import { isDemoLoginEnabled } from "../src/config/env";
 import { useAuth } from "../src/auth/AuthContext";
-import { useDaycareSettings } from "../src/daycare/DaycareBrandingContext";
+import { useDaycareSettings, useHero } from "../src/daycare/DaycareBrandingContext";
 import { Colors } from "../src/theme/colors";
-import { heroOverlayTextStyles } from "../src/theme/heroOverlay";
 import { BorderRadius, Shadow, Spacing } from "../src/theme/spacing";
 
 export default function HomeScreen() {
   const router = useRouter();
   const { profile, initializing, isConfigured, signIn, signInAsRole, resetPassword } = useAuth();
   const daycareSettings = useDaycareSettings();
+  const loginHero = useHero("login");
   const showDemoLogin = !isConfigured && isDemoLoginEnabled;
   const showConfigError = !isConfigured && !isDemoLoginEnabled;
 
@@ -82,23 +83,35 @@ export default function HomeScreen() {
 
   return (
     <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
-      <BrandedHeroBanner heroKey="login" height={280}>
-        <View style={styles.heroOverlay}>
+      <View style={styles.heroSection}>
+        <Image source={loginHero} style={styles.fullHeroImage} contentFit="cover" contentPosition="top" />
+        <View style={styles.heroGradient} />
+        <View style={styles.heroContent}>
           <View style={styles.logoCircle}>
-            <Text style={styles.logoText}>{CLIENT_CONFIG.logoInitial}</Text>
+            <AppText variant="display" tone="brand" style={styles.logoText}>
+              {CLIENT_CONFIG.logoInitial}
+            </AppText>
           </View>
-          <Text style={heroOverlayTextStyles.titleLarge}>{daycareSettings.daycareName}</Text>
-          <Text style={heroOverlayTextStyles.subtitleLarge}>הבית הדיגיטלי החם של הגן</Text>
+          <View style={styles.heroGreeting}>
+            <AppText variant="titleLarge" tone="white" style={styles.heroTitle}>
+              {daycareSettings.daycareName}
+            </AppText>
+            <AppText variant="bodyMedium" tone="white" style={styles.heroSubtitle}>
+              הבית הדיגיטלי החם של הגן
+            </AppText>
+          </View>
         </View>
-      </BrandedHeroBanner>
+      </View>
 
       <View style={styles.body}>
-        <AppCard style={styles.welcomeCard}>
-          <Text style={styles.cardTitle}>ברוכים הבאים</Text>
+        <AppCard elevation="elevated" style={styles.welcomeCard}>
+          <AppText variant="title">ברוכים הבאים</AppText>
 
           {isConfigured ? (
             <>
-              <Text style={styles.cardText}>התחברו עם כתובת המייל והסיסמה שלכם.</Text>
+              <AppText variant="body" tone="secondary">
+                התחברו עם כתובת המייל והסיסמה שלכם.
+              </AppText>
 
               <AppTextInput
                 label="אימייל"
@@ -106,6 +119,8 @@ export default function HomeScreen() {
                 onChangeText={setEmail}
                 placeholder="name@example.com"
                 keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
               />
               <AppTextInput
                 label="סיסמה"
@@ -115,7 +130,11 @@ export default function HomeScreen() {
                 secureTextEntry
               />
 
-              {error ? <Text style={styles.errorText}>{error}</Text> : null}
+              {error ? (
+                <AppText variant="bodyMedium" tone="error">
+                  {error}
+                </AppText>
+              ) : null}
 
               <View style={styles.actions}>
                 <AppButton
@@ -124,22 +143,23 @@ export default function HomeScreen() {
                   disabled={submitting}
                 />
                 <TouchableOpacity onPress={handleForgotPassword} activeOpacity={0.7}>
-                  <Text style={styles.forgotText}>שכחתי סיסמה</Text>
+                  <AppText variant="bodyMedium" tone="brand" style={styles.forgotText}>
+                    שכחתי סיסמה
+                  </AppText>
                 </TouchableOpacity>
               </View>
             </>
           ) : showConfigError ? (
-            <>
-              <Text style={styles.cardText}>
-                האפליקציה לא מוגדרת לשרת. פנו למנהל המערכת או ודאו שהגדרות Supabase הוזנו בבניית
-                האפליקציה.
-              </Text>
-            </>
+            <AppText variant="body" tone="secondary">
+              האפליקציה לא מוגדרת לשרת. פנו למנהל המערכת או ודאו שהגדרות Supabase הוזנו בבניית
+              האפליקציה.
+            </AppText>
           ) : showDemoLogin ? (
             <>
-              <Text style={styles.cardText}>
-                כאן תוכלו לעקוב אחרי היום בגן, לקבל עדכונים, לצפות בהודעות ולנהל מסמכים בצורה פשוטה ונעימה.
-              </Text>
+              <AppText variant="body" tone="secondary">
+                כאן תוכלו לעקוב אחרי היום בגן, לקבל עדכונים, לצפות בהודעות ולנהל מסמכים בצורה
+                פשוטה ונעימה.
+              </AppText>
 
               <View style={styles.actions}>
                 <AppButton title="כניסה להורים" onPress={() => signInAsRole("parent")} />
@@ -154,15 +174,19 @@ export default function HomeScreen() {
         </AppCard>
 
         <View style={styles.previewSection}>
-          <View style={styles.previewCard}>
-            <Text style={styles.previewTitle}>עדכונים יומיים</Text>
-            <Text style={styles.previewText}>סיכום יום, פעילויות והודעות מהגן</Text>
-          </View>
+          <AppCard style={styles.previewCard}>
+            <AppText variant="subtitle">עדכונים יומיים</AppText>
+            <AppText variant="caption" tone="secondary" style={styles.previewText}>
+              סיכום יום, פעילויות והודעות מהגן
+            </AppText>
+          </AppCard>
 
-          <View style={styles.previewCard}>
-            <Text style={styles.previewTitle}>נוכחות ומסמכים</Text>
-            <Text style={styles.previewText}>מעקב נוכחות וניהול חוזים במקום אחד</Text>
-          </View>
+          <AppCard style={styles.previewCard}>
+            <AppText variant="subtitle">נוכחות ומסמכים</AppText>
+            <AppText variant="caption" tone="secondary" style={styles.previewText}>
+              מעקב נוכחות וניהול חוזים במקום אחד
+            </AppText>
+          </AppCard>
         </View>
       </View>
     </AppScreen>
@@ -178,19 +202,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  heroOverlay: {
-    alignItems: "center",
-    gap: Spacing.sm,
-    paddingTop: Spacing.lg,
+  heroSection: {
+    width: "100%",
+    height: 320,
+    position: "relative",
+    backgroundColor: Colors.background,
+    borderBottomLeftRadius: BorderRadius.xl,
+    borderBottomRightRadius: BorderRadius.xl,
+    overflow: "hidden",
   },
-  body: {
+  fullHeroImage: {
+    width: "100%",
+    height: "100%",
+  },
+  heroGradient: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 140,
+    backgroundColor: "rgba(0,0,0,0.32)",
+  },
+  heroContent: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: Spacing.md,
-    marginTop: -Spacing.xl,
-    gap: Spacing.lg,
+    gap: Spacing.md,
   },
   logoCircle: {
-    width: 96,
-    height: 96,
+    width: 88,
+    height: 88,
     borderRadius: BorderRadius.full,
     alignItems: "center",
     justifyContent: "center",
@@ -198,70 +240,47 @@ const styles = StyleSheet.create({
     ...Shadow.card,
   },
   logoText: {
-    fontSize: 48,
-    fontWeight: "700",
-    color: Colors.primary,
-  },
-  gardenName: {
-    fontSize: 30,
-    fontWeight: "800",
-    color: Colors.textPrimary,
     textAlign: "center",
+    fontSize: 44,
+    lineHeight: 48,
   },
-  subtitle: {
-    fontSize: 16,
-    color: Colors.textSecondary,
+  heroGreeting: {
+    alignItems: "center",
+    gap: Spacing.xs,
+  },
+  heroTitle: {
     textAlign: "center",
+    textShadowColor: "rgba(0,0,0,0.35)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
+  },
+  heroSubtitle: {
+    textAlign: "center",
+    color: "rgba(255,255,255,0.9)",
+  },
+  body: {
+    paddingHorizontal: Spacing.md,
+    marginTop: -Spacing.xl,
+    gap: Spacing.lg,
   },
   welcomeCard: {
     gap: Spacing.md,
   },
-  cardTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: Colors.textPrimary,
-    textAlign: "right",
-  },
-  cardText: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: Colors.textSecondary,
-    textAlign: "right",
-  },
-  errorText: {
-    color: Colors.error,
-    fontWeight: "700",
-    textAlign: "right",
-  },
   actions: {
     gap: Spacing.sm,
-    marginTop: Spacing.sm,
+    marginTop: Spacing.xs,
   },
   forgotText: {
     textAlign: "center",
-    color: Colors.primary,
-    fontWeight: "700",
-    fontSize: 14,
   },
   previewSection: {
     gap: Spacing.sm,
     paddingBottom: Spacing.xl,
   },
   previewCard: {
-    backgroundColor: Colors.cardBackground,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
-  },
-  previewTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: Colors.textPrimary,
-    textAlign: "right",
-    marginBottom: 4,
+    gap: Spacing.xs,
   },
   previewText: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-    textAlign: "right",
+    marginTop: 2,
   },
 });

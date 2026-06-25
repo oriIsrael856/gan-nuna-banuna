@@ -193,7 +193,7 @@ export default function ParentHomeScreen() {
             </View>
           ) : null}
           <TouchableOpacity activeOpacity={0.85} onPress={() => router.push("/parent/child")}>
-            <AppCard style={styles.childCard}>
+            <AppCard elevation="elevated" style={styles.childCard}>
               <ChildAvatar avatarText={parentChild?.name.slice(0, 1) ?? "י"} />
               <View style={styles.childTextBlock}>
                 <Text style={styles.childName}>{parentChild?.name ?? "ילד/ה"}</Text>

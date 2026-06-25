@@ -16,6 +16,7 @@ import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
 import { AppStateCard } from "../../src/components/AppStateCard";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
+import { EmptyState } from "../../src/components/EmptyState";
 import { MessageAvatar } from "../../src/components/MessageAvatar";
 import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
@@ -144,13 +145,17 @@ export default function MessagesScreen() {
             onActionPress={reload}
           />
         ) : threads.length === 0 ? (
-          <AppStateCard
-            state="empty"
-            title="אין הודעות"
+          <EmptyState
+            icon="chatbubbles-outline"
+            title="אין הודעות עדיין"
             message={
               isTeacher
-                ? "שיחות עם ההורים יופיעו כאן."
-                : "עדכונים מהגן יופיעו כאן. לשליחת הודעה פרטית לחצו על הכפתור למעלה."
+                ? "כשתשלחו עדכון להורים, השיחות יופיעו כאן."
+                : "עדכונים מהגן יופיעו כאן. לשליחת הודעה פרטית לצוות לחצו למטה."
+            }
+            actionLabel={isTeacher ? "הודעה חדשה" : creating ? undefined : "שליחת הודעה לצוות הגן"}
+            onActionPress={
+              isTeacher ? () => setComposerOpen(true) : creating ? undefined : openParentStaffChat
             }
           />
         ) : (

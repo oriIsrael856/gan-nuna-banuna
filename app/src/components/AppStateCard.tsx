@@ -1,10 +1,11 @@
 import React from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 import { Colors } from "../theme/colors";
 import { Spacing } from "../theme/spacing";
 import { AppButton } from "./AppButton";
 import { AppCard } from "./AppCard";
+import { AppText } from "./AppText";
 
 interface AppStateCardProps {
   title: string;
@@ -26,8 +27,12 @@ export function AppStateCard({
       {state === "loading" ? (
         <ActivityIndicator color={Colors.primary} style={styles.loader} />
       ) : null}
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.message}>{message}</Text>
+      <AppText variant="subtitle" style={styles.title}>
+        {title}
+      </AppText>
+      <AppText variant="body" tone="secondary" style={styles.message}>
+        {message}
+      </AppText>
       {actionLabel && onActionPress ? (
         <View style={styles.action}>
           <AppButton title={actionLabel} onPress={onActionPress} />
@@ -46,15 +51,9 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   title: {
-    color: Colors.textPrimary,
-    fontSize: 17,
-    fontWeight: "800",
     textAlign: "center",
   },
   message: {
-    color: Colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 21,
     marginTop: Spacing.xs,
     textAlign: "center",
   },

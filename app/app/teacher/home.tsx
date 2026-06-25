@@ -223,7 +223,7 @@ export default function TeacherHomeScreen() {
               onActionPress={reload}
             />
           ) : (
-            <AppCard>
+            <AppCard elevation="elevated">
               <View style={styles.summaryHeader}>
                 <Text style={styles.summaryTitle}>סיכום היום</Text>
                 <Text style={styles.summaryDate}>{formattedDate}</Text>
@@ -259,7 +259,7 @@ export default function TeacherHomeScreen() {
               <AppCard style={styles.reminderCard}>
                 <View style={styles.reminderRow}>
                   <View style={styles.reminderIconWrap}>
-                    <Ionicons name="alert-circle" size={20} color={Colors.warningColor ?? "#C07820"} />
+                    <Ionicons name="alert-circle" size={20} color={Colors.warning} />
                   </View>
                   <View style={styles.reminderTextBlock}>
                     <Text style={styles.reminderTitle}>

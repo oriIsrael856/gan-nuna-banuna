@@ -11,6 +11,7 @@ import { AppStateCard } from "../../src/components/AppStateCard";
 import { AppTextInput } from "../../src/components/AppTextInput";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
 import { BrandedHeroBanner } from "../../src/components/BrandedHeroBanner";
+import { EmptyState } from "../../src/components/EmptyState";
 import { StatusBadge } from "../../src/components/StatusBadge";
 import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
@@ -106,10 +107,21 @@ export default function TeacherChildrenScreen() {
               onActionPress={reload}
             />
           ) : filteredChildren.length === 0 ? (
-            <AppCard style={styles.emptyCard}>
-              <Text style={styles.emptyTitle}>לא נמצאו ילדים</Text>
-              <Text style={styles.emptyText}>נסו לחפש שם אחר או לנקות את החיפוש.</Text>
-            </AppCard>
+            children.length === 0 ? (
+              <EmptyState
+                icon="happy-outline"
+                title="עדיין אין ילדים בגן"
+                message="הוסיפו את הילד/ה הראשון/ה כדי להתחיל לנהל נוכחות, דוחות וחוזים."
+                actionLabel="הוספת ילד/ה"
+                onActionPress={() => router.push("/teacher/add-child")}
+              />
+            ) : (
+              <EmptyState
+                icon="search-outline"
+                title="לא נמצאו ילדים"
+                message="נסו לחפש שם אחר או לנקות את החיפוש."
+              />
+            )
           ) : (
             filteredChildren.map((child) => (
               <TouchableOpacity

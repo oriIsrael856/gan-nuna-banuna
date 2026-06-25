@@ -3,7 +3,8 @@ import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 
 import { Colors } from "../theme/colors";
-import { BorderRadius, Spacing } from "../theme/spacing";
+import { BorderRadius, Shadow, Spacing } from "../theme/spacing";
+import { Typography } from "../theme/typography";
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "danger";
 
@@ -83,6 +84,7 @@ const styles = StyleSheet.create({
   },
   primary: {
     backgroundColor: Colors.primary,
+    ...Shadow.subtle,
   },
   secondary: {
     backgroundColor: Colors.secondary,
@@ -96,8 +98,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.error,
   },
   text: {
-    fontSize: 16,
-    fontWeight: "600",
+    ...Typography.subtitle,
     textAlign: "center",
   },
   primaryText: {
