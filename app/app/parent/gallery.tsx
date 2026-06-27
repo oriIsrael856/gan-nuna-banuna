@@ -49,7 +49,12 @@ export default function ParentGalleryScreen() {
         />
         <Text style={styles.title}>גלריית הגן</Text>
         <Text style={styles.subtitle}>תמונות וסרטונים מהיום בגן</Text>
-        <TouchableOpacity onPress={() => router.push("/parent/albums" as Href)} style={styles.albumLink}>
+        <TouchableOpacity
+          onPress={() => router.push("/parent/albums" as Href)}
+          style={styles.albumLink}
+          accessibilityRole="button"
+          accessibilityLabel="מעבר לאלבומים לפי נושא"
+        >
           <Text style={styles.albumLinkText}>אלבומים לפי נושא ›</Text>
         </TouchableOpacity>
 
@@ -115,7 +120,12 @@ const styles = StyleSheet.create({
     marginTop: 2,
     marginBottom: Spacing.sm,
   },
-  albumLink: { alignSelf: "flex-end", marginBottom: Spacing.lg },
+  albumLink: {
+    alignSelf: "flex-end",
+    minHeight: 44,
+    justifyContent: "center",
+    marginBottom: Spacing.lg,
+  },
   albumLinkText: { fontSize: 14, fontWeight: "700", color: Colors.primary },
   grid: {
     flexDirection: "row-reverse",

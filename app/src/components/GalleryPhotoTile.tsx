@@ -20,7 +20,15 @@ export function GalleryPhotoTile({
 }: GalleryPhotoTileProps) {
   return (
     <View style={styles.tile}>
-      <TouchableOpacity activeOpacity={0.85} onPress={onPress} style={styles.mediaButton}>
+      <TouchableOpacity
+        activeOpacity={0.85}
+        onPress={onPress}
+        style={styles.mediaButton}
+        accessibilityRole="button"
+        accessibilityLabel={
+          photo.mediaType === "video" ? `סרטון: ${photo.label}` : `תמונה: ${photo.label}`
+        }
+      >
         {photo.mediaType === "video" ? (
           <View style={styles.mediaWrap}>
             <Video
@@ -45,7 +53,8 @@ export function GalleryPhotoTile({
         <TouchableOpacity
           style={styles.deleteButton}
           onPress={onDelete}
-          hitSlop={8}
+          hitSlop={12}
+          accessibilityRole="button"
           accessibilityLabel="מחיקה"
         >
           <Ionicons name="trash-outline" size={14} color={Colors.error} />
@@ -80,7 +89,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(0,0,0,0.25)",
+    backgroundColor: Colors.scrim,
   },
   tileLabel: {
     fontSize: 11,

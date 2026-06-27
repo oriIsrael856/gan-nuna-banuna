@@ -71,6 +71,8 @@ export default function AdminHomeScreen() {
               activeOpacity={0.75}
               onPress={() => router.push(item.href)}
               style={[styles.row, index === MENU_ITEMS.length - 1 && styles.rowLast]}
+              accessibilityRole="button"
+              accessibilityLabel={`${item.label}, ${item.subtitle}`}
             >
               <Ionicons name="chevron-back" size={18} color={colors.textSecondary} />
               <View style={styles.rowText}>

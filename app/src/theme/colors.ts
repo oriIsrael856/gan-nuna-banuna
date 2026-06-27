@@ -17,6 +17,7 @@ export const Colors = {
   borderNeutral: "#D8D8D8", // neutral gray (e.g. switch track off)
   divider: "#F0F0F0", // light divider / row separator
   surfaceMuted: "#EFE7DD", // warm muted background tint
+  scrim: "rgba(0,0,0,0.25)", // dark overlay over media (video badge, etc.)
 
   // Attendance status
   presentBackground: "#E8F5E4",

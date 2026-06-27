@@ -150,28 +150,32 @@ export default function DailySummaryScreen() {
               <Text style={styles.sectionTitle}>פעילויות מרכזיות</Text>
             </View>
 
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.activitiesScroll}
-            >
-              {dailyActivities.map((activity) => (
-                <View key={activity.id} style={styles.activityCard}>
-                  <Text style={styles.activityTime}>{activity.time}</Text>
-                  <View style={styles.activityThumb}>
-                    {activity.imageUrl ? (
-                      <Image source={{ uri: activity.imageUrl }} style={styles.activityImage} />
-                    ) : (
-                      <Ionicons name="image-outline" size={26} color={Colors.primary} />
-                    )}
+            {dailyActivities.length === 0 ? (
+              <Text style={styles.emptySectionText}>אין פעילויות שתועדו היום</Text>
+            ) : (
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.activitiesScroll}
+              >
+                {dailyActivities.map((activity) => (
+                  <View key={activity.id} style={styles.activityCard}>
+                    <Text style={styles.activityTime}>{activity.time}</Text>
+                    <View style={styles.activityThumb}>
+                      {activity.imageUrl ? (
+                        <Image source={{ uri: activity.imageUrl }} style={styles.activityImage} />
+                      ) : (
+                        <Ionicons name="image-outline" size={26} color={Colors.primary} />
+                      )}
+                    </View>
+                    <Text style={styles.activityTitle}>{activity.title}</Text>
+                    <Text style={styles.activityText} numberOfLines={1}>
+                      {activity.description}
+                    </Text>
                   </View>
-                  <Text style={styles.activityTitle}>{activity.title}</Text>
-                  <Text style={styles.activityText} numberOfLines={1}>
-                    {activity.description}
-                  </Text>
-                </View>
-              ))}
-            </ScrollView>
+                ))}
+              </ScrollView>
+            )}
           </AppCard>
 
           <View style={styles.twoColumns}>
@@ -180,16 +184,22 @@ export default function DailySummaryScreen() {
                 <Ionicons name="clipboard-outline" size={18} color={Colors.primary} />
                 <Text style={styles.columnTitle}>הערות מהיום</Text>
               </View>
-              {dailyNotes.map((note) => (
-                <View key={note.id} style={styles.noteRow}>
-                  <Text style={styles.noteBullet}>•</Text>
-                  <Text style={styles.noteText}>{note.text}</Text>
-                </View>
-              ))}
+              {dailyNotes.length === 0 ? (
+                <Text style={styles.emptySectionText}>אין הערות היום</Text>
+              ) : (
+                dailyNotes.map((note) => (
+                  <View key={note.id} style={styles.noteRow}>
+                    <Text style={styles.noteBullet}>•</Text>
+                    <Text style={styles.noteText}>{note.text}</Text>
+                  </View>
+                ))
+              )}
               <TouchableOpacity
                 activeOpacity={0.75}
                 onPress={() => router.push("/messages")}
                 style={styles.columnButton}
+                accessibilityRole="button"
+                accessibilityLabel="שליחת הודעה לגננת"
               >
                 <Ionicons name="add" size={16} color={Colors.primary} />
                 <Text style={styles.columnButtonText}>שליחת הודעה לגננת</Text>
@@ -201,18 +211,24 @@ export default function DailySummaryScreen() {
                 <Ionicons name="paper-plane-outline" size={18} color={Colors.primary} />
                 <Text style={styles.columnTitle}>הודעות להורים</Text>
               </View>
-              {dailyMessages.map((message) => (
-                <View key={message.id} style={styles.messageItem}>
-                  <Text style={styles.messageTime}>{message.time}</Text>
-                  <Text style={styles.messageText} numberOfLines={2}>
-                    {message.text}
-                  </Text>
-                </View>
-              ))}
+              {dailyMessages.length === 0 ? (
+                <Text style={styles.emptySectionText}>אין הודעות חדשות</Text>
+              ) : (
+                dailyMessages.map((message) => (
+                  <View key={message.id} style={styles.messageItem}>
+                    <Text style={styles.messageTime}>{message.time}</Text>
+                    <Text style={styles.messageText} numberOfLines={2}>
+                      {message.text}
+                    </Text>
+                  </View>
+                ))
+              )}
               <TouchableOpacity
                 activeOpacity={0.75}
                 onPress={() => router.push("/messages")}
                 style={styles.columnButton}
+                accessibilityRole="button"
+                accessibilityLabel="צפייה בכל ההודעות"
               >
                 <Ionicons name="chatbubbles-outline" size={16} color={Colors.primary} />
                 <Text style={styles.columnButtonText}>צפייה בכל ההודעות</Text>
@@ -225,22 +241,26 @@ export default function DailySummaryScreen() {
             <Text style={styles.sectionTitle}>מה אכלנו היום</Text>
           </View>
 
-          <View style={styles.mealsRow}>
-            {dailyMeals.map((meal) => (
-              <AppCard key={meal.id} style={styles.mealCard}>
-                <Text style={styles.mealTitle}>
-                  {MEAL_TYPE_LABELS[meal.mealType] ?? meal.title}
-                </Text>
-                <Text style={styles.mealTime}>{meal.time}</Text>
-                <View style={styles.mealThumb}>
-                  <Ionicons name="fast-food-outline" size={22} color={Colors.primary} />
-                </View>
-                <Text style={styles.mealText} numberOfLines={2}>
-                  {meal.description}
-                </Text>
-              </AppCard>
-            ))}
-          </View>
+          {dailyMeals.length === 0 ? (
+            <Text style={styles.emptySectionText}>אין ארוחות שתועדו היום</Text>
+          ) : (
+            <View style={styles.mealsRow}>
+              {dailyMeals.map((meal) => (
+                <AppCard key={meal.id} style={styles.mealCard}>
+                  <Text style={styles.mealTitle}>
+                    {MEAL_TYPE_LABELS[meal.mealType] ?? meal.title}
+                  </Text>
+                  <Text style={styles.mealTime}>{meal.time}</Text>
+                  <View style={styles.mealThumb}>
+                    <Ionicons name="fast-food-outline" size={22} color={Colors.primary} />
+                  </View>
+                  <Text style={styles.mealText} numberOfLines={2}>
+                    {meal.description}
+                  </Text>
+                </AppCard>
+              ))}
+            </View>
+          )}
             </>
           )}
         </View>
@@ -270,19 +290,6 @@ const styles = StyleSheet.create({
   titleBlock: {
     alignItems: "center",
     marginTop: Spacing.sm,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: Colors.primary,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 14,
-    color: Colors.primary,
-    fontWeight: "700",
-    marginTop: 2,
-    textAlign: "center",
   },
   body: {
     paddingHorizontal: Spacing.md,
@@ -427,12 +434,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "800",
   },
-  columnAction: {
-    color: Colors.primary,
+  emptySectionText: {
     fontSize: 12,
-    fontWeight: "800",
+    color: Colors.textSecondary,
     textAlign: "right",
-    marginTop: Spacing.sm,
   },
   messageItem: {
     paddingVertical: Spacing.xs,

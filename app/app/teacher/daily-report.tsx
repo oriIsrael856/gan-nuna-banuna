@@ -116,6 +116,8 @@ export default function TeacherDailyReportScreen() {
             activeOpacity={0.75}
             onPress={() => router.push("/teacher/gallery")}
             style={styles.galleryLink}
+            accessibilityRole="button"
+            accessibilityLabel="מעבר לגלריה המלאה"
           >
             <Text style={styles.galleryLinkText}>לגלריה המלאה ›</Text>
           </TouchableOpacity>
@@ -166,35 +168,43 @@ export default function TeacherDailyReportScreen() {
           onPress={() => router.push("/teacher/add-activity")}
         />
 
-        {dailyActivities.map((activity) => (
-          <AppCard key={activity.id} style={styles.contentCard}>
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemTime}>{activity.time}</Text>
-              <View style={styles.itemHeaderRight}>
-                <Text style={styles.badge}>{CATEGORY_LABELS[activity.category]}</Text>
-                <TouchableOpacity
-                  hitSlop={8}
-                  onPress={() => router.push(`/teacher/add-activity?editId=${activity.id}`)}
-                  style={styles.deleteButton}
-                >
-                  <Ionicons name="create-outline" size={18} color={Colors.textSecondary} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  hitSlop={8}
-                  onPress={() => handleDeleteActivity(activity.id)}
-                  style={styles.deleteButton}
-                >
-                  <Ionicons name="trash-outline" size={18} color={Colors.textSecondary} />
-                </TouchableOpacity>
+        {dailyActivities.length === 0 ? (
+          <AppStateCard state="empty" title="אין פעילויות" message="עדיין לא תועדו פעילויות היום." />
+        ) : (
+          dailyActivities.map((activity) => (
+            <AppCard key={activity.id} style={styles.contentCard}>
+              <View style={styles.itemHeader}>
+                <Text style={styles.itemTime}>{activity.time}</Text>
+                <View style={styles.itemHeaderRight}>
+                  <Text style={styles.badge}>{CATEGORY_LABELS[activity.category]}</Text>
+                  <TouchableOpacity
+                    hitSlop={14}
+                    onPress={() => router.push(`/teacher/add-activity?editId=${activity.id}`)}
+                    style={styles.deleteButton}
+                    accessibilityRole="button"
+                    accessibilityLabel="עריכת פעילות"
+                  >
+                    <Ionicons name="create-outline" size={18} color={Colors.textSecondary} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    hitSlop={14}
+                    onPress={() => handleDeleteActivity(activity.id)}
+                    style={styles.deleteButton}
+                    accessibilityRole="button"
+                    accessibilityLabel="מחיקת פעילות"
+                  >
+                    <Ionicons name="trash-outline" size={18} color={Colors.textSecondary} />
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-            {activity.imageUrl ? (
-              <Image source={{ uri: activity.imageUrl }} style={styles.activityImage} />
-            ) : null}
-            <Text style={styles.itemTitle}>{activity.title}</Text>
-            <Text style={styles.itemText}>{activity.description}</Text>
-          </AppCard>
-        ))}
+              {activity.imageUrl ? (
+                <Image source={{ uri: activity.imageUrl }} style={styles.activityImage} />
+              ) : null}
+              <Text style={styles.itemTitle}>{activity.title}</Text>
+              <Text style={styles.itemText}>{activity.description}</Text>
+            </AppCard>
+          ))
+        )}
 
         <SectionHeader
           title="הודעות להורים"
@@ -202,20 +212,24 @@ export default function TeacherDailyReportScreen() {
           onPress={() => router.push("/messages")}
         />
 
-        <AppCard style={styles.contentCard}>
-          {dailyMessages.map((message, index) => (
-            <View
-              key={message.id}
-              style={[
-                styles.compactItem,
-                index === dailyMessages.length - 1 && styles.lastCompactItem,
-              ]}
-            >
-              <Text style={styles.itemTime}>{message.time}</Text>
-              <Text style={styles.itemText}>{message.text}</Text>
-            </View>
-          ))}
-        </AppCard>
+        {dailyMessages.length === 0 ? (
+          <AppStateCard state="empty" title="אין הודעות" message="לא נשלחו הודעות להורים היום." />
+        ) : (
+          <AppCard style={styles.contentCard}>
+            {dailyMessages.map((message, index) => (
+              <View
+                key={message.id}
+                style={[
+                  styles.compactItem,
+                  index === dailyMessages.length - 1 && styles.lastCompactItem,
+                ]}
+              >
+                <Text style={styles.itemTime}>{message.time}</Text>
+                <Text style={styles.itemText}>{message.text}</Text>
+              </View>
+            ))}
+          </AppCard>
+        )}
 
         <SectionHeader
           title="הערות מהיום"
@@ -223,68 +237,84 @@ export default function TeacherDailyReportScreen() {
           onPress={() => router.push("/teacher/add-note")}
         />
 
-        <AppCard style={styles.contentCard}>
-          {dailyNotes.map((note, index) => (
-            <View
-              key={note.id}
-              style={[
-                styles.compactItem,
-                index === dailyNotes.length - 1 && styles.lastCompactItem,
-              ]}
-            >
-              <View style={styles.itemHeader}>
-                <Text style={styles.itemTitle}>{note.childName ?? "הערה כללית"}</Text>
-                <TouchableOpacity
-                  hitSlop={8}
-                  onPress={() => router.push(`/teacher/add-note?editId=${note.id}`)}
-                  style={styles.deleteButton}
-                >
-                  <Ionicons name="create-outline" size={18} color={Colors.textSecondary} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  hitSlop={8}
-                  onPress={() => handleDeleteNote(note.id)}
-                  style={styles.deleteButton}
-                >
-                  <Ionicons name="trash-outline" size={18} color={Colors.textSecondary} />
-                </TouchableOpacity>
+        {dailyNotes.length === 0 ? (
+          <AppStateCard state="empty" title="אין הערות" message="עדיין לא נוספו הערות היום." />
+        ) : (
+          <AppCard style={styles.contentCard}>
+            {dailyNotes.map((note, index) => (
+              <View
+                key={note.id}
+                style={[
+                  styles.compactItem,
+                  index === dailyNotes.length - 1 && styles.lastCompactItem,
+                ]}
+              >
+                <View style={styles.itemHeader}>
+                  <Text style={styles.itemTitle}>{note.childName ?? "הערה כללית"}</Text>
+                  <TouchableOpacity
+                    hitSlop={14}
+                    onPress={() => router.push(`/teacher/add-note?editId=${note.id}`)}
+                    style={styles.deleteButton}
+                    accessibilityRole="button"
+                    accessibilityLabel="עריכת הערה"
+                  >
+                    <Ionicons name="create-outline" size={18} color={Colors.textSecondary} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    hitSlop={14}
+                    onPress={() => handleDeleteNote(note.id)}
+                    style={styles.deleteButton}
+                    accessibilityRole="button"
+                    accessibilityLabel="מחיקת הערה"
+                  >
+                    <Ionicons name="trash-outline" size={18} color={Colors.textSecondary} />
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.itemText}>{note.text}</Text>
               </View>
-              <Text style={styles.itemText}>{note.text}</Text>
-            </View>
-          ))}
-        </AppCard>
+            ))}
+          </AppCard>
+        )}
 
         <SectionHeader
           title="מה אכלנו היום"
           actionLabel="הוספת ארוחה"
           onPress={() => router.push("/teacher/add-meal")}
         />
-        {dailyMeals.map((meal) => (
-          <AppCard key={meal.id} style={styles.contentCard}>
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemTime}>{meal.time}</Text>
-              <View style={styles.itemHeaderRight}>
-                <Text style={styles.badge}>{MEAL_LABELS[meal.mealType]}</Text>
-                <TouchableOpacity
-                  hitSlop={8}
-                  onPress={() => router.push(`/teacher/add-meal?editId=${meal.id}`)}
-                  style={styles.deleteButton}
-                >
-                  <Ionicons name="create-outline" size={18} color={Colors.textSecondary} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  hitSlop={8}
-                  onPress={() => handleDeleteMeal(meal.id)}
-                  style={styles.deleteButton}
-                >
-                  <Ionicons name="trash-outline" size={18} color={Colors.textSecondary} />
-                </TouchableOpacity>
+        {dailyMeals.length === 0 ? (
+          <AppStateCard state="empty" title="אין ארוחות" message="עדיין לא תועדו ארוחות היום." />
+        ) : (
+          dailyMeals.map((meal) => (
+            <AppCard key={meal.id} style={styles.contentCard}>
+              <View style={styles.itemHeader}>
+                <Text style={styles.itemTime}>{meal.time}</Text>
+                <View style={styles.itemHeaderRight}>
+                  <Text style={styles.badge}>{MEAL_LABELS[meal.mealType]}</Text>
+                  <TouchableOpacity
+                    hitSlop={14}
+                    onPress={() => router.push(`/teacher/add-meal?editId=${meal.id}`)}
+                    style={styles.deleteButton}
+                    accessibilityRole="button"
+                    accessibilityLabel="עריכת ארוחה"
+                  >
+                    <Ionicons name="create-outline" size={18} color={Colors.textSecondary} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    hitSlop={14}
+                    onPress={() => handleDeleteMeal(meal.id)}
+                    style={styles.deleteButton}
+                    accessibilityRole="button"
+                    accessibilityLabel="מחיקת ארוחה"
+                  >
+                    <Ionicons name="trash-outline" size={18} color={Colors.textSecondary} />
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-            <Text style={styles.itemTitle}>{meal.title}</Text>
-            <Text style={styles.itemText}>{meal.description}</Text>
-          </AppCard>
-        ))}
+              <Text style={styles.itemTitle}>{meal.title}</Text>
+              <Text style={styles.itemText}>{meal.description}</Text>
+            </AppCard>
+          ))
+        )}
           </>
         )}
         </View>
@@ -329,7 +359,12 @@ function SectionHeader({
   return (
     <View style={styles.sectionHeader}>
       <Text style={styles.sectionTitle}>{title}</Text>
-      <TouchableOpacity activeOpacity={0.75} onPress={onPress}>
+      <TouchableOpacity
+        activeOpacity={0.75}
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={actionLabel}
+      >
         <Text style={styles.sectionAction}>{actionLabel}</Text>
       </TouchableOpacity>
     </View>
@@ -351,19 +386,6 @@ const styles = StyleSheet.create({
   titleBlock: {
     alignItems: "center",
     marginTop: Spacing.sm,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: Colors.primary,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 14,
-    color: Colors.primary,
-    fontWeight: "700",
-    marginTop: 2,
-    textAlign: "center",
   },
   body: {
     paddingHorizontal: Spacing.md,

@@ -11,7 +11,7 @@ import { AppScreen } from "../../../src/components/AppScreen";
 import { useDaycareColors } from "../../../src/daycare/DaycareBrandingContext";
 import { getStaffMembers, removeStaffMember, type StaffMember } from "../../../src/services/staff.service";
 import { confirmDelete } from "../../../src/utils/confirm";
-import { BorderRadius, Spacing } from "../../../src/theme/spacing";
+import { Spacing } from "../../../src/theme/spacing";
 import { Colors } from "../../../src/theme/colors";
 
 export default function AdminStaffScreen() {
@@ -61,7 +61,13 @@ export default function AdminStaffScreen() {
                 </Text>
               </View>
               {member.role === "teacher" ? (
-                <TouchableOpacity onPress={() => handleRemove(member)}>
+                <TouchableOpacity
+                  onPress={() => handleRemove(member)}
+                  hitSlop={12}
+                  style={styles.removeButton}
+                  accessibilityRole="button"
+                  accessibilityLabel={`הסרת ${member.fullName} מהצוות`}
+                >
                   <Text style={{ color: colors.error, fontWeight: "700" }}>הסרה</Text>
                 </TouchableOpacity>
               ) : null}
@@ -95,6 +101,7 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.divider,
   },
   rowText: { flex: 1, alignItems: "flex-end" },
+  removeButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: Spacing.xs },
   name: { fontSize: 16, fontWeight: "700" },
   role: { fontSize: 13, marginTop: 2 },
   empty: { textAlign: "right", fontSize: 14 },

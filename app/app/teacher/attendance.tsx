@@ -127,6 +127,14 @@ export default function AttendanceScreen() {
 
           <Text style={styles.sectionTitle}>רשימת ילדים</Text>
 
+          {children.length === 0 ? (
+            <AppStateCard
+              state="empty"
+              title="אין ילדים רשומים"
+              message="ילדים שיתווספו לגן יופיעו כאן."
+            />
+          ) : null}
+
           {children.map((child) => {
             const selectedStatus = attendanceByChildId[child.id];
 
@@ -227,6 +235,9 @@ function StatusChip({
           borderColor: active ? colors.color : Colors.background,
         },
       ]}
+      accessibilityRole="radio"
+      accessibilityLabel={label}
+      accessibilityState={{ selected: active }}
     >
       <Text style={[styles.statusText, { color: active ? colors.color : Colors.textSecondary }]}>
         {label}
@@ -263,19 +274,6 @@ const styles = StyleSheet.create({
   titleBlock: {
     alignItems: "center",
     marginTop: Spacing.sm,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: Colors.primary,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 14,
-    color: Colors.primary,
-    fontWeight: "700",
-    marginTop: 2,
-    textAlign: "center",
   },
   body: {
     paddingHorizontal: Spacing.md,
@@ -354,7 +352,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   statusChip: {
-    minHeight: 38,
+    minHeight: 44,
     minWidth: "45%",
     flexGrow: 1,
     alignItems: "center",

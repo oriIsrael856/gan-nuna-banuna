@@ -93,6 +93,9 @@ export default function ParentAbsenceReportScreen() {
                 styles.optionCard,
                 selectedReport === option ? styles.optionCardActive : undefined,
               ]}
+              accessibilityRole="radio"
+              accessibilityLabel={option}
+              accessibilityState={{ selected: selectedReport === option }}
             >
               <Text
                 style={[

@@ -140,6 +140,9 @@ export default function AddActivityScreen() {
                     activeOpacity={0.85}
                     onPress={() => handleSelectCatalog(item)}
                     style={[styles.catalogTile, selected && styles.catalogTileSelected]}
+                    accessibilityRole="checkbox"
+                    accessibilityLabel={item.title}
+                    accessibilityState={{ checked: selected }}
                   >
                     <View style={styles.catalogImageWrap}>
                       {item.imageUrl ? (
@@ -170,6 +173,9 @@ export default function AddActivityScreen() {
                   activeOpacity={0.8}
                   onPress={() => setCategory(item.id)}
                   style={[styles.chip, selected && styles.chipSelected]}
+                  accessibilityRole="radio"
+                  accessibilityLabel={item.label}
+                  accessibilityState={{ selected }}
                 >
                   <Text style={[styles.chipText, selected && styles.chipTextSelected]}>
                     {item.label}
@@ -284,6 +290,8 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   chip: {
+    minHeight: 44,
+    justifyContent: "center",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs + 2,
     borderRadius: BorderRadius.full,

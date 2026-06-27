@@ -76,7 +76,12 @@ export default function TeacherChildrenScreen() {
               style={styles.searchInput}
             />
 
-            <TouchableOpacity activeOpacity={0.75} style={styles.filterButton}>
+            <TouchableOpacity
+              activeOpacity={0.75}
+              style={styles.filterButton}
+              accessibilityRole="button"
+              accessibilityLabel="סינון רשימת ילדים"
+            >
               <Ionicons name="options-outline" size={22} color={Colors.primary} />
             </TouchableOpacity>
           </View>
@@ -129,6 +134,8 @@ export default function TeacherChildrenScreen() {
                 activeOpacity={0.85}
                 onPress={() => router.push(`/teacher/child/${child.id}`)}
                 onLongPress={() => handleDeleteChild(child.id, child.name)}
+                accessibilityRole="button"
+                accessibilityLabel={`${child.name}, פרטי ילד`}
               >
                 <AppCard style={styles.childCard}>
                 <View style={styles.childMain}>
@@ -207,19 +214,6 @@ const styles = StyleSheet.create({
   titleBlock: {
     alignItems: "center",
     marginTop: Spacing.sm,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: Colors.primary,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 14,
-    color: Colors.primary,
-    fontWeight: "700",
-    marginTop: 2,
-    textAlign: "center",
   },
   body: {
     paddingHorizontal: Spacing.md,
@@ -332,20 +326,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "700",
     color: Colors.primary,
-  },
-  emptyCard: {
-    alignItems: "center",
-    gap: Spacing.xs,
-  },
-  emptyTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: Colors.textPrimary,
-  },
-  emptyText: {
-    fontSize: 13,
-    color: Colors.textSecondary,
-    textAlign: "center",
   },
   addButton: {
     marginTop: Spacing.md,
