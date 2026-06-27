@@ -18,6 +18,10 @@ export const Colors = {
   divider: "#F0F0F0", // light divider / row separator
   surfaceMuted: "#EFE7DD", // warm muted background tint
   scrim: "rgba(0,0,0,0.25)", // dark overlay over media (video badge, etc.)
+  heroOverlay: "rgba(0,0,0,0.3)", // dark gradient over hero banner photos, for title legibility
+  modalOverlay: "rgba(0,0,0,0.4)", // backdrop behind modals/sheets
+  reminderBorder: "rgba(192,120,32,0.2)", // warning-tinted border (reminder/attention cards)
+  reminderIconBackground: "rgba(192,120,32,0.12)", // warning-tinted icon chip background
 
   // Attendance status
   presentBackground: "#E8F5E4",

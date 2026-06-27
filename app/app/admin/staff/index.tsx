@@ -8,6 +8,7 @@ import { AppButton } from "../../../src/components/AppButton";
 import { AppCard } from "../../../src/components/AppCard";
 import { AppHeader } from "../../../src/components/AppHeader";
 import { AppScreen } from "../../../src/components/AppScreen";
+import { AppStateCard } from "../../../src/components/AppStateCard";
 import { useDaycareColors } from "../../../src/daycare/DaycareBrandingContext";
 import { getStaffMembers, removeStaffMember, type StaffMember } from "../../../src/services/staff.service";
 import { confirmDelete } from "../../../src/utils/confirm";
@@ -18,9 +19,16 @@ export default function AdminStaffScreen() {
   const router = useRouter();
   const colors = useDaycareColors();
   const [staff, setStaff] = useState<StaffMember[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const load = useCallback(() => {
-    void getStaffMembers().then(setStaff);
+    setLoading(true);
+    setError(false);
+    getStaffMembers()
+      .then(setStaff)
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
   }, []);
 
   useFocusEffect(
@@ -50,33 +58,45 @@ export default function AdminStaffScreen() {
         <AppHeader onBellPress={() => router.push("/notifications")} onLeadingPress={() => router.back()} />
         <Text style={[styles.title, { color: colors.textPrimary }]}>צוות הגן</Text>
         <AppButton title="הזמנת מורה" onPress={() => router.push("/admin/staff/invite" as Href)} />
-        <AppCard style={styles.list}>
-          {staff.map((member) => (
-            <View key={member.id} style={styles.row}>
-              <View style={styles.rowText}>
-                <Text style={[styles.name, { color: colors.textPrimary }]}>{member.fullName}</Text>
-                <Text style={[styles.role, { color: colors.textSecondary }]}>
-                  {member.role === "admin" ? "מנהל/ת" : "מורה"}
-                  {member.phone ? ` · ${member.phone}` : ""}
-                </Text>
+        {loading ? (
+          <AppStateCard state="loading" title="טוען צוות" message="רגע, טוענים את רשימת הצוות" />
+        ) : error ? (
+          <AppStateCard
+            state="error"
+            title="לא הצלחנו לטעון"
+            message="אירעה שגיאה בטעינת הצוות. נסו שוב."
+            actionLabel="נסו שוב"
+            onActionPress={load}
+          />
+        ) : (
+          <AppCard style={styles.list}>
+            {staff.map((member) => (
+              <View key={member.id} style={styles.row}>
+                <View style={styles.rowText}>
+                  <Text style={[styles.name, { color: colors.textPrimary }]}>{member.fullName}</Text>
+                  <Text style={[styles.role, { color: colors.textSecondary }]}>
+                    {member.role === "admin" ? "מנהל/ת" : "מורה"}
+                    {member.phone ? ` · ${member.phone}` : ""}
+                  </Text>
+                </View>
+                {member.role === "teacher" ? (
+                  <TouchableOpacity
+                    onPress={() => handleRemove(member)}
+                    hitSlop={12}
+                    style={styles.removeButton}
+                    accessibilityRole="button"
+                    accessibilityLabel={`הסרת ${member.fullName} מהצוות`}
+                  >
+                    <Text style={{ color: colors.error, fontWeight: "700" }}>הסרה</Text>
+                  </TouchableOpacity>
+                ) : null}
               </View>
-              {member.role === "teacher" ? (
-                <TouchableOpacity
-                  onPress={() => handleRemove(member)}
-                  hitSlop={12}
-                  style={styles.removeButton}
-                  accessibilityRole="button"
-                  accessibilityLabel={`הסרת ${member.fullName} מהצוות`}
-                >
-                  <Text style={{ color: colors.error, fontWeight: "700" }}>הסרה</Text>
-                </TouchableOpacity>
-              ) : null}
-            </View>
-          ))}
-          {staff.length === 0 ? (
-            <Text style={[styles.empty, { color: colors.textSecondary }]}>אין עדיין מורים נוספים.</Text>
-          ) : null}
-        </AppCard>
+            ))}
+            {staff.length === 0 ? (
+              <Text style={[styles.empty, { color: colors.textSecondary }]}>אין עדיין מורים נוספים.</Text>
+            ) : null}
+          </AppCard>
+        )}
       </AppScreen>
     </View>
   );

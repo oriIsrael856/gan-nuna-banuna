@@ -288,6 +288,8 @@ export default function ParentHomeScreen() {
                     activeOpacity={0.75}
                     onPress={() => router.push("/parent/daily-summary")}
                     style={styles.activityCard}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${activity.title}, צפייה בסיכום היומי`}
                   >
                     <Text style={styles.activityTime}>{activity.time}</Text>
                     <View style={styles.activityThumb}>
@@ -443,7 +445,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 120,
-    backgroundColor: "rgba(0,0,0,0.28)",
+    backgroundColor: Colors.heroOverlay,
   },
   headerOverlay: {
     position: "absolute",

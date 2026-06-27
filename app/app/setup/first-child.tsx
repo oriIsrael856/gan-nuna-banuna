@@ -9,6 +9,7 @@ import { AppTextInput } from "../../src/components/AppTextInput";
 import { SetupStepLayout } from "../../src/components/SetupStepLayout";
 import { useDaycareColors } from "../../src/daycare/DaycareBrandingContext";
 import { addChild } from "../../src/services/children.service";
+import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 import { isBlank, isValidEmail, isValidPhone } from "../../src/utils/validation";
 
@@ -88,7 +89,12 @@ export default function SetupFirstChildScreen() {
     >
       <AppCard>
         <AppTextInput label="שם הילד/ה" value={childName} onChangeText={setChildName} />
-        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateBtn}>
+        <TouchableOpacity
+          onPress={() => setShowDatePicker(true)}
+          style={styles.dateBtn}
+          accessibilityRole="button"
+          accessibilityLabel={birthDate ? `תאריך לידה: ${birthDate}` : "בחירת תאריך לידה"}
+        >
           <Text style={[styles.dateText, { color: colors.textPrimary }]}>
             {birthDate ? `תאריך לידה: ${birthDate}` : "בחירת תאריך לידה (אופציונלי)"}
           </Text>
@@ -115,8 +121,11 @@ export default function SetupFirstChildScreen() {
                 styles.chip,
                 gender === value && { backgroundColor: colors.primary },
               ]}
+              accessibilityRole="radio"
+              accessibilityLabel={value === "male" ? "בן" : "בת"}
+              accessibilityState={{ selected: gender === value }}
             >
-              <Text style={[styles.chipText, gender === value && { color: "#fff" }]}>
+              <Text style={[styles.chipText, gender === value && { color: Colors.white }]}>
                 {value === "male" ? "בן" : "בת"}
               </Text>
             </TouchableOpacity>
@@ -136,6 +145,9 @@ export default function SetupFirstChildScreen() {
                 styles.chip,
                 relationshipType === option && { backgroundColor: colors.secondary },
               ]}
+              accessibilityRole="radio"
+              accessibilityLabel={option}
+              accessibilityState={{ selected: relationshipType === option }}
             >
               <Text style={styles.chipText}>{option}</Text>
             </TouchableOpacity>
@@ -174,10 +186,12 @@ const styles = StyleSheet.create({
     marginVertical: Spacing.sm,
   },
   chip: {
+    minHeight: 44,
+    justifyContent: "center",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.full,
-    backgroundColor: "#EEE",
+    backgroundColor: Colors.divider,
   },
   chipText: {
     fontSize: 14,

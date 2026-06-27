@@ -68,23 +68,11 @@ export default function TeacherChildrenScreen() {
         </BrandedHeroBanner>
 
         <View style={styles.body}>
-          <View style={styles.searchRow}>
-            <AppTextInput
-              value={searchText}
-              onChangeText={setSearchText}
-              placeholder="חיפוש ילד..."
-              style={styles.searchInput}
-            />
-
-            <TouchableOpacity
-              activeOpacity={0.75}
-              style={styles.filterButton}
-              accessibilityRole="button"
-              accessibilityLabel="סינון רשימת ילדים"
-            >
-              <Ionicons name="options-outline" size={22} color={Colors.primary} />
-            </TouchableOpacity>
-          </View>
+          <AppTextInput
+            value={searchText}
+            onChangeText={setSearchText}
+            placeholder="חיפוש ילד..."
+          />
 
           <AppCard style={styles.summaryCard}>
             <SummaryItem label="סה״כ ילדים" value={children.length} />
@@ -218,23 +206,6 @@ const styles = StyleSheet.create({
   body: {
     paddingHorizontal: Spacing.md,
     marginTop: -Spacing.xl,
-  },
-  searchRow: {
-    flexDirection: "row-reverse",
-    gap: Spacing.sm,
-  },
-  searchInput: {
-    flex: 1,
-  },
-  filterButton: {
-    minHeight: 48,
-    width: 48,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-    borderColor: Colors.primary,
-    backgroundColor: Colors.cardBackground,
   },
   summaryCard: {
     flexDirection: "row-reverse",

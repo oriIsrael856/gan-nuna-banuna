@@ -197,11 +197,11 @@ export default function AddChildScreen() {
         <AppCard style={styles.sectionCard}>
           <Text style={styles.sectionTitle}>פרטי הילד</Text>
 
-          <TouchableOpacity activeOpacity={0.75} style={styles.photoPlaceholder}>
+          <View style={styles.photoPlaceholder}>
             <Ionicons name="camera-outline" size={28} color={Colors.primary} />
             <Text style={styles.photoText}>הוספת תמונה</Text>
-            <Text style={styles.photoSubtext}>אופציונלי</Text>
-          </TouchableOpacity>
+            <Text style={styles.photoSubtext}>בקרוב</Text>
+          </View>
 
           <AppTextInput
             label="שם הילד *"
@@ -215,6 +215,8 @@ export default function AddChildScreen() {
             activeOpacity={0.8}
             style={styles.dateButton}
             onPress={() => setShowDatePicker(true)}
+            accessibilityRole="button"
+            accessibilityLabel={birthDate ? `תאריך לידה: ${birthDate}` : "בחירת תאריך לידה"}
           >
             <Text style={styles.dateButtonText}>
               {birthDate || "בחר תאריך לידה"}
@@ -335,6 +337,9 @@ function OptionChip({
       activeOpacity={0.75}
       onPress={onPress}
       style={[styles.optionChip, active ? styles.optionChipActive : undefined]}
+      accessibilityRole="radio"
+      accessibilityLabel={label}
+      accessibilityState={{ selected: active }}
     >
       <Text style={[styles.optionText, active ? styles.optionTextActive : undefined]}>
         {label}
@@ -444,7 +449,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   optionChip: {
-    minHeight: 40,
+    minHeight: 44,
     justifyContent: "center",
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.full,

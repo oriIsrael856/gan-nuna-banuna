@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
     right: 0,
     height: 120,
     // Simulated gradient via opacity layering
-    backgroundColor: "rgba(0,0,0,0.28)",
+    backgroundColor: Colors.heroOverlay,
   },
   headerOverlay: {
     position: "absolute",
@@ -392,11 +392,11 @@ const styles = StyleSheet.create({
   },
   summaryItemBorderBottom: {
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(0,0,0,0.06)",
+    borderBottomColor: Colors.divider,
   },
   summaryItemBorderStart: {
     borderStartWidth: 1,
-    borderStartColor: "rgba(0,0,0,0.06)",
+    borderStartColor: Colors.divider,
   },
   summaryIconWrap: {
     width: 36,
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
   },
   reminderCard: {
     backgroundColor: Colors.sentBackground,
-    borderColor: "rgba(192,120,32,0.2)",
+    borderColor: Colors.reminderBorder,
   },
   reminderRow: {
     flexDirection: "row-reverse",
@@ -437,7 +437,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: BorderRadius.full,
-    backgroundColor: "rgba(192,120,32,0.12)",
+    backgroundColor: Colors.reminderIconBackground,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     alignItems: "flex-end",
     borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.055)",
+    borderColor: Colors.border,
     ...Shadow.subtle,
   },
   actionIcon: {
