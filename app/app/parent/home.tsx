@@ -22,7 +22,6 @@ import {
   TodaySummaryCard,
   type SummaryValues,
 } from "../../src/components/parentHome/TodaySummaryCard";
-import { useHero } from "../../src/daycare/DaycareBrandingContext";
 import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
 import { useNotifications } from "../../src/notifications/NotificationsContext";
@@ -33,6 +32,10 @@ import { getParentHomeStats } from "../../src/services/parentHome.service";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 import { Typography } from "../../src/theme/typography";
+
+// Parent Home always uses the exact approved local Hero artwork (1179 x 1020);
+// no per-daycare remote override is applied on this screen.
+const PARENT_HOME_HERO = require("../../assets/parent/home/hero/hero-background-artwork-mobile.png");
 
 // Hero artwork intrinsic aspect ratio (1179 x 1020) and corner-decor aspect (630 x 182).
 const HERO_ASPECT = 1020 / 1179;
@@ -49,8 +52,6 @@ export default function ParentHomeScreen() {
   const { unreadCount } = useNotifications();
   const parentChildId = getCurrentParentChildId();
   const hasMultipleChildren = (profile?.parentChildIds.length ?? 0) > 1;
-
-  const parentHomeHero = useHero("parentHome");
 
   const { data, loading, error, reload } = useAsyncData(async () => {
     const childIds = profile?.parentChildIds ?? [parentChildId];
@@ -160,7 +161,7 @@ export default function ParentHomeScreen() {
         pointerEvents="box-none"
       >
         <Image
-          source={parentHomeHero}
+          source={PARENT_HOME_HERO}
           style={StyleSheet.absoluteFill}
           contentFit="cover"
           contentPosition="top"
