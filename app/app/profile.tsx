@@ -23,9 +23,9 @@ export default function ProfileScreen() {
   const router = useRouter();
   const user = getCurrentUser();
   const role = getCurrentUserRole();
-  const variant = role === "teacher" ? "teacher" : "parent";
+  const variant = role === "teacher" || role === "admin" ? "teacher" : "parent";
   const handleBottomNavPress = useBottomNavPress(variant);
-  const roleLabel = role === "teacher" ? "צוות הגן" : "הורה";
+  const roleLabel = variant === "teacher" ? "צוות הגן" : "הורה";
 
   const menuItems: { id: string; label: string; icon: IoniconName; route: Href }[] = [
     { id: "messages", label: "ההודעות שלי", icon: "chatbubble-ellipses-outline", route: "/messages" },

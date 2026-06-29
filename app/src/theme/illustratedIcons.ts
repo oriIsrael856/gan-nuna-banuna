@@ -27,6 +27,9 @@ export const IllustratedIcons: Record<string, ImageSource | null> = {
   events: null,
   children: null,
   profile: null,
+  contracts: null,
+  uploadContract: null,
+  absence: null,
 };
 
 export type IllustratedIconName = keyof typeof IllustratedIcons;
@@ -46,4 +49,7 @@ export const IllustratedIconFallback: Record<IllustratedIconName, IoniconName> =
   events: "calendar-number-outline",
   children: "happy-outline",
   profile: "person-outline",
+  contracts: "folder-open-outline",
+  uploadContract: "cloud-upload-outline",
+  absence: "alert-circle-outline",
 };

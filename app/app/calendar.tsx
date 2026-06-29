@@ -51,7 +51,7 @@ const TYPE_OPTIONS: { id: CalendarEventType; label: string }[] = [
 export default function CalendarScreen() {
   const router = useRouter();
   const role = getCurrentUserRole();
-  const isTeacher = role === "teacher";
+  const isTeacher = role === "teacher" || role === "admin";
   const variant = isTeacher ? "teacher" : "parent";
   const handleBottomNavPress = useBottomNavPress(variant);
   const { data, loading, error, reload } = useAsyncData(() => getCalendarEvents(), []);

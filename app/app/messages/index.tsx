@@ -36,7 +36,7 @@ import { BorderRadius, Spacing } from "../../src/theme/spacing";
 export default function MessagesScreen() {
   const router = useRouter();
   const role = getCurrentUserRole();
-  const isTeacher = role === "teacher";
+  const isTeacher = role === "teacher" || role === "admin";
   const variant = isTeacher ? "teacher" : "parent";
   const handleBottomNavPress = useBottomNavPress(variant);
   const { data, loading, error, reload } = useAsyncData(() => getMessageThreads(), []);
