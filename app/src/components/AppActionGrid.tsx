@@ -21,8 +21,58 @@ export interface AppActionItem {
 
 interface AppActionGridProps {
   actions: AppActionItem[];
+  /** Columns per row (default: 3 — e.g. 12 actions → 3×4). */
+  columns?: number;
   /** Horizontal inset from screen edges (default: 2 × Spacing.md) */
   horizontalInset?: number;
+}
+
+function chunkActions<T>(items: T[], columns: number): T[][] {
+  const rows: T[][] = [];
+  for (let i = 0; i < items.length; i += columns) {
+    rows.push(items.slice(i, i + columns));
+  }
+  return rows;
+}
+
+function ActionCard({
+  action,
+  width,
+}: {
+  action: AppActionItem;
+  width: number;
+}) {
+  return (
+    <TouchableOpacity
+      activeOpacity={0.85}
+      onPress={action.onPress}
+      accessibilityRole="button"
+      accessibilityLabel={
+        action.accessibilityLabel ??
+        `${action.title}${action.subtitle ? `. ${action.subtitle}` : ""}`
+      }
+      style={[styles.card, { width }]}
+    >
+      {action.illustration ? (
+        <Image
+          source={action.illustration}
+          style={styles.illustration}
+          contentFit="contain"
+          transition={120}
+        />
+      ) : (
+        <IllustratedIcon name={action.iconName ?? "calendar"} width={78} height={72} />
+      )}
+      <Text style={styles.title} numberOfLines={1}>
+        {action.title}
+      </Text>
+      {action.subtitle ? (
+        <Text style={styles.subtitle} numberOfLines={1}>
+          {action.subtitle}
+        </Text>
+      ) : null}
+    </TouchableOpacity>
+  );
 }
 
 /**
@@ -32,54 +82,34 @@ interface AppActionGridProps {
  * optimized; until then pass `iconName` to render the IllustratedIcon placeholder.
  * See docs/16-design-system.md.
  */
-export function AppActionGrid({ actions, horizontalInset = Spacing.md * 2 }: AppActionGridProps) {
+export function AppActionGrid({
+  actions,
+  columns = 3,
+  horizontalInset = Spacing.md * 2,
+}: AppActionGridProps) {
   const { width } = useWindowDimensions();
   const contentWidth = width - horizontalInset;
   const columnGap = Spacing.sm;
-  const cardWidth = (contentWidth - columnGap * 2) / 3;
+  const cardWidth = Math.floor((contentWidth - columnGap * (columns - 1)) / columns);
+  const rows = chunkActions(actions, columns);
 
   return (
-    <View style={[styles.grid, { columnGap, rowGap: columnGap }]}>
-      {actions.map((action) => (
-        <TouchableOpacity
-          key={action.id}
-          activeOpacity={0.85}
-          onPress={action.onPress}
-          accessibilityRole="button"
-          accessibilityLabel={
-            action.accessibilityLabel ??
-            `${action.title}${action.subtitle ? `. ${action.subtitle}` : ""}`
-          }
-          style={[styles.card, { width: cardWidth }]}
-        >
-          {action.illustration ? (
-            <Image
-              source={action.illustration}
-              style={styles.illustration}
-              contentFit="contain"
-              transition={120}
-            />
-          ) : (
-            <IllustratedIcon name={action.iconName ?? "calendar"} width={78} height={72} />
-          )}
-          <Text style={styles.title} numberOfLines={1}>
-            {action.title}
-          </Text>
-          {action.subtitle ? (
-            <Text style={styles.subtitle} numberOfLines={1}>
-              {action.subtitle}
-            </Text>
-          ) : null}
-        </TouchableOpacity>
+    <View style={[styles.grid, { rowGap: columnGap }]}>
+      {rows.map((row, rowIndex) => (
+        <View key={rowIndex} style={[styles.row, { gap: columnGap }]}>
+          {row.map((action) => (
+            <ActionCard key={action.id} action={action} width={cardWidth} />
+          ))}
+        </View>
       ))}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  grid: {
+  grid: {},
+  row: {
     flexDirection: "row-reverse",
-    flexWrap: "wrap",
   },
   card: {
     height: 116,
