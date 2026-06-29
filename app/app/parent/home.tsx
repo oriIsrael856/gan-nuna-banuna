@@ -163,10 +163,10 @@ export default function ParentHomeScreen() {
         )}
       </ScrollView>
 
-      {/* Fixed Hero Section (artwork → overlay → corner decor → controls) */}
+      {/* Hero artwork + overlay (clipped for bottom radius); decor sits above unclipped */}
       <View
-        style={[styles.hero, { height: heroHeight }]}
-        pointerEvents="box-none"
+        style={[styles.heroBackdrop, { height: heroHeight }]}
+        pointerEvents="none"
       >
         <Image
           source={PARENT_HOME_HERO}
@@ -174,21 +174,31 @@ export default function ParentHomeScreen() {
           contentFit="cover"
           contentPosition="top"
         />
-        <View style={styles.heroOverlay} pointerEvents="none" />
+        <View style={styles.heroOverlay} />
+      </View>
+      <View
+        style={[
+          styles.heroDecor,
+          {
+            height: heroHeight,
+            width,
+          },
+        ]}
+        pointerEvents="none"
+      >
         <View
-          style={[
-            styles.heroDecor,
-            {
-              width: decorWidth,
-              height: decorHeight,
-              left: decorLeft,
-              top: decorTop,
-            },
-          ]}
-          pointerEvents="none"
+          style={{
+            position: "absolute",
+            width: decorWidth,
+            height: decorHeight,
+            left: decorLeft,
+            top: decorTop,
+          }}
         >
           <HeroCornerDecor width={decorWidth} height={decorHeight} />
         </View>
+      </View>
+      <View style={[styles.heroControls, { height: heroHeight }]} pointerEvents="box-none">
         <HomeHeroControls
           topInset={insets.top}
           unreadCount={unreadCount}
@@ -227,7 +237,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     gap: Spacing.md,
   },
-  hero: {
+  heroBackdrop: {
     position: "absolute",
     top: 0,
     left: 0,
@@ -244,6 +254,17 @@ const styles = StyleSheet.create({
   },
   heroDecor: {
     position: "absolute",
+    top: 0,
+    left: 0,
+    overflow: "visible",
+    zIndex: 2,
+  },
+  heroControls: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 3,
   },
   summaryWrap: {
     position: "absolute",

@@ -1,11 +1,16 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import type { ImageSourcePropType } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import type { Href } from "expo-router";
 
+import { Spacing } from "../../theme/spacing";
 import { HomeAssets } from "./homeAssets";
+
+/** Figma: 361px content width, 8px column gutter on 393px frame. */
+const HORIZONTAL_PADDING = Spacing.md;
+const COLUMN_GAP = Spacing.sm;
 
 interface QuickAction {
   id: string;
@@ -74,12 +79,8 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: "row-reverse",
     flexWrap: "wrap",
-    justifyContent: "space-between",
-    rowGap: 12,
   },
   card: {
-    // 3 columns within a 361-wide content area, 8px column gutter → ~115 each.
-    width: "31.6%",
     height: 116,
     backgroundColor: "#FFFFFF",
     borderRadius: 10,

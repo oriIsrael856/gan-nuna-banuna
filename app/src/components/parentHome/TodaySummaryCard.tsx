@@ -1,9 +1,18 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import type { ImageSourcePropType } from "react-native";
 import { Image } from "expo-image";
 
+import { Spacing } from "../../theme/spacing";
 import { HomeAssets } from "./homeAssets";
+
+/** Matches summaryWrap horizontal inset in parent/home.tsx */
+const SUMMARY_MARGIN = Spacing.md;
+const CARD_PADDING = Spacing.md;
+const COLUMN_GAP = Spacing.sm;
+/** Figma mini-card height (node 36:24) */
+const ITEM_H = 99;
+const ILLUSTRATION_ASPECT = 84 / 90;
 
 export interface SummaryValues {
   events: string;
@@ -17,10 +26,6 @@ interface SummaryItem {
   label: string;
   illustration: ImageSourcePropType;
 }
-
-/** Larger than Quick Actions — summary mini-cards have more vertical room. */
-const ILLUSTRATION_W = 90;
-const ILLUSTRATION_H = 84;
 
 /**
  * Figma node 36:24. RTL visual order (right → left): upcoming events,
@@ -50,6 +55,12 @@ interface TodaySummaryCardProps {
 }
 
 export function TodaySummaryCard({ values }: TodaySummaryCardProps) {
+  const { width: screenWidth } = useWindowDimensions();
+  const innerWidth = screenWidth - SUMMARY_MARGIN * 2 - CARD_PADDING * 2;
+  const itemWidth = (innerWidth - COLUMN_GAP * 3) / 4;
+  const illustrationWidth = Math.min(72, Math.round(itemWidth * 0.88));
+  const illustrationHeight = Math.round(illustrationWidth * ILLUSTRATION_ASPECT);
+
   return (
     <View style={styles.card}>
       <View style={styles.header}>
@@ -61,9 +72,9 @@ export function TodaySummaryCard({ values }: TodaySummaryCardProps) {
         </Text>
       </View>
 
-      <View style={styles.grid}>
+      <View style={[styles.grid, { gap: COLUMN_GAP, height: ITEM_H }]}>
         {SUMMARY_ITEMS.map((item) => (
-          <View key={item.key} style={styles.item}>
+          <View key={item.key} style={[styles.item, { width: itemWidth, height: ITEM_H }]}>
             <Text
               style={styles.itemLabel}
               numberOfLines={1}
@@ -72,12 +83,14 @@ export function TodaySummaryCard({ values }: TodaySummaryCardProps) {
             >
               {item.label}
             </Text>
-            <Image
-              source={item.illustration}
-              style={styles.itemIllustration}
-              contentFit="contain"
-              transition={120}
-            />
+            <View style={styles.illustrationWrap}>
+              <Image
+                source={item.illustration}
+                style={{ width: illustrationWidth, height: illustrationHeight }}
+                contentFit="contain"
+                transition={120}
+              />
+            </View>
             <Text style={styles.itemValue} numberOfLines={1}>
               {values[item.key]}
             </Text>
@@ -89,17 +102,14 @@ export function TodaySummaryCard({ values }: TodaySummaryCardProps) {
 }
 
 const DARK_GREEN = "#315A44";
-/** Mini-card height — taller than Figma 99px so 78×72 icons + bottom values fit. */
-const ITEM_H = 118;
 
 const styles = StyleSheet.create({
   card: {
     backgroundColor: "#FFFFFF",
     borderRadius: 20,
     paddingTop: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: CARD_PADDING,
     paddingBottom: 18,
-    // Figma: drop-shadow 0 5 8 rgba(31,58,43,0.08)
     shadowColor: "#1F3A2B",
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.08,
@@ -129,42 +139,34 @@ const styles = StyleSheet.create({
   },
   grid: {
     flexDirection: "row-reverse",
-    gap: 8,
-    height: ITEM_H,
   },
   item: {
-    flex: 1,
-    height: ITEM_H,
     backgroundColor: "#FFFCF8",
     borderWidth: 1,
     borderColor: "#F1E6D7",
     borderRadius: 12,
     overflow: "hidden",
+    alignItems: "center",
+    paddingTop: 7,
+    paddingBottom: 8,
+    paddingHorizontal: 2,
   },
   itemLabel: {
-    position: "absolute",
-    top: 7,
-    left: 0,
-    right: 0,
+    width: "100%",
     fontSize: 9,
     lineHeight: 12,
     fontWeight: "500",
     color: DARK_GREEN,
     textAlign: "center",
   },
-  itemIllustration: {
-    position: "absolute",
-    top: 14,
-    left: "50%",
-    marginLeft: -(ILLUSTRATION_W / 2),
-    width: ILLUSTRATION_W,
-    height: ILLUSTRATION_H,
+  illustrationWrap: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
   },
   itemValue: {
-    position: "absolute",
-    bottom: 8,
-    left: 0,
-    right: 0,
+    width: "100%",
     fontSize: 16,
     lineHeight: 20,
     fontWeight: "700",
