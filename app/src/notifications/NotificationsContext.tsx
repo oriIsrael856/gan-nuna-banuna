@@ -46,7 +46,13 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   }, []);
 
   // Reload whenever the signed-in user changes (login/logout/role switch).
+  // Skip until a real profile is loaded — querying earlier falls back to a
+  // mock user id that isn't a valid UUID and 400s against Supabase.
   useEffect(() => {
+    if (!profile?.id) {
+      setUnreadCount(0);
+      return;
+    }
     const cancel = refresh();
     return cancel;
   }, [refresh, profile?.id]);

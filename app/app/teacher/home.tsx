@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import type { Href } from "expo-router";
@@ -10,6 +10,7 @@ import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
 import { AppStateCard } from "../../src/components/AppStateCard";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
+import { IllustratedIcon } from "../../src/components/IllustratedIcon";
 import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useNotifications } from "../../src/notifications/NotificationsContext";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
@@ -20,101 +21,30 @@ import { getDailyReportSummary } from "../../src/services/dailyReports.service";
 import { useHero } from "../../src/daycare/DaycareBrandingContext";
 import { Colors } from "../../src/theme/colors";
 import { Typography } from "../../src/theme/typography";
-import { BorderRadius, Shadow, Spacing } from "../../src/theme/spacing";
+import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import type { IllustratedIconName } from "../../src/theme/illustratedIcons";
 
-type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
-
-const teacherQuickActions: {
+interface TeacherAction {
   id: string;
+  icon: IllustratedIconName;
   label: string;
-  description: string;
-  icon: IoniconName;
-  route?: Href;
-}[] = [
-  {
-    id: "children",
-    label: "ילדים בגן",
-    description: "צפייה וניהול הרשימה",
-    icon: "people-outline",
-    route: "/teacher/children",
-  },
-  {
-    id: "attendance",
-    label: "נוכחות",
-    description: "סימון נוכחות והיעדרויות",
-    icon: "checkbox-outline",
-    route: "/teacher/attendance",
-  },
-  {
-    id: "daily-report",
-    label: "סיכום יום",
-    description: "מעקב ודוחות יומיים",
-    icon: "document-text-outline",
-    route: "/teacher/daily-report",
-  },
-  {
-    id: "contracts",
-    label: "חוזים",
-    description: "צפייה וניהול חוזים",
-    icon: "folder-open-outline",
-    route: "/teacher/contracts",
-  },
-  {
-    id: "upload-contract",
-    label: "העלאת חוזה",
-    description: "העלאת חוזה חדש",
-    icon: "cloud-upload-outline",
-    route: "/teacher/upload-contract",
-  },
-  {
-    id: "messages",
-    label: "הודעות להורים",
-    description: "שיחות עם ההורים",
-    icon: "chatbubbles-outline",
-    route: "/messages",
-  },
-  {
-    id: "gallery",
-    label: "גלריה",
-    description: "העלאת תמונות מהגן",
-    icon: "images-outline",
-    route: "/teacher/gallery",
-  },
-  {
-    id: "cameras",
-    label: "מצלמות לייב",
-    description: "שידור חי להורים",
-    icon: "videocam-outline",
-    route: "/teacher/cameras" as Href,
-  },
-  {
-    id: "albums",
-    label: "אלבומים",
-    description: "קולאזים לפי נושא",
-    icon: "albums-outline",
-    route: "/teacher/albums" as Href,
-  },
-  {
-    id: "event-suggestions",
-    label: "הצעות לאירועים",
-    description: "רעיונות מיוחדים להורים",
-    icon: "sparkles-outline",
-    route: "/teacher/event-suggestions" as Href,
-  },
-  {
-    id: "contact-messages",
-    label: "פניות מהורים",
-    description: "הודעות מטופס יצירת קשר",
-    icon: "mail-outline",
-    route: "/teacher/contact-messages",
-  },
-  {
-    id: "absence-reports",
-    label: "דיווחי היעדרות",
-    description: "דיווחים מהורים",
-    icon: "alert-circle-outline",
-    route: "/teacher/absence-reports",
-  },
+  subtitle: string;
+  route: Href;
+}
+
+const TEACHER_ACTIONS: TeacherAction[] = [
+  { id: "children", icon: "children", label: "ילדים בגן", subtitle: "צפייה וניהול", route: "/teacher/children" },
+  { id: "attendance", icon: "attendance", label: "נוכחות", subtitle: "סימון נוכחות", route: "/teacher/attendance" },
+  { id: "daily-report", icon: "dailySummary", label: "תיעוד יומי", subtitle: "צילום ודוחות", route: "/teacher/daily-report" },
+  { id: "contracts", icon: "contracts", label: "חוזים", subtitle: "צפייה וניהול", route: "/teacher/contracts" },
+  { id: "upload-contract", icon: "uploadContract", label: "העלאת חוזה", subtitle: "חוזה חדש", route: "/teacher/upload-contract" },
+  { id: "messages", icon: "messages", label: "הודעות להורים", subtitle: "שיחות עם הורים", route: "/messages" },
+  { id: "gallery", icon: "photos", label: "גלריה", subtitle: "תמונות מהגן", route: "/teacher/gallery" },
+  { id: "cameras", icon: "cameras", label: "מצלמות לייב", subtitle: "שידור חי", route: "/teacher/cameras" as Href },
+  { id: "albums", icon: "albums", label: "אלבומים", subtitle: "קולאז'ים לפי נושא", route: "/teacher/albums" as Href },
+  { id: "event-suggestions", icon: "suggestions", label: "הצעות לאירועים", subtitle: "רעיונות להורים", route: "/teacher/event-suggestions" as Href },
+  { id: "contact-messages", icon: "contact", label: "פניות מהורים", subtitle: "טופס יצירת קשר", route: "/teacher/contact-messages" },
+  { id: "absence-reports", icon: "absence", label: "דיווחי היעדרות", subtitle: "דיווחים מהורים", route: "/teacher/absence-reports" },
 ];
 
 export default function TeacherHomeScreen() {
@@ -143,48 +73,39 @@ export default function TeacherHomeScreen() {
   const pendingContractsCount = data?.pendingContractsCount ?? 0;
 
   const formattedDate = new Date().toLocaleDateString("he-IL", {
-    weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
   });
 
-  const summaryItems: { label: string; value: number; text?: string; icon: IoniconName }[] =
+  const summaryItems: { label: string; value: number; text?: string; icon: IllustratedIconName }[] =
     summary
       ? [
           {
             label: "ילדים בגן",
             value: children.length,
             text: `מתוך ${summary.totalChildren}`,
-            icon: "people-outline",
+            icon: "children",
           },
           {
             label: "נוכחים היום",
             value: summary.presentChildren,
-            icon: "checkmark-circle-outline",
+            text: "היום",
+            icon: "attendance",
           },
-          { label: "התראות חדשות", value: unreadCount, text: "שלא נקראו", icon: "mail-outline" },
+          { label: "התראות חדשות", value: unreadCount, text: "שלא נקראו", icon: "messages" },
           {
             label: "חוזים ממתינים",
             value: pendingContractsCount,
             text: "לחתימה",
-            icon: "document-text-outline",
+            icon: "contracts",
           },
         ]
       : [];
 
-  function handleActionPress(route: Href | undefined) {
-    if (route) {
-      router.push(route);
-      return;
-    }
-    Alert.alert("בקרוב", "הפעולה הזו תתווסף בהמשך.");
-  }
-
   return (
     <View style={styles.root}>
       <AppScreen scrollable noPadding contentStyle={styles.screenContent}>
-        {/* Hero */}
         <View style={styles.heroSection}>
           <Image
             source={teacherHomeHero}
@@ -199,7 +120,6 @@ export default function TeacherHomeScreen() {
               onLeadingPress={() => router.push("/settings")}
             />
           </View>
-          {/* Greeting inside hero */}
           <View style={styles.heroGreeting}>
             <Text style={styles.greeting}>בוקר טוב, {ownerName} ☀️</Text>
             <Text style={styles.greetingSubtext}>יום נפלא ב{daycareName}</Text>
@@ -207,7 +127,6 @@ export default function TeacherHomeScreen() {
         </View>
 
         <View style={styles.body}>
-          {/* Summary card */}
           {loading ? (
             <AppStateCard
               state="loading"
@@ -223,74 +142,78 @@ export default function TeacherHomeScreen() {
               onActionPress={reload}
             />
           ) : (
-            <AppCard elevation="elevated">
-              <View style={styles.summaryHeader}>
-                <Text style={styles.summaryTitle}>סיכום היום</Text>
-                <Text style={styles.summaryDate}>{formattedDate}</Text>
-              </View>
-              <View style={styles.summaryGrid}>
-                {summaryItems.map((item, index) => (
-                  <View
-                    key={item.label}
-                    style={[
-                      styles.summaryItem,
-                      index < summaryItems.length - 2 && styles.summaryItemBorderBottom,
-                      index % 2 === 0 && styles.summaryItemBorderStart,
-                    ]}
-                  >
-                    <View style={styles.summaryIconWrap}>
-                      <Ionicons name={item.icon} size={18} color={Colors.primary} />
+            <>
+              <AppCard style={styles.summaryCard}>
+                <View style={styles.summaryHeader}>
+                  <Text style={styles.summaryTitle}>סיכום היום</Text>
+                  <Text style={styles.summaryDate}>{formattedDate}</Text>
+                </View>
+                <View style={styles.statsGrid}>
+                  {summaryItems.map((item) => (
+                    <View key={item.label} style={styles.statItem}>
+                      <Text style={styles.statLabel} numberOfLines={1}>
+                        {item.label}
+                      </Text>
+                      <IllustratedIcon name={item.icon} size={44} style={styles.statIcon} />
+                      <Text style={styles.statValue}>{item.value}</Text>
+                      {item.text ? (
+                        <Text style={styles.statText} numberOfLines={1}>
+                          {item.text}
+                        </Text>
+                      ) : null}
                     </View>
-                    <Text style={styles.summaryValue}>{item.value}</Text>
-                    <Text style={styles.summaryLabel}>{item.label}</Text>
-                    {item.text ? <Text style={styles.summaryText}>{item.text}</Text> : null}
-                  </View>
-                ))}
-              </View>
-            </AppCard>
-          )}
-
-          {/* Pending contracts banner */}
-          {pendingContractsCount > 0 && (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => router.push("/teacher/contracts")}
-            >
-              <AppCard style={styles.reminderCard}>
-                <View style={styles.reminderRow}>
-                  <View style={styles.reminderIconWrap}>
-                    <Ionicons name="alert-circle" size={20} color={Colors.warning} />
-                  </View>
-                  <View style={styles.reminderTextBlock}>
-                    <Text style={styles.reminderTitle}>
-                      {pendingContractsCount} חוזים ממתינים לחתימה
-                    </Text>
-                    <Text style={styles.reminderText}>לחצו לעיון ומעקב אחר ההורים</Text>
-                  </View>
-                  <Ionicons name="chevron-back" size={18} color={Colors.textSecondary} />
+                  ))}
                 </View>
               </AppCard>
-            </TouchableOpacity>
-          )}
 
-          {/* Quick actions */}
-          <Text style={styles.actionsTitle}>פעולות מרכזיות</Text>
-          <View style={styles.actionsGrid}>
-            {teacherQuickActions.map((action) => (
-              <TouchableOpacity
-                key={action.id}
-                activeOpacity={0.7}
-                onPress={() => handleActionPress(action.route)}
-                style={styles.actionItem}
-              >
-                <View style={styles.actionIcon}>
-                  <Ionicons name={action.icon} size={22} color={Colors.primary} />
-                </View>
-                <Text style={styles.actionText}>{action.label}</Text>
-                <Text style={styles.actionDescription}>{action.description}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+              {pendingContractsCount > 0 ? (
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  onPress={() => router.push("/teacher/contracts")}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${pendingContractsCount} חוזים ממתינים לחתימה`}
+                >
+                  <AppCard style={styles.reminderCard}>
+                    <View style={styles.reminderRow}>
+                      <View style={styles.reminderIconWrap}>
+                        <Ionicons name="alert-circle" size={20} color={Colors.warning} />
+                      </View>
+                      <View style={styles.reminderTextBlock}>
+                        <Text style={styles.reminderTitle}>
+                          {pendingContractsCount} חוזים ממתינים לחתימה
+                        </Text>
+                        <Text style={styles.reminderText}>לחצו לעיון ומעקב אחר ההורים</Text>
+                      </View>
+                      <Ionicons name="chevron-back" size={18} color={Colors.textSecondary} />
+                    </View>
+                  </AppCard>
+                </TouchableOpacity>
+              ) : null}
+
+              <View style={styles.actionsGrid}>
+                {TEACHER_ACTIONS.map((action) => (
+                  <TouchableOpacity
+                    key={action.id}
+                    activeOpacity={0.85}
+                    onPress={() => router.push(action.route)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${action.label}, ${action.subtitle}`}
+                    style={styles.actionPressable}
+                  >
+                    <AppCard style={styles.actionCard}>
+                      <IllustratedIcon name={action.icon} size={56} />
+                      <Text style={styles.actionLabel} numberOfLines={1}>
+                        {action.label}
+                      </Text>
+                      <Text style={styles.actionSubtitle} numberOfLines={1}>
+                        {action.subtitle}
+                      </Text>
+                    </AppCard>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </>
+          )}
         </View>
       </AppScreen>
 
@@ -313,7 +236,7 @@ const styles = StyleSheet.create({
   },
   heroSection: {
     width: "100%",
-    height: 340,
+    height: 300,
     position: "relative",
     backgroundColor: Colors.background,
     borderBottomLeftRadius: BorderRadius.xl,
@@ -330,7 +253,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 120,
-    // Simulated gradient via opacity layering
     backgroundColor: Colors.heroOverlay,
   },
   headerOverlay: {
@@ -343,10 +265,10 @@ const styles = StyleSheet.create({
   },
   heroGreeting: {
     position: "absolute",
-    bottom: Spacing.lg,
+    top: Spacing.xxl + Spacing.md,
     left: Spacing.md,
     right: Spacing.md,
-    alignItems: "flex-end",
+    alignItems: "center",
   },
   greeting: {
     ...Typography.titleLarge,
@@ -354,24 +276,29 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(0,0,0,0.3)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 4,
-    textAlign: "right",
+    textAlign: "center",
   },
   greetingSubtext: {
     ...Typography.bodyMedium,
-    color: "rgba(255,255,255,0.85)",
-    textAlign: "right",
+    color: "rgba(255,255,255,0.95)",
+    textAlign: "center",
     marginTop: 2,
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   body: {
     paddingHorizontal: Spacing.md,
-    paddingTop: Spacing.lg,
+    marginTop: -Spacing.xl,
+    gap: Spacing.md,
+  },
+  summaryCard: {
     gap: Spacing.md,
   },
   summaryHeader: {
     flexDirection: "row-reverse",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: Spacing.md,
   },
   summaryTitle: {
     ...Typography.title,
@@ -381,44 +308,33 @@ const styles = StyleSheet.create({
     ...Typography.caption,
     color: Colors.textSecondary,
   },
-  summaryGrid: {
+  statsGrid: {
     flexDirection: "row-reverse",
     flexWrap: "wrap",
+    justifyContent: "space-between",
+    gap: Spacing.sm,
   },
-  summaryItem: {
-    width: "50%",
+  statItem: {
+    flexBasis: "47%",
+    flexGrow: 1,
     alignItems: "center",
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    backgroundColor: Colors.background,
   },
-  summaryItemBorderBottom: {
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
+  statIcon: {
+    marginVertical: 4,
   },
-  summaryItemBorderStart: {
-    borderStartWidth: 1,
-    borderStartColor: Colors.divider,
-  },
-  summaryIconWrap: {
-    width: 36,
-    height: 36,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.secondary,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: Spacing.xs,
-  },
-  summaryValue: {
-    ...Typography.display,
+  statValue: {
+    ...Typography.title,
     color: Colors.primary,
-    lineHeight: 34,
   },
-  summaryLabel: {
-    ...Typography.captionMedium,
+  statLabel: {
+    ...Typography.label,
     color: Colors.textPrimary,
     textAlign: "center",
-    marginTop: 2,
   },
-  summaryText: {
+  statText: {
     ...Typography.label,
     color: Colors.textSecondary,
     textAlign: "center",
@@ -454,46 +370,31 @@ const styles = StyleSheet.create({
     color: Colors.sentText ?? Colors.textSecondary,
     marginTop: 2,
   },
-  actionsTitle: {
-    ...Typography.title,
-    color: Colors.textPrimary,
-    textAlign: "right",
-    marginTop: Spacing.sm,
-  },
   actionsGrid: {
     flexDirection: "row-reverse",
     flexWrap: "wrap",
-    gap: Spacing.sm,
+    justifyContent: "space-between",
+    rowGap: Spacing.md,
   },
-  actionItem: {
-    width: "48%",
-    backgroundColor: Colors.cardBackground,
-    borderRadius: BorderRadius.lg,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.md,
-    alignItems: "flex-end",
-    borderWidth: 1,
-    borderColor: Colors.border,
-    ...Shadow.subtle,
+  actionPressable: {
+    width: "31.5%",
   },
-  actionIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: BorderRadius.full,
+  actionCard: {
+    flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: Colors.secondary,
-    marginBottom: Spacing.sm,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.xs,
+    gap: 4,
   },
-  actionText: {
-    ...Typography.subtitle,
+  actionLabel: {
+    ...Typography.captionMedium,
     color: Colors.textPrimary,
-    textAlign: "right",
+    textAlign: "center",
+    marginTop: 4,
   },
-  actionDescription: {
-    ...Typography.caption,
+  actionSubtitle: {
+    ...Typography.label,
     color: Colors.textSecondary,
-    marginTop: 2,
-    textAlign: "right",
+    textAlign: "center",
   },
 });

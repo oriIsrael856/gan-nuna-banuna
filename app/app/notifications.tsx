@@ -28,7 +28,7 @@ const TYPE_ICONS: Record<string, IoniconName> = {
 export default function NotificationsScreen() {
   const router = useRouter();
   const role = getCurrentUserRole();
-  const variant = role === "teacher" ? "teacher" : "parent";
+  const variant = role === "teacher" || role === "admin" ? "teacher" : "parent";
   const handleBottomNavPress = useBottomNavPress(variant);
   const { markAllRead } = useNotifications();
   const { data, loading, error, reload } = useAsyncData(() => getNotifications(), []);
