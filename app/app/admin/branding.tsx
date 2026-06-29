@@ -10,6 +10,7 @@ import { AppTextInput } from "../../src/components/AppTextInput";
 import { useDaycareBranding, useDaycareColors } from "../../src/daycare/DaycareBrandingContext";
 import { updateDaycareSettings } from "../../src/services/daycareSetup.service";
 import { Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 export default function AdminBrandingScreen() {
   const router = useRouter();
@@ -66,8 +67,7 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { gap: Spacing.lg, paddingBottom: Spacing.xxl },
   title: {
-    fontSize: 24,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     textAlign: "right",
     marginTop: Spacing.sm,
     marginBottom: Spacing.sm,

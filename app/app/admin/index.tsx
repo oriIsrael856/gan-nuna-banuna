@@ -10,6 +10,7 @@ import { AppScreen } from "../../src/components/AppScreen";
 import { useDaycareColors, useDaycareSettings } from "../../src/daycare/DaycareBrandingContext";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
 import { Colors } from "../../src/theme/colors";
+import { Typography } from "../../src/theme/typography";
 
 type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -94,13 +95,12 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { paddingBottom: Spacing.xxl },
   title: {
-    fontSize: 26,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
   subtitle: {
-    fontSize: 14,
+    ...Typography.body,
     textAlign: "right",
     marginBottom: Spacing.lg,
   },
@@ -122,6 +122,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   rowText: { flex: 1, alignItems: "flex-end" },
-  rowLabel: { fontSize: 16, fontWeight: "700" },
-  rowSub: { fontSize: 12, marginTop: 2 },
+  rowLabel: { ...Typography.subtitle, fontWeight: "700" },
+  rowSub: { ...Typography.label, marginTop: 2 },
 });

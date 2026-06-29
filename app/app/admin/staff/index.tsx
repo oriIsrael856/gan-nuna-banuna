@@ -14,6 +14,7 @@ import { getStaffMembers, removeStaffMember, type StaffMember } from "../../../s
 import { confirmDelete } from "../../../src/utils/confirm";
 import { Spacing } from "../../../src/theme/spacing";
 import { Colors } from "../../../src/theme/colors";
+import { Typography } from "../../../src/theme/typography";
 
 export default function AdminStaffScreen() {
   const router = useRouter();
@@ -106,8 +107,7 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { gap: Spacing.lg, paddingBottom: Spacing.xxl },
   title: {
-    fontSize: 24,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   },
   rowText: { flex: 1, alignItems: "flex-end" },
   removeButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: Spacing.xs },
-  name: { fontSize: 16, fontWeight: "700" },
-  role: { fontSize: 13, marginTop: 2 },
-  empty: { textAlign: "right", fontSize: 14 },
+  name: { ...Typography.subtitle, fontWeight: "700" },
+  role: { ...Typography.caption, marginTop: 2 },
+  empty: { ...Typography.body, textAlign: "right" },
 });

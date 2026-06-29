@@ -11,6 +11,7 @@ import { useDaycareColors } from "../../../src/daycare/DaycareBrandingContext";
 import { getCurrentDaycareId } from "../../../src/services/auth.service";
 import { inviteTeacher } from "../../../src/services/staff.service";
 import { Spacing } from "../../../src/theme/spacing";
+import { Typography } from "../../../src/theme/typography";
 import { isBlank, isValidEmail } from "../../../src/utils/validation";
 
 export default function AdminInviteTeacherScreen() {
@@ -79,8 +80,7 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { gap: Spacing.lg, paddingBottom: Spacing.xxl },
   title: {
-    fontSize: 24,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
