@@ -20,6 +20,7 @@ import {
 import { confirmDelete } from "../../src/utils/confirm";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 export default function TeacherEventSuggestionsScreen() {
   const router = useRouter();
@@ -87,7 +88,12 @@ export default function TeacherEventSuggestionsScreen() {
             {(data ?? []).map((item) => (
               <AppCard key={item.id} style={styles.itemCard}>
                 <View style={styles.itemHeader}>
-                  <TouchableOpacity onPress={() => handleDelete(item.id)}>
+                  <TouchableOpacity
+                    onPress={() => handleDelete(item.id)}
+                    style={styles.actionTouch}
+                    accessibilityRole="button"
+                    accessibilityLabel={`מחיקת הצעה ${item.title}`}
+                  >
                     <Text style={styles.deleteLink}>מחיקה</Text>
                   </TouchableOpacity>
                   <View style={styles.itemInfo}>
@@ -117,6 +123,9 @@ export default function TeacherEventSuggestionsScreen() {
                       key={t.id}
                       style={[styles.typeChip, suggestionType === t.id && styles.typeChipActive]}
                       onPress={() => setSuggestionType(t.id)}
+                      accessibilityRole="radio"
+                      accessibilityLabel={t.label}
+                      accessibilityState={{ selected: suggestionType === t.id }}
                     >
                       <Text style={[styles.typeChipText, suggestionType === t.id && styles.typeChipTextActive]}>{t.label}</Text>
                     </TouchableOpacity>
@@ -143,24 +152,25 @@ export default function TeacherEventSuggestionsScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.background },
+  root: { flex: 1, backgroundColor: Colors.pageBackground },
   screenContent: { paddingBottom: Spacing.xxl },
-  title: { fontSize: 26, fontWeight: "800", color: Colors.textPrimary, textAlign: "right", marginTop: Spacing.sm },
-  subtitle: { fontSize: 14, color: Colors.textSecondary, textAlign: "right", marginBottom: Spacing.lg },
+  title: { ...Typography.titleLarge, color: Colors.textPrimary, textAlign: "right", marginTop: Spacing.sm },
+  subtitle: { ...Typography.body, color: Colors.textSecondary, textAlign: "right", marginBottom: Spacing.lg },
   itemCard: { marginBottom: Spacing.sm },
   itemHeader: { flexDirection: "row-reverse", gap: Spacing.md },
   itemInfo: { flex: 1, alignItems: "flex-end" },
-  itemTitle: { fontSize: 16, fontWeight: "800", color: Colors.textPrimary },
-  itemBody: { fontSize: 13, color: Colors.textSecondary, marginTop: 4, textAlign: "right" },
-  rsvpMeta: { fontSize: 12, color: Colors.primary, marginTop: 6, fontWeight: "700" },
-  deleteLink: { color: Colors.error, fontWeight: "700" },
+  itemTitle: { ...Typography.subtitle, fontWeight: "700", color: Colors.textPrimary },
+  itemBody: { ...Typography.caption, color: Colors.textSecondary, marginTop: 4, textAlign: "right" },
+  rsvpMeta: { ...Typography.labelBold, color: Colors.primary, marginTop: 6 },
+  deleteLink: { ...Typography.bodyMedium, fontWeight: "700", color: Colors.error },
+  actionTouch: { minHeight: 44, justifyContent: "center" },
   formCard: { gap: Spacing.sm, marginTop: Spacing.md },
-  fieldLabel: { fontSize: 14, fontWeight: "700", textAlign: "right", color: Colors.textPrimary },
+  fieldLabel: { ...Typography.bodyMedium, fontWeight: "700", textAlign: "right", color: Colors.textPrimary },
   typeRow: { flexDirection: "row-reverse", gap: Spacing.sm },
-  typeChip: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: BorderRadius.full, backgroundColor: Colors.secondary },
+  typeChip: { minHeight: 44, justifyContent: "center", paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: BorderRadius.full, backgroundColor: Colors.secondary },
   typeChipActive: { backgroundColor: Colors.primary },
-  typeChipText: { fontSize: 13, color: Colors.textPrimary },
+  typeChipText: { ...Typography.captionMedium, color: Colors.textPrimary },
   typeChipTextActive: { color: Colors.white, fontWeight: "700" },
   switchRow: { flexDirection: "row-reverse", alignItems: "center", gap: Spacing.md },
-  switchLabel: { flex: 1, fontSize: 14, fontWeight: "700", textAlign: "right", color: Colors.textPrimary },
+  switchLabel: { ...Typography.bodyMedium, flex: 1, fontWeight: "700", textAlign: "right", color: Colors.textPrimary },
 });

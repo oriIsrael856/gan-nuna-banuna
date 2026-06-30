@@ -37,4 +37,19 @@ export const Shadow = {
     shadowRadius: 16,
     elevation: 6,
   },
+  // ── Warm home design system (green-tinted) — see docs/16-design-system.md ──
+  warmTile: {
+    shadowColor: "#1F3A2B",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.07,
+    shadowRadius: 14,
+    elevation: 3,
+  },
+  warmCard: {
+    shadowColor: "#1F3A2B",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
+  },
 } as const;

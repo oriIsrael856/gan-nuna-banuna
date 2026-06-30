@@ -20,6 +20,7 @@ import {
 } from "../../src/services/children.service";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 import { isBlank, isValidEmail, isValidPhone } from "../../src/utils/validation";
 
 type Gender = "male" | "female";
@@ -351,15 +352,14 @@ function OptionChip({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
     gap: Spacing.lg,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.textPrimary,
     textAlign: "right",
   },
@@ -367,14 +367,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
   },
   noticeTitle: {
-    fontSize: 15,
+    ...Typography.bodyMedium,
     fontWeight: "700",
     color: Colors.textPrimary,
     textAlign: "right",
   },
   noticeText: {
-    fontSize: 13,
-    lineHeight: 20,
+    ...Typography.caption,
     color: Colors.textSecondary,
     marginTop: 4,
     textAlign: "right",
@@ -383,8 +382,7 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
   },
@@ -394,7 +392,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   counterText: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
   },
   photoPlaceholder: {
@@ -409,18 +407,18 @@ const styles = StyleSheet.create({
     borderColor: Colors.secondary,
   },
   photoText: {
-    fontSize: 13,
-    color: Colors.textPrimary,
+    ...Typography.captionMedium,
     fontWeight: "700",
+    color: Colors.textPrimary,
     marginTop: 4,
   },
   photoSubtext: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
     marginTop: 2,
   },
   fieldLabel: {
-    fontSize: 14,
+    ...Typography.bodyMedium,
     fontWeight: "600",
     color: Colors.textPrimary,
     textAlign: "right",
@@ -435,7 +433,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.secondary,
   },
   dateButtonText: {
-    fontSize: 15,
+    ...Typography.bodyMedium,
     color: Colors.textPrimary,
     textAlign: "right",
   },
@@ -462,8 +460,9 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
   },
   optionText: {
-    color: Colors.textPrimary,
+    ...Typography.bodyMedium,
     fontWeight: "600",
+    color: Colors.textPrimary,
   },
   optionTextActive: {
     color: Colors.white,

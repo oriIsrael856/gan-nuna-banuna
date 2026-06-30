@@ -13,6 +13,7 @@ import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
 import { getGalleryAlbums, themeLabel } from "../../src/services/albums.service";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 export default function ParentAlbumsScreen() {
   const router = useRouter();
@@ -42,6 +43,8 @@ export default function ParentAlbumsScreen() {
               key={album.id}
               activeOpacity={0.85}
               onPress={() => router.push(`/parent/album/${album.id}` as Href)}
+              accessibilityRole="button"
+              accessibilityLabel={`אלבום ${album.title}`}
             >
               <View style={styles.albumCard}>
                 {album.coverImageUrl ? (
@@ -69,10 +72,10 @@ export default function ParentAlbumsScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.background },
+  root: { flex: 1, backgroundColor: Colors.pageBackground },
   screenContent: { paddingBottom: Spacing.xxl },
-  title: { fontSize: 26, fontWeight: "800", color: Colors.textPrimary, textAlign: "right", marginTop: Spacing.sm },
-  subtitle: { fontSize: 14, color: Colors.textSecondary, textAlign: "right", marginBottom: Spacing.lg },
+  title: { ...Typography.titleLarge, color: Colors.textPrimary, textAlign: "right", marginTop: Spacing.sm },
+  subtitle: { ...Typography.body, color: Colors.textSecondary, textAlign: "right", marginBottom: Spacing.lg },
   albumCard: {
     flexDirection: "row-reverse",
     alignItems: "center",
@@ -85,6 +88,6 @@ const styles = StyleSheet.create({
   cover: { width: 72, height: 72, borderRadius: BorderRadius.md },
   coverPlaceholder: { backgroundColor: Colors.secondary, alignItems: "center", justifyContent: "center" },
   albumInfo: { flex: 1, alignItems: "flex-end" },
-  albumTitle: { fontSize: 17, fontWeight: "800", color: Colors.textPrimary },
-  albumMeta: { fontSize: 12, color: Colors.textSecondary, marginTop: 4 },
+  albumTitle: { ...Typography.subtitle, fontWeight: "700", color: Colors.textPrimary },
+  albumMeta: { ...Typography.label, color: Colors.textSecondary, marginTop: 4 },
 });

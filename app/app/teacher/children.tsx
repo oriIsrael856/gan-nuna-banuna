@@ -21,6 +21,7 @@ import { confirmDelete } from "../../src/utils/confirm";
 import { Colors } from "../../src/theme/colors";
 import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 export default function TeacherChildrenScreen() {
   const router = useRouter();
@@ -190,7 +191,7 @@ function SummaryItem({ label, value }: { label: string; value: number }) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
@@ -217,12 +218,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   summaryValue: {
-    fontSize: 22,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.primary,
   },
   summaryLabel: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
     marginTop: 4,
     textAlign: "center",
@@ -235,13 +235,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
   },
   sectionMeta: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
   },
   childCard: {
@@ -261,8 +260,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
   },
   avatarText: {
-    fontSize: 20,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.primary,
   },
   childInfo: {
@@ -270,13 +268,13 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   childName: {
-    fontSize: 16,
+    ...Typography.subtitle,
     fontWeight: "700",
     color: Colors.textPrimary,
     textAlign: "right",
   },
   childAge: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     marginTop: 2,
     textAlign: "right",
@@ -294,8 +292,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   guardianBadgeText: {
-    fontSize: 11,
-    fontWeight: "700",
+    ...Typography.labelBold,
     color: Colors.primary,
   },
   addButton: {

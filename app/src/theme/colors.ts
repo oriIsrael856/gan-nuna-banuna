@@ -5,6 +5,7 @@ export const Colors = {
   secondary: CLIENT_CONFIG.secondaryColor,
   background: CLIENT_CONFIG.backgroundColor,
   cardBackground: CLIENT_CONFIG.cardBackgroundColor,
+  pageBackground: "#FFF9F3", // warm cream page surface (matches Parent Home)
   textPrimary: CLIENT_CONFIG.textPrimary,
   textSecondary: CLIENT_CONFIG.textSecondary,
   warning: CLIENT_CONFIG.warningColor,
@@ -22,6 +23,18 @@ export const Colors = {
   modalOverlay: "rgba(0,0,0,0.4)", // backdrop behind modals/sheets
   reminderBorder: "rgba(192,120,32,0.2)", // warning-tinted border (reminder/attention cards)
   reminderIconBackground: "rgba(192,120,32,0.12)", // warning-tinted icon chip background
+
+  // ── Warm home design system (Figma "Parent Home" language) ──
+  // The refined palette introduced by the approved Parent Home redesign. Use
+  // these across screens for the illustrated/warm look. See docs/16-design-system.md.
+  brandGreen: "#315A44", // deep green — card titles, icons, active text
+  brandGreenSoft: "#829D73", // softer green — raised home pill / active fills
+  textMutedGreen: "#647166", // muted green-gray — dates, secondary labels on warm cards
+  surfaceWarm: "#FFFCF8", // warm off-white — mini-card / tile surface
+  surfaceNav: "#FFFDFC", // near-white — bottom nav / floating surfaces
+  borderWarm: "#F1E6D7", // warm sand hairline border on warm tiles
+  shadowGreen: "#1F3A2B", // green-tinted shadow color for warm cards/tiles
+  badgeAlert: "#D96B5B", // notification badge / soft alert dot
 
   // Attendance status
   presentBackground: "#E8F5E4",

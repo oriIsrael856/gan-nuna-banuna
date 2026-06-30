@@ -19,6 +19,7 @@ import {
 } from "../../src/services/dailyReports.service";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 const CATEGORIES: { id: string; label: string }[] = [
   { id: "learning", label: "למידה" },
@@ -210,20 +211,19 @@ export default function AddActivityScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
   },
   title: {
-    fontSize: 26,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.textPrimary,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
   subtitle: {
-    fontSize: 14,
+    ...Typography.body,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   fieldLabel: {
-    fontSize: 14,
+    ...Typography.bodyMedium,
     fontWeight: "600",
     color: Colors.textPrimary,
     textAlign: "right",
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
     marginVertical: Spacing.md,
   },
   catalogEmpty: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "right",
   },
@@ -279,8 +279,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   catalogTileText: {
-    fontSize: 11,
-    fontWeight: "700",
+    ...Typography.labelBold,
     color: Colors.textPrimary,
     textAlign: "center",
   },
@@ -304,7 +303,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
   },
   chipText: {
-    fontSize: 13,
+    ...Typography.captionMedium,
     fontWeight: "700",
     color: Colors.textPrimary,
   },

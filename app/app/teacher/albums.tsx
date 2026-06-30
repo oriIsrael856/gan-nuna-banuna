@@ -23,6 +23,7 @@ import { getGalleryPhotos } from "../../src/services/gallery.service";
 import { confirmDelete } from "../../src/utils/confirm";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 export default function TeacherAlbumsScreen() {
   const router = useRouter();
@@ -110,7 +111,12 @@ export default function TeacherAlbumsScreen() {
                     <Text style={styles.albumTitle}>{album.title}</Text>
                     <Text style={styles.albumMeta}>{themeLabel(album.theme)} · {album.photoCount} תמונות</Text>
                   </View>
-                  <TouchableOpacity onPress={() => handleDelete(album.id)}>
+                  <TouchableOpacity
+                    onPress={() => handleDelete(album.id)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`מחיקת אלבום ${album.title}`}
+                    style={styles.iconButton}
+                  >
                     <Ionicons name="trash-outline" size={20} color={Colors.error} />
                   </TouchableOpacity>
                 </View>
@@ -130,6 +136,9 @@ export default function TeacherAlbumsScreen() {
                       key={t.id}
                       style={[styles.themeChip, theme === t.id && styles.themeChipActive]}
                       onPress={() => setTheme(t.id)}
+                      accessibilityRole="radio"
+                      accessibilityLabel={t.label}
+                      accessibilityState={{ selected: theme === t.id }}
                     >
                       <Text style={[styles.themeChipText, theme === t.id && styles.themeChipTextActive]}>{t.label}</Text>
                     </TouchableOpacity>
@@ -141,7 +150,14 @@ export default function TeacherAlbumsScreen() {
                   {photoList.map((photo) => {
                     const selected = selectedPhotoIds.includes(photo.id);
                     return (
-                      <TouchableOpacity key={photo.id} onPress={() => togglePhoto(photo.id)} style={styles.photoTile}>
+                      <TouchableOpacity
+                        key={photo.id}
+                        onPress={() => togglePhoto(photo.id)}
+                        style={styles.photoTile}
+                        accessibilityRole="checkbox"
+                        accessibilityLabel="תמונה לקולאז'"
+                        accessibilityState={{ checked: selected }}
+                      >
                         <Image source={{ uri: photo.imageUrl }} style={styles.photoImage} />
                         {selected ? (
                           <View style={styles.selectedBadge}>
@@ -165,29 +181,32 @@ export default function TeacherAlbumsScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.background },
+  root: { flex: 1, backgroundColor: Colors.pageBackground },
   screenContent: { paddingBottom: Spacing.xxl },
-  title: { fontSize: 26, fontWeight: "800", color: Colors.textPrimary, textAlign: "right", marginTop: Spacing.sm },
-  subtitle: { fontSize: 14, color: Colors.textSecondary, textAlign: "right", marginBottom: Spacing.lg },
+  title: { ...Typography.titleLarge, color: Colors.textPrimary, textAlign: "right", marginTop: Spacing.sm },
+  subtitle: { ...Typography.body, color: Colors.textSecondary, textAlign: "right", marginBottom: Spacing.lg },
   albumCard: { marginBottom: Spacing.sm },
   albumRow: { flexDirection: "row-reverse", alignItems: "center", gap: Spacing.md },
   cover: { width: 56, height: 56, borderRadius: BorderRadius.md },
   coverPlaceholder: { backgroundColor: Colors.secondary, alignItems: "center", justifyContent: "center" },
   albumInfo: { flex: 1, alignItems: "flex-end" },
-  albumTitle: { fontSize: 16, fontWeight: "800", color: Colors.textPrimary },
-  albumMeta: { fontSize: 12, color: Colors.textSecondary, marginTop: 2 },
+  albumTitle: { ...Typography.subtitle, fontWeight: "700", color: Colors.textPrimary },
+  albumMeta: { ...Typography.label, color: Colors.textSecondary, marginTop: 2 },
+  iconButton: { minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" },
   formCard: { gap: Spacing.sm, marginTop: Spacing.md },
-  formTitle: { fontSize: 18, fontWeight: "800", textAlign: "right" },
-  fieldLabel: { fontSize: 14, fontWeight: "700", color: Colors.textPrimary, textAlign: "right" },
+  formTitle: { ...Typography.title, color: Colors.textPrimary, textAlign: "right" },
+  fieldLabel: { ...Typography.bodyMedium, fontWeight: "700", color: Colors.textPrimary, textAlign: "right" },
   themeRow: { flexDirection: "row-reverse", gap: Spacing.sm, paddingVertical: Spacing.xs },
   themeChip: {
+    minHeight: 44,
+    justifyContent: "center",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.full,
     backgroundColor: Colors.secondary,
   },
   themeChipActive: { backgroundColor: Colors.primary },
-  themeChipText: { fontSize: 13, color: Colors.textPrimary },
+  themeChipText: { ...Typography.captionMedium, color: Colors.textPrimary },
   themeChipTextActive: { color: Colors.white, fontWeight: "700" },
   photoGrid: { flexDirection: "row-reverse", flexWrap: "wrap", gap: Spacing.sm },
   photoTile: { width: "30%", aspectRatio: 1, borderRadius: BorderRadius.sm, overflow: "hidden" },

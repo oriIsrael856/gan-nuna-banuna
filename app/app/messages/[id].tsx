@@ -28,6 +28,7 @@ import {
 import type { ChatMessage } from "../../src/data/mockMessages";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Shadow, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 export default function ConversationScreen() {
   const router = useRouter();
@@ -204,7 +205,13 @@ export default function ConversationScreen() {
 
         {canSend ? (
           <View style={styles.inputBar}>
-            <TouchableOpacity activeOpacity={0.8} onPress={handleSend} style={styles.sendButton}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={handleSend}
+              style={styles.sendButton}
+              accessibilityRole="button"
+              accessibilityLabel="שליחה"
+            >
               <Ionicons name="send" size={18} color={Colors.white} />
             </TouchableOpacity>
             <TextInput
@@ -231,7 +238,7 @@ export default function ConversationScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   flex: {
     flex: 1,
@@ -242,14 +249,14 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.sm,
   },
   headerName: {
-    fontSize: 20,
+    ...Typography.title,
     fontWeight: "800",
     color: Colors.textPrimary,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
   headerSubtitle: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "right",
   },
@@ -285,10 +292,9 @@ const styles = StyleSheet.create({
     ...Shadow.card,
   },
   bubbleText: {
-    fontSize: 15,
+    ...Typography.body,
     color: Colors.textPrimary,
     textAlign: "right",
-    lineHeight: 21,
   },
   bubbleTextMine: {
     color: Colors.white,
@@ -310,9 +316,10 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     backgroundColor: Colors.cardBackground,
     borderTopWidth: 1,
-    borderTopColor: Colors.background,
+    borderTopColor: Colors.divider,
   },
   input: {
+    ...Typography.body,
     flex: 1,
     maxHeight: 120,
     minHeight: 44,
@@ -321,7 +328,6 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === "ios" ? 12 : 8,
     borderRadius: BorderRadius.lg,
     backgroundColor: Colors.background,
-    fontSize: 15,
     color: Colors.textPrimary,
   },
   sendButton: {
@@ -341,10 +347,10 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     backgroundColor: Colors.secondary,
     borderTopWidth: 1,
-    borderTopColor: Colors.background,
+    borderTopColor: Colors.divider,
   },
   readOnlyText: {
-    fontSize: 14,
+    ...Typography.body,
     fontWeight: "700",
     color: Colors.primary,
     textAlign: "right",

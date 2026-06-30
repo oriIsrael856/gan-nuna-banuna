@@ -28,6 +28,7 @@ import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
 import { Colors } from "../../src/theme/colors";
 import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -278,7 +279,7 @@ export default function DailySummaryScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
@@ -308,18 +309,17 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   statValue: {
-    fontSize: 22,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.primary,
   },
   statLabel: {
-    fontSize: 13,
+    ...Typography.captionMedium,
     fontWeight: "700",
     color: Colors.textPrimary,
     textAlign: "center",
   },
   statText: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
     textAlign: "center",
     marginTop: 2,
@@ -341,8 +341,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
   },
@@ -357,7 +356,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   activityTime: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
     textAlign: "right",
   },
@@ -375,13 +374,13 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   activityTitle: {
-    fontSize: 14,
-    fontWeight: "800",
+    ...Typography.bodyMedium,
+    fontWeight: "700",
     color: Colors.textPrimary,
     textAlign: "right",
   },
   activityText: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
@@ -396,8 +395,8 @@ const styles = StyleSheet.create({
   },
   columnTitle: {
     flex: 1,
-    fontSize: 15,
-    fontWeight: "800",
+    ...Typography.subtitle,
+    fontWeight: "700",
     color: Colors.textPrimary,
     textAlign: "right",
   },
@@ -407,21 +406,21 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   noteBullet: {
+    ...Typography.body,
+    fontWeight: "700",
     color: Colors.primary,
-    fontSize: 14,
-    fontWeight: "800",
   },
   noteText: {
     flex: 1,
-    fontSize: 12,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "right",
-    lineHeight: 18,
   },
   columnButton: {
     flexDirection: "row-reverse",
     alignItems: "center",
     justifyContent: "center",
+    minHeight: 44,
     gap: 4,
     borderWidth: 1,
     borderColor: Colors.primary,
@@ -430,12 +429,12 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xs,
   },
   columnButtonText: {
+    ...Typography.label,
+    fontWeight: "700",
     color: Colors.primary,
-    fontSize: 12,
-    fontWeight: "800",
   },
   emptySectionText: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
     textAlign: "right",
   },
@@ -444,14 +443,13 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   messageTime: {
-    fontSize: 11,
+    ...Typography.label,
     color: Colors.textSecondary,
   },
   messageText: {
-    fontSize: 12,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "right",
-    lineHeight: 18,
     marginTop: 2,
   },
   mealsRow: {
@@ -463,13 +461,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   mealTitle: {
-    fontSize: 13,
-    fontWeight: "800",
+    ...Typography.captionMedium,
+    fontWeight: "700",
     color: Colors.textPrimary,
     textAlign: "center",
   },
   mealTime: {
-    fontSize: 11,
+    ...Typography.label,
     color: Colors.textSecondary,
     marginTop: 2,
   },
@@ -483,9 +481,8 @@ const styles = StyleSheet.create({
     marginVertical: Spacing.xs,
   },
   mealText: {
-    fontSize: 11,
+    ...Typography.label,
     color: Colors.textSecondary,
     textAlign: "center",
-    lineHeight: 16,
   },
 });

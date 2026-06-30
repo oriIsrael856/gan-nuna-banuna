@@ -22,6 +22,7 @@ import { getContractSignedUrl } from "../../src/services/storage.service";
 import { Colors } from "../../src/theme/colors";
 import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 export default function ParentContractRenewalScreen() {
   const router = useRouter();
@@ -240,7 +241,7 @@ function formatDate(value: string | undefined) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
@@ -252,19 +253,6 @@ const styles = StyleSheet.create({
   titleBlock: {
     alignItems: "center",
     marginTop: Spacing.sm,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: Colors.primary,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 14,
-    color: Colors.primary,
-    fontWeight: "700",
-    marginTop: 2,
-    textAlign: "center",
   },
   body: {
     paddingHorizontal: Spacing.md,
@@ -285,8 +273,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
   },
   avatarText: {
-    fontSize: 20,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.primary,
   },
   childInfo: {
@@ -294,12 +281,12 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   childName: {
-    fontSize: 17,
-    fontWeight: "800",
+    ...Typography.subtitle,
+    fontWeight: "700",
     color: Colors.textPrimary,
   },
   childSubtext: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     marginTop: 2,
   },
@@ -312,18 +299,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   sectionLabel: {
-    fontSize: 14,
-    color: Colors.textSecondary,
+    ...Typography.captionMedium,
     fontWeight: "700",
+    color: Colors.textSecondary,
   },
   contractTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
   },
   contractText: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "right",
   },
@@ -343,8 +329,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
   },
@@ -354,33 +339,32 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: Spacing.xs,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background,
+    borderBottomColor: Colors.divider,
   },
   detailLabel: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
   },
   detailValue: {
-    fontSize: 13,
-    color: Colors.textPrimary,
+    ...Typography.captionMedium,
     fontWeight: "700",
+    color: Colors.textPrimary,
     textAlign: "left",
     flex: 1,
   },
   fileName: {
-    fontSize: 15,
-    fontWeight: "800",
+    ...Typography.bodyMedium,
+    fontWeight: "700",
     color: Colors.textPrimary,
     textAlign: "right",
   },
   fileSize: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "right",
   },
   cardText: {
-    fontSize: 14,
-    lineHeight: 21,
+    ...Typography.body,
     color: Colors.textSecondary,
     textAlign: "right",
   },

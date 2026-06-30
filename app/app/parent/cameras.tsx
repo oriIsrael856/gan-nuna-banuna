@@ -23,6 +23,7 @@ import {
 } from "../../src/services/cameras.service";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 const privacyUrl = CLIENT_CONFIG.privacyPolicyUrl || PRIVACY_POLICY_URL;
 
@@ -118,7 +119,11 @@ export default function ParentCamerasScreen() {
               • אין להקליט או לשתף את השידור{"\n"}
               • הגן רשאי לכבות שידור בכל עת (שינה / פרטיות)
             </Text>
-            <TouchableOpacity onPress={() => Linking.openURL(privacyUrl).catch(() => {})}>
+            <TouchableOpacity
+              onPress={() => Linking.openURL(privacyUrl).catch(() => {})}
+              accessibilityRole="link"
+              accessibilityLabel="מדיניות פרטיות"
+            >
               <Text style={styles.policyLink}>מדיניות פרטיות ›</Text>
             </TouchableOpacity>
             <View style={styles.consentRow}>
@@ -177,7 +182,13 @@ export default function ParentCamerasScreen() {
           />
         ) : (
           (cameras ?? []).map((camera) => (
-            <TouchableOpacity key={camera.id} activeOpacity={0.85} onPress={() => setSelectedCamera(camera)}>
+            <TouchableOpacity
+              key={camera.id}
+              activeOpacity={0.85}
+              onPress={() => setSelectedCamera(camera)}
+              accessibilityRole="button"
+              accessibilityLabel={`צפייה במצלמה ${camera.name}`}
+            >
               <AppCard style={styles.cameraCard}>
                 <View style={styles.cameraRow}>
                   <Ionicons name="chevron-back" size={18} color={Colors.textSecondary} />
@@ -203,22 +214,22 @@ export default function ParentCamerasScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.background },
+  root: { flex: 1, backgroundColor: Colors.pageBackground },
   screenContent: { paddingBottom: Spacing.xxl },
-  title: { fontSize: 26, fontWeight: "800", color: Colors.textPrimary, textAlign: "right", marginTop: Spacing.sm },
-  subtitle: { fontSize: 14, color: Colors.textSecondary, textAlign: "right", marginBottom: Spacing.lg },
+  title: { ...Typography.titleLarge, color: Colors.textPrimary, textAlign: "right", marginTop: Spacing.sm },
+  subtitle: { ...Typography.body, color: Colors.textSecondary, textAlign: "right", marginBottom: Spacing.lg },
   consentCard: { alignItems: "center", gap: Spacing.md, paddingVertical: Spacing.lg },
   consentIcon: { alignSelf: "center" },
-  consentTitle: { fontSize: 20, fontWeight: "800", color: Colors.textPrimary, textAlign: "center" },
-  consentBody: { fontSize: 14, color: Colors.textSecondary, textAlign: "right", lineHeight: 22, alignSelf: "stretch" },
-  policyLink: { color: Colors.primary, fontWeight: "700", fontSize: 14 },
+  consentTitle: { ...Typography.title, color: Colors.textPrimary, textAlign: "center" },
+  consentBody: { ...Typography.body, color: Colors.textSecondary, textAlign: "right", alignSelf: "stretch" },
+  policyLink: { ...Typography.bodyMedium, fontWeight: "700", color: Colors.primary },
   consentRow: { flexDirection: "row-reverse", alignItems: "center", gap: Spacing.md, alignSelf: "stretch" },
-  consentCheckLabel: { flex: 1, fontSize: 14, fontWeight: "700", color: Colors.textPrimary, textAlign: "right" },
+  consentCheckLabel: { flex: 1, ...Typography.bodyMedium, fontWeight: "700", color: Colors.textPrimary, textAlign: "right" },
   cameraCard: { marginBottom: Spacing.sm },
   cameraRow: { flexDirection: "row-reverse", alignItems: "center", gap: Spacing.md },
   cameraInfo: { flex: 1, alignItems: "flex-end" },
-  cameraName: { fontSize: 16, fontWeight: "800", color: Colors.textPrimary },
-  cameraMeta: { fontSize: 12, color: Colors.textSecondary, marginTop: 2 },
+  cameraName: { ...Typography.subtitle, fontWeight: "700", color: Colors.textPrimary },
+  cameraMeta: { ...Typography.label, color: Colors.textSecondary, marginTop: 2 },
   iconCircle: {
     width: 44,
     height: 44,

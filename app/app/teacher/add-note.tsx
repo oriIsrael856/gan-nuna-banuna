@@ -14,6 +14,7 @@ import { getChildren } from "../../src/services/children.service";
 import { addDailyNote, getDailyNotes, updateDailyNote } from "../../src/services/dailyReports.service";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 const NOTE_TYPES: { id: string; label: string }[] = [
   { id: "general", label: "כללי" },
@@ -95,6 +96,9 @@ export default function AddNoteScreen() {
               activeOpacity={0.8}
               onPress={() => setChildId(null)}
               style={[styles.chip, childId === null && styles.chipSelected]}
+              accessibilityRole="radio"
+              accessibilityLabel="כללי"
+              accessibilityState={{ selected: childId === null }}
             >
               <Text style={[styles.chipText, childId === null && styles.chipTextSelected]}>
                 כללי
@@ -108,6 +112,9 @@ export default function AddNoteScreen() {
                   activeOpacity={0.8}
                   onPress={() => setChildId(child.id)}
                   style={[styles.chip, selected && styles.chipSelected]}
+                  accessibilityRole="radio"
+                  accessibilityLabel={child.name}
+                  accessibilityState={{ selected }}
                 >
                   <Text style={[styles.chipText, selected && styles.chipTextSelected]}>
                     {child.name}
@@ -127,6 +134,9 @@ export default function AddNoteScreen() {
                   activeOpacity={0.8}
                   onPress={() => setNoteType(item.id)}
                   style={[styles.chip, selected && styles.chipSelected]}
+                  accessibilityRole="radio"
+                  accessibilityLabel={item.label}
+                  accessibilityState={{ selected }}
                 >
                   <Text style={[styles.chipText, selected && styles.chipTextSelected]}>
                     {item.label}
@@ -161,20 +171,19 @@ export default function AddNoteScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
   },
   title: {
-    fontSize: 26,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.textPrimary,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
   subtitle: {
-    fontSize: 14,
+    ...Typography.body,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
@@ -184,7 +193,7 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   fieldLabel: {
-    fontSize: 14,
+    ...Typography.bodyMedium,
     fontWeight: "600",
     color: Colors.textPrimary,
     textAlign: "right",
@@ -195,6 +204,8 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   chip: {
+    minHeight: 44,
+    justifyContent: "center",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs + 2,
     borderRadius: BorderRadius.full,
@@ -207,7 +218,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
   },
   chipText: {
-    fontSize: 13,
+    ...Typography.captionMedium,
     fontWeight: "700",
     color: Colors.textPrimary,
   },

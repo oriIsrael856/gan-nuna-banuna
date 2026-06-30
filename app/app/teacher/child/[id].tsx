@@ -15,6 +15,7 @@ import { getContractByChildId } from "../../../src/services/contracts.service";
 import { confirmDelete } from "../../../src/utils/confirm";
 import { Colors } from "../../../src/theme/colors";
 import { Spacing } from "../../../src/theme/spacing";
+import { Typography } from "../../../src/theme/typography";
 
 export default function TeacherChildScreen() {
   const router = useRouter();
@@ -109,7 +110,7 @@ export default function TeacherChildScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
@@ -121,9 +122,9 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   empty: {
+    ...Typography.body,
     textAlign: "center",
     color: Colors.textSecondary,
     marginTop: Spacing.xxl,
-    fontSize: 15,
   },
 });

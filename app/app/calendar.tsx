@@ -30,6 +30,7 @@ import {
 import { confirmDelete } from "../src/utils/confirm";
 import { Colors } from "../src/theme/colors";
 import { BorderRadius, Spacing } from "../src/theme/spacing";
+import { Typography } from "../src/theme/typography";
 import { todayIso } from "../src/services/mappers";
 
 type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
@@ -395,20 +396,19 @@ export default function CalendarScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
   },
   title: {
-    fontSize: 26,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.textPrimary,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
   subtitle: {
-    fontSize: 14,
+    ...Typography.body,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
@@ -424,9 +424,9 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
   },
   newButtonText: {
-    color: Colors.white,
-    fontSize: 15,
+    ...Typography.body,
     fontWeight: "800",
+    color: Colors.white,
   },
   monthCard: {
     marginTop: Spacing.lg,
@@ -446,7 +446,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   monthTitle: {
-    fontSize: 18,
+    ...Typography.title,
     fontWeight: "800",
     color: Colors.textPrimary,
     textAlign: "center",
@@ -456,10 +456,9 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xs,
   },
   weekdayLabel: {
+    ...Typography.labelBold,
     flex: 1,
     textAlign: "center",
-    fontSize: 12,
-    fontWeight: "700",
     color: Colors.textSecondary,
   },
   daysGrid: {
@@ -481,7 +480,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
   },
   dayNumber: {
-    fontSize: 15,
+    ...Typography.body,
     fontWeight: "700",
     color: Colors.textPrimary,
   },
@@ -505,7 +504,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.lg,
   },
   dayEventsTitle: {
-    fontSize: 17,
+    ...Typography.title,
     fontWeight: "800",
     color: Colors.textPrimary,
     textAlign: "right",
@@ -535,21 +534,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
   },
   dateDay: {
-    fontSize: 20,
+    ...Typography.title,
     fontWeight: "800",
     color: Colors.primary,
   },
   dateMonth: {
-    fontSize: 11,
+    ...Typography.labelBold,
     color: Colors.primary,
-    fontWeight: "700",
   },
   eventInfo: {
     flex: 1,
     alignItems: "flex-end",
   },
   eventTitle: {
-    fontSize: 16,
+    ...Typography.subtitle,
     fontWeight: "800",
     color: Colors.textPrimary,
     textAlign: "right",
@@ -561,7 +559,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   eventTime: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
   },
   typeChip: {
@@ -574,9 +572,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   typeText: {
-    fontSize: 12,
+    ...Typography.labelBold,
     color: Colors.primary,
-    fontWeight: "700",
   },
   modalBackdrop: {
     flex: 1,
@@ -592,13 +589,13 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   modalTitle: {
-    fontSize: 20,
+    ...Typography.title,
     fontWeight: "800",
     color: Colors.textPrimary,
     textAlign: "right",
   },
   modalLabel: {
-    fontSize: 14,
+    ...Typography.captionMedium,
     fontWeight: "600",
     color: Colors.textPrimary,
     textAlign: "right",
@@ -621,7 +618,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
   },
   typeOptionText: {
-    fontSize: 13,
+    ...Typography.caption,
     fontWeight: "700",
     color: Colors.textPrimary,
   },
@@ -636,7 +633,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
   },
   modalCancelText: {
-    fontSize: 15,
+    ...Typography.body,
     fontWeight: "800",
     color: Colors.textSecondary,
   },

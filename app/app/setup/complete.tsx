@@ -8,6 +8,7 @@ import { SetupStepLayout } from "../../src/components/SetupStepLayout";
 import { useDaycareBranding, useDaycareColors } from "../../src/daycare/DaycareBrandingContext";
 import { completeSetup } from "../../src/services/daycareSetup.service";
 import { Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 const TOTAL_STEPS = 6;
 
@@ -64,15 +65,14 @@ export default function SetupCompleteScreen() {
 
 const styles = StyleSheet.create({
   line: {
-    fontSize: 16,
+    ...Typography.subtitle,
     fontWeight: "700",
     textAlign: "right",
     marginBottom: Spacing.xs,
   },
   hint: {
-    fontSize: 14,
+    ...Typography.body,
     textAlign: "right",
     marginTop: Spacing.md,
-    lineHeight: 20,
   },
 });

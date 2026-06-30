@@ -13,6 +13,7 @@ import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
 import { getUpcomingEvents } from "../../src/services/calendar.service";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -102,20 +103,19 @@ export default function ParentUpcomingEventsScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
   },
   title: {
-    fontSize: 26,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.textPrimary,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
   subtitle: {
-    fontSize: 14,
+    ...Typography.body,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
@@ -138,22 +138,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
   },
   dateDay: {
-    fontSize: 20,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.primary,
   },
   dateMonth: {
-    fontSize: 11,
+    ...Typography.labelBold,
     color: Colors.primary,
-    fontWeight: "700",
   },
   eventInfo: {
     flex: 1,
     alignItems: "flex-end",
   },
   eventTitle: {
-    fontSize: 16,
-    fontWeight: "800",
+    ...Typography.subtitle,
+    fontWeight: "700",
     color: Colors.textPrimary,
     textAlign: "right",
   },
@@ -164,7 +162,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   eventTime: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
   },
   typeChip: {
@@ -177,8 +175,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   typeText: {
-    fontSize: 12,
+    ...Typography.labelBold,
     color: Colors.primary,
-    fontWeight: "700",
   },
 });

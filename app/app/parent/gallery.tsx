@@ -15,6 +15,7 @@ import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
 import { getGalleryPhotos, type GalleryPhoto } from "../../src/services/gallery.service";
 import { Colors } from "../../src/theme/colors";
 import { Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 export default function ParentGalleryScreen() {
   const router = useRouter();
@@ -101,20 +102,19 @@ export default function ParentGalleryScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
   },
   title: {
-    fontSize: 26,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.textPrimary,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
   subtitle: {
-    fontSize: 14,
+    ...Typography.body,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: Spacing.lg,
   },
-  albumLinkText: { fontSize: 14, fontWeight: "700", color: Colors.primary },
+  albumLinkText: { ...Typography.captionMedium, fontWeight: "700", color: Colors.primary },
   grid: {
     flexDirection: "row-reverse",
     flexWrap: "wrap",

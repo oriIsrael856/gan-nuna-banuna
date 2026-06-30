@@ -25,6 +25,7 @@ import {
 } from "../src/services/cameras.service";
 import { Colors } from "../src/theme/colors";
 import { BorderRadius, Spacing } from "../src/theme/spacing";
+import { Typography } from "../src/theme/typography";
 
 type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -186,6 +187,8 @@ export default function SettingsScreen() {
             router.replace("/");
           }}
           style={styles.logoutButton}
+          accessibilityRole="button"
+          accessibilityLabel="התנתקות"
         >
           <Ionicons name="log-out-outline" size={20} color={Colors.error} />
           <Text style={styles.logoutText}>התנתקות</Text>
@@ -264,7 +267,12 @@ function LinkRow({
 
   if (onPress) {
     return (
-      <TouchableOpacity activeOpacity={0.75} onPress={onPress}>
+      <TouchableOpacity
+        activeOpacity={0.75}
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+      >
         {content}
       </TouchableOpacity>
     );
@@ -276,20 +284,19 @@ function LinkRow({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
   },
   title: {
-    fontSize: 26,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.textPrimary,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
   subtitle: {
-    fontSize: 14,
+    ...Typography.body,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
@@ -304,8 +311,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   pilotBadgeText: {
-    fontSize: 12,
-    fontWeight: "700",
+    ...Typography.labelBold,
     color: Colors.primary,
   },
   card: {
@@ -313,8 +319,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
     marginBottom: Spacing.xs,
@@ -323,9 +328,10 @@ const styles = StyleSheet.create({
     flexDirection: "row-reverse",
     alignItems: "center",
     gap: Spacing.md,
+    minHeight: 44,
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background,
+    borderBottomColor: Colors.divider,
   },
   rowLast: {
     borderBottomWidth: 0,
@@ -343,13 +349,13 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   rowLabel: {
-    fontSize: 15,
+    ...Typography.body,
     fontWeight: "700",
     color: Colors.textPrimary,
     textAlign: "right",
   },
   rowSubtitle: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
     marginTop: 2,
   },
@@ -359,7 +365,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   rowValue: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
   },
   logoutButton: {
@@ -374,14 +380,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.cardBackground,
   },
   logoutText: {
-    fontSize: 16,
+    ...Typography.subtitle,
     fontWeight: "800",
     color: Colors.error,
   },
   footerText: {
+    ...Typography.label,
     textAlign: "center",
     color: Colors.textSecondary,
-    fontSize: 12,
     marginTop: Spacing.lg,
   },
 });

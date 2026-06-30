@@ -15,6 +15,7 @@ import { getCurrentUserRole } from "../src/services/auth.service";
 import { getNotifications } from "../src/services/notifications.service";
 import { Colors } from "../src/theme/colors";
 import { BorderRadius, Spacing } from "../src/theme/spacing";
+import { Typography } from "../src/theme/typography";
 
 type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -111,20 +112,19 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
   },
   title: {
-    fontSize: 26,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.textPrimary,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
   subtitle: {
-    fontSize: 14,
+    ...Typography.body,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
@@ -154,20 +154,19 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   notifTitle: {
-    fontSize: 15,
-    fontWeight: "800",
+    ...Typography.subtitle,
+    fontWeight: "700",
     color: Colors.textPrimary,
     textAlign: "right",
   },
   notifText: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
-    lineHeight: 19,
   },
   notifTime: {
-    fontSize: 11,
+    ...Typography.label,
     color: Colors.textSecondary,
     marginTop: 4,
   },

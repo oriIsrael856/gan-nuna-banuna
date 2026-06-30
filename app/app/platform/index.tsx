@@ -8,6 +8,7 @@ import { useAuth } from "../../src/auth/AuthContext";
 import { supabase } from "../../src/lib/supabase";
 import { Colors } from "../../src/theme/colors";
 import { Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 type DaycareRow = {
   id: string;
@@ -83,8 +84,7 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   pageTitle: {
-    fontSize: 24,
-    fontWeight: "700",
+    ...Typography.titleLarge,
     color: Colors.textPrimary,
     textAlign: "right",
     marginBottom: Spacing.sm,
@@ -93,49 +93,44 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   greeting: {
-    fontSize: 20,
-    fontWeight: "700",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
   },
   subtitle: {
-    fontSize: 15,
-    lineHeight: 22,
+    ...Typography.body,
     color: Colors.textSecondary,
     textAlign: "right",
   },
   hint: {
-    fontSize: 14,
-    lineHeight: 20,
+    ...Typography.body,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: Spacing.xs,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
     marginBottom: Spacing.xs,
   },
   emptyText: {
-    fontSize: 15,
+    ...Typography.body,
     color: Colors.textSecondary,
     textAlign: "right",
   },
   daycareRow: {
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background,
+    borderBottomColor: Colors.divider,
   },
   daycareName: {
-    fontSize: 16,
-    fontWeight: "600",
+    ...Typography.subtitle,
     color: Colors.textPrimary,
     textAlign: "right",
   },
   daycareClientId: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,

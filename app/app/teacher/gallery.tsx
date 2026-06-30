@@ -21,6 +21,7 @@ import {
 import { confirmDelete } from "../../src/utils/confirm";
 import { Colors } from "../../src/theme/colors";
 import { Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 
 
@@ -60,7 +61,12 @@ export default function TeacherGalleryScreen() {
         />
         <Text style={styles.title}>גלריית הגן</Text>
         <Text style={styles.subtitle}>צילום תמונות וסרטונים · שיתוף עם ההורים</Text>
-        <TouchableOpacity onPress={() => router.push("/teacher/albums" as Href)} style={styles.albumLink}>
+        <TouchableOpacity
+          onPress={() => router.push("/teacher/albums" as Href)}
+          style={styles.albumLink}
+          accessibilityRole="link"
+          accessibilityLabel="אלבומים וקולאזים לפי נושא"
+        >
           <Text style={styles.albumLinkText}>אלבומים וקולאזים לפי נושא ›</Text>
         </TouchableOpacity>
 
@@ -117,27 +123,26 @@ export default function TeacherGalleryScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
     gap: Spacing.lg,
   },
   title: {
-    fontSize: 26,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.textPrimary,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
   subtitle: {
-    fontSize: 14,
+    ...Typography.body,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
   },
-  albumLink: { alignSelf: "flex-end" },
-  albumLinkText: { fontSize: 14, fontWeight: "700", color: Colors.primary },
+  albumLink: { alignSelf: "flex-end", minHeight: 44, justifyContent: "center" },
+  albumLinkText: { ...Typography.bodyMedium, fontWeight: "700", color: Colors.primary },
   grid: {
     flexDirection: "row-reverse",
     flexWrap: "wrap",

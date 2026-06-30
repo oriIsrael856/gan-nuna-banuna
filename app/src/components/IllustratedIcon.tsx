@@ -14,8 +14,12 @@ import {
 
 interface IllustratedIconProps {
   name: IllustratedIconName;
-  /** Rendered box size in px. Defaults to 56. */
+  /** Square box size in px (used when width/height are omitted). Defaults to 56. */
   size?: number;
+  /** Explicit width — overrides `size`. Use to match exact design dimensions. */
+  width?: number;
+  /** Explicit height — overrides `size`. */
+  height?: number;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -25,14 +29,17 @@ interface IllustratedIconProps {
  * — a soft tile with the matching line icon — so the layout is final and only
  * the art needs swapping in later.
  */
-export function IllustratedIcon({ name, size = 56, style }: IllustratedIconProps) {
+export function IllustratedIcon({ name, size = 56, width, height, style }: IllustratedIconProps) {
   const source = IllustratedIcons[name];
+  const w = width ?? size;
+  const h = height ?? size;
+  const minEdge = Math.min(w, h);
 
   if (source) {
     return (
       <Image
         source={source}
-        style={[{ width: size, height: size }, style as StyleProp<ImageStyle>]}
+        style={[{ width: w, height: h }, style as StyleProp<ImageStyle>]}
         contentFit="contain"
       />
     );
@@ -42,13 +49,13 @@ export function IllustratedIcon({ name, size = 56, style }: IllustratedIconProps
     <View
       style={[
         styles.placeholder,
-        { width: size, height: size, borderRadius: size * 0.28 },
+        { width: w, height: h, borderRadius: minEdge * 0.28 },
         style,
       ]}
     >
       <Ionicons
         name={IllustratedIconFallback[name]}
-        size={size * 0.5}
+        size={minEdge * 0.5}
         color={Colors.primary}
       />
     </View>

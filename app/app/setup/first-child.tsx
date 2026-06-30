@@ -11,6 +11,7 @@ import { useDaycareColors } from "../../src/daycare/DaycareBrandingContext";
 import { addChild } from "../../src/services/children.service";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 import { isBlank, isValidEmail, isValidPhone } from "../../src/utils/validation";
 
 const TOTAL_STEPS = 6;
@@ -176,8 +177,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
   },
   dateText: {
+    ...Typography.bodyMedium,
     textAlign: "right",
-    fontSize: 15,
   },
   chipsRow: {
     flexDirection: "row-reverse",
@@ -194,11 +195,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.divider,
   },
   chipText: {
-    fontSize: 14,
+    ...Typography.bodyMedium,
     fontWeight: "600",
   },
   sectionTitle: {
-    fontSize: 16,
+    ...Typography.subtitle,
     fontWeight: "800",
     textAlign: "right",
     marginBottom: Spacing.xs,

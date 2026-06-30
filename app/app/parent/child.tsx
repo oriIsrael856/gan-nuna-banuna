@@ -14,6 +14,7 @@ import { getChildById } from "../../src/services/children.service";
 import { getContractByChildId } from "../../src/services/contracts.service";
 import { Colors } from "../../src/theme/colors";
 import { Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 export default function ParentChildScreen() {
   const router = useRouter();
@@ -75,15 +76,15 @@ export default function ParentChildScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
   },
   empty: {
+    ...Typography.body,
     textAlign: "center",
     color: Colors.textSecondary,
     marginTop: Spacing.xxl,
-    fontSize: 15,
   },
 });

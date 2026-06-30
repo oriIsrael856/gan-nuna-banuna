@@ -6,6 +6,7 @@ import type { Href } from "expo-router";
 import { AppCard } from "../../src/components/AppCard";
 import { SetupStepLayout } from "../../src/components/SetupStepLayout";
 import { useDaycareColors } from "../../src/daycare/DaycareBrandingContext";
+import { Typography } from "../../src/theme/typography";
 
 const TOTAL_STEPS = 6;
 
@@ -36,8 +37,7 @@ export default function SetupFirstContractScreen() {
 
 const styles = StyleSheet.create({
   text: {
-    fontSize: 15,
-    lineHeight: 22,
+    ...Typography.body,
     textAlign: "right",
   },
 });

@@ -26,6 +26,7 @@ import { confirmDelete } from "../../src/utils/confirm";
 import { Colors } from "../../src/theme/colors";
 import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 const CATEGORY_LABELS: Record<string, string> = {
   learning: "למידה",
@@ -374,7 +375,7 @@ function SectionHeader({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
@@ -401,19 +402,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   summaryValue: {
-    fontSize: 24,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.primary,
   },
   summaryLabel: {
-    fontSize: 13,
-    color: Colors.textPrimary,
+    ...Typography.captionMedium,
     fontWeight: "700",
+    color: Colors.textPrimary,
     marginTop: 2,
     textAlign: "center",
   },
   summaryText: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
     marginTop: 2,
     textAlign: "center",
@@ -426,17 +426,16 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
     marginTop: Spacing.lg,
     marginBottom: Spacing.sm,
   },
   sectionAction: {
-    color: Colors.primary,
-    fontSize: 13,
+    ...Typography.captionMedium,
     fontWeight: "700",
+    color: Colors.primary,
   },
   contentCard: {
     marginBottom: Spacing.sm,
@@ -456,25 +455,25 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   captureTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
   },
   captureHint: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "right",
-    lineHeight: 20,
   },
   galleryLink: {
     alignSelf: "flex-end",
+    minHeight: 44,
+    justifyContent: "center",
     paddingVertical: Spacing.xs,
   },
   galleryLinkText: {
-    color: Colors.primary,
-    fontSize: 13,
+    ...Typography.captionMedium,
     fontWeight: "700",
+    color: Colors.primary,
   },
   itemHeader: {
     flexDirection: "row-reverse",
@@ -491,11 +490,11 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   itemTime: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
   },
   badge: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.primary,
     backgroundColor: Colors.secondary,
     paddingHorizontal: Spacing.sm,
@@ -510,14 +509,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   itemTitle: {
-    fontSize: 15,
+    ...Typography.bodyMedium,
     fontWeight: "700",
     color: Colors.textPrimary,
     textAlign: "right",
   },
   itemText: {
-    fontSize: 13,
-    lineHeight: 20,
+    ...Typography.caption,
     color: Colors.textSecondary,
     marginTop: 4,
     textAlign: "right",
@@ -525,7 +523,7 @@ const styles = StyleSheet.create({
   compactItem: {
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background,
+    borderBottomColor: Colors.divider,
   },
   lastCompactItem: {
     borderBottomWidth: 0,

@@ -24,6 +24,7 @@ import { confirmDelete } from "../../src/utils/confirm";
 import { parseCameraSchedule } from "../../src/utils/cameraSchedule";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 export default function TeacherCamerasScreen() {
   const router = useRouter();
@@ -158,10 +159,20 @@ export default function TeacherCamerasScreen() {
                   <Ionicons name="videocam-outline" size={22} color={Colors.primary} />
                 </View>
                 <View style={styles.actionsRow}>
-                  <TouchableOpacity onPress={() => startEdit(camera)}>
+                  <TouchableOpacity
+                    onPress={() => startEdit(camera)}
+                    style={styles.actionTouch}
+                    accessibilityRole="button"
+                    accessibilityLabel={`עריכת מצלמה ${camera.name}`}
+                  >
                     <Text style={styles.link}>עריכה</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => handleDelete(camera.id)}>
+                  <TouchableOpacity
+                    onPress={() => handleDelete(camera.id)}
+                    style={styles.actionTouch}
+                    accessibilityRole="button"
+                    accessibilityLabel={`מחיקת מצלמה ${camera.name}`}
+                  >
                     <Text style={styles.deleteLink}>מחיקה</Text>
                   </TouchableOpacity>
                 </View>
@@ -206,22 +217,23 @@ export default function TeacherCamerasScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.background },
+  root: { flex: 1, backgroundColor: Colors.pageBackground },
   screenContent: { paddingBottom: Spacing.xxl },
-  title: { fontSize: 26, fontWeight: "800", color: Colors.textPrimary, textAlign: "right", marginTop: Spacing.sm },
-  subtitle: { fontSize: 14, color: Colors.textSecondary, textAlign: "right", marginBottom: Spacing.lg },
+  title: { ...Typography.titleLarge, color: Colors.textPrimary, textAlign: "right", marginTop: Spacing.sm },
+  subtitle: { ...Typography.body, color: Colors.textSecondary, textAlign: "right", marginBottom: Spacing.lg },
   cameraCard: { marginBottom: Spacing.md, gap: Spacing.sm },
   cameraHeader: { flexDirection: "row-reverse", alignItems: "center", gap: Spacing.md },
   cameraInfo: { flex: 1, alignItems: "flex-end" },
-  cameraName: { fontSize: 17, fontWeight: "800", color: Colors.textPrimary },
-  cameraMeta: { fontSize: 12, color: Colors.textSecondary, marginTop: 2 },
+  cameraName: { ...Typography.subtitle, fontWeight: "700", color: Colors.textPrimary },
+  cameraMeta: { ...Typography.label, color: Colors.textSecondary, marginTop: 2 },
   actionsRow: { flexDirection: "row-reverse", gap: Spacing.lg },
-  link: { color: Colors.primary, fontWeight: "700" },
-  deleteLink: { color: Colors.error, fontWeight: "700" },
+  actionTouch: { minHeight: 44, justifyContent: "center" },
+  link: { ...Typography.bodyMedium, fontWeight: "700", color: Colors.primary },
+  deleteLink: { ...Typography.bodyMedium, fontWeight: "700", color: Colors.error },
   formCard: { gap: Spacing.sm, marginBottom: Spacing.lg },
-  formTitle: { fontSize: 18, fontWeight: "800", textAlign: "right", color: Colors.textPrimary },
+  formTitle: { ...Typography.title, color: Colors.textPrimary, textAlign: "right" },
   formActions: { gap: Spacing.sm, marginTop: Spacing.sm },
   noteCard: { marginTop: Spacing.md, backgroundColor: Colors.secondary },
-  noteTitle: { fontSize: 14, fontWeight: "800", textAlign: "right", color: Colors.primary },
-  noteText: { fontSize: 13, color: Colors.textSecondary, textAlign: "right", lineHeight: 20 },
+  noteTitle: { ...Typography.bodyMedium, fontWeight: "800", textAlign: "right", color: Colors.primary },
+  noteText: { ...Typography.caption, color: Colors.textSecondary, textAlign: "right" },
 });

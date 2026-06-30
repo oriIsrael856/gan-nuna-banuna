@@ -24,6 +24,7 @@ import { confirmDelete } from "../../src/utils/confirm";
 import { Colors } from "../../src/theme/colors";
 import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 import type { ContractStatus } from "../../src/types/contract";
 
 export default function TeacherContractsScreen() {
@@ -103,7 +104,12 @@ export default function TeacherContractsScreen() {
               style={styles.searchInput}
             />
 
-            <TouchableOpacity activeOpacity={0.75} style={styles.filterButton}>
+            <TouchableOpacity
+              activeOpacity={0.75}
+              style={styles.filterButton}
+              accessibilityRole="button"
+              accessibilityLabel="סינון חוזים"
+            >
               <Ionicons name="options-outline" size={22} color={Colors.primary} />
             </TouchableOpacity>
           </View>
@@ -138,6 +144,8 @@ export default function TeacherContractsScreen() {
                 key={contract.id}
                 activeOpacity={0.85}
                 onPress={() => router.push(`/teacher/child/${contract.childId}`)}
+                accessibilityRole="button"
+                accessibilityLabel={`חוזה של ${contract.childName}`}
               >
                 <AppCard style={styles.contractCard}>
                 <View style={styles.contractHeader}>
@@ -172,6 +180,8 @@ export default function TeacherContractsScreen() {
                       activeOpacity={0.8}
                       style={styles.actionChip}
                       onPress={() => handleMarkSigned(contract.id)}
+                      accessibilityRole="button"
+                      accessibilityLabel="סמן כנחתם"
                     >
                       <Ionicons name="checkmark-circle-outline" size={16} color={Colors.primary} />
                       <Text style={styles.actionChipText}>סמן כנחתם</Text>
@@ -181,6 +191,8 @@ export default function TeacherContractsScreen() {
                     activeOpacity={0.8}
                     style={styles.actionChip}
                     onPress={() => handleDeleteContract(contract.id)}
+                    accessibilityRole="button"
+                    accessibilityLabel="מחיקת חוזה"
                   >
                     <Ionicons name="trash-outline" size={16} color={Colors.error} />
                     <Text style={[styles.actionChipText, styles.actionChipDanger]}>מחיקה</Text>
@@ -214,7 +226,7 @@ function SummaryCard({ label, value }: { label: string; value: number }) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
@@ -226,19 +238,6 @@ const styles = StyleSheet.create({
   titleBlock: {
     alignItems: "center",
     marginTop: Spacing.sm,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: Colors.primary,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 14,
-    color: Colors.primary,
-    fontWeight: "700",
-    marginTop: 2,
-    textAlign: "center",
   },
   body: {
     paddingHorizontal: Spacing.md,
@@ -254,12 +253,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   summaryValue: {
-    fontSize: 24,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.primary,
   },
   summaryLabel: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
     marginTop: 4,
     textAlign: "center",
@@ -293,13 +291,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
   },
   sectionMeta: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
   },
   emptyCard: {
@@ -307,12 +304,12 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   emptyTitle: {
-    fontSize: 16,
+    ...Typography.subtitle,
     fontWeight: "700",
     color: Colors.textPrimary,
   },
   emptyText: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "center",
   },
@@ -334,22 +331,21 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
   },
   avatarText: {
+    ...Typography.titleLarge,
     color: Colors.primary,
-    fontSize: 20,
-    fontWeight: "800",
   },
   contractInfo: {
     flex: 1,
     alignItems: "flex-end",
   },
   childName: {
-    fontSize: 16,
-    fontWeight: "800",
+    ...Typography.subtitle,
+    fontWeight: "700",
     color: Colors.textPrimary,
     textAlign: "right",
   },
   childAge: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     marginTop: 2,
   },
@@ -361,12 +357,13 @@ const styles = StyleSheet.create({
     flexDirection: "row-reverse",
     gap: Spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: Colors.background,
+    borderTopColor: Colors.divider,
     paddingTop: Spacing.sm,
   },
   actionChip: {
     flexDirection: "row-reverse",
     alignItems: "center",
+    minHeight: 44,
     gap: 4,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 6,
@@ -374,7 +371,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   actionChipText: {
-    fontSize: 13,
+    ...Typography.captionMedium,
     fontWeight: "700",
     color: Colors.primary,
   },
@@ -382,7 +379,7 @@ const styles = StyleSheet.create({
     color: Colors.error,
   },
   metaText: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "right",
   },

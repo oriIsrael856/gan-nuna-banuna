@@ -19,6 +19,7 @@ import { getChildren } from "../../src/services/children.service";
 import { Colors } from "../../src/theme/colors";
 import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 import type { AttendanceStatus } from "../../src/types/child";
 
 const STATUS_OPTIONS: { status: AttendanceStatus; label: string }[] = [
@@ -262,7 +263,7 @@ function getStatusColors(status: AttendanceStatus) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
@@ -288,23 +289,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   summaryValue: {
-    fontSize: 24,
-    fontWeight: "800",
+    ...Typography.titleLarge,
   },
   summaryLabel: {
-    fontSize: 13,
-    color: Colors.textPrimary,
+    ...Typography.captionMedium,
     fontWeight: "700",
+    color: Colors.textPrimary,
     marginTop: 2,
   },
   summarySubtext: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
     marginTop: 2,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
     marginTop: Spacing.lg,
@@ -328,21 +327,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
   },
   avatarText: {
+    ...Typography.titleLarge,
     color: Colors.primary,
-    fontSize: 20,
-    fontWeight: "800",
   },
   childInfo: {
     flex: 1,
     alignItems: "flex-end",
   },
   childName: {
-    fontSize: 16,
+    ...Typography.subtitle,
     fontWeight: "700",
     color: Colors.textPrimary,
   },
   childAge: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     marginTop: 2,
   },
@@ -362,7 +360,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   statusText: {
-    fontSize: 13,
+    ...Typography.captionMedium,
     fontWeight: "700",
   },
   saveButton: {

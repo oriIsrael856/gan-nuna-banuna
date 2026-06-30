@@ -15,6 +15,7 @@ import { getCurrentDaycareName } from "../../src/services/auth.service";
 import { submitContactMessage } from "../../src/services/contact.service";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -132,7 +133,13 @@ function ContactAction({
   onPress: () => void;
 }) {
   return (
-    <TouchableOpacity activeOpacity={0.8} onPress={onPress} style={styles.action}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={onPress}
+      style={styles.action}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+    >
       <View style={styles.actionIcon}>
         <Ionicons name={icon} size={24} color={Colors.primary} />
       </View>
@@ -164,20 +171,19 @@ function DetailRow({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
   },
   title: {
-    fontSize: 26,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.textPrimary,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
   subtitle: {
-    fontSize: 14,
+    ...Typography.body,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
@@ -206,7 +212,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
   },
   actionLabel: {
-    fontSize: 13,
+    ...Typography.captionMedium,
     fontWeight: "700",
     color: Colors.textPrimary,
   },
@@ -220,7 +226,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: Spacing.xs,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background,
+    borderBottomColor: Colors.divider,
   },
   detailLabelBlock: {
     flexDirection: "row-reverse",
@@ -228,13 +234,13 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   detailLabel: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
   },
   detailValue: {
-    fontSize: 14,
-    color: Colors.textPrimary,
+    ...Typography.bodyMedium,
     fontWeight: "700",
+    color: Colors.textPrimary,
     flex: 1,
     textAlign: "left",
   },
@@ -242,8 +248,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   formTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
   },

@@ -7,6 +7,7 @@ import { AppScreen } from "../../src/components/AppScreen";
 import { HeroImageEditor } from "../../src/components/HeroImageEditor";
 import { useDaycareBranding, useDaycareColors } from "../../src/daycare/DaycareBrandingContext";
 import { Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 export default function AdminHeroesScreen() {
   const router = useRouter();
@@ -28,8 +29,7 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { paddingBottom: Spacing.xxl },
   title: {
-    fontSize: 24,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     textAlign: "right",
     marginTop: Spacing.sm,
     marginBottom: Spacing.sm,

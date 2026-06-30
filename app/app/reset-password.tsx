@@ -9,6 +9,7 @@ import { AppScreen } from "../src/components/AppScreen";
 import { AppTextInput } from "../src/components/AppTextInput";
 import { isSupabaseConfigured, supabase } from "../src/lib/supabase";
 import { Colors } from "../src/theme/colors";
+import { Typography } from "../src/theme/typography";
 
 export default function ResetPasswordScreen() {
   const router = useRouter();
@@ -92,13 +93,12 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
   title: {
-    fontSize: 26,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     textAlign: "right",
     marginTop: 8,
   },
   subtitle: {
-    fontSize: 14,
+    ...Typography.body,
     textAlign: "right",
     marginTop: 4,
     marginBottom: 16,
@@ -108,8 +108,8 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   error: {
+    ...Typography.body,
     color: Colors.errorStrong,
     textAlign: "right",
-    fontSize: 14,
   },
 });

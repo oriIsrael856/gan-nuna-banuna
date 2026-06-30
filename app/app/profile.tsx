@@ -16,6 +16,7 @@ import {
 } from "../src/services/auth.service";
 import { Colors } from "../src/theme/colors";
 import { BorderRadius, Spacing } from "../src/theme/spacing";
+import { Typography } from "../src/theme/typography";
 
 type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -65,6 +66,8 @@ export default function ProfileScreen() {
               key={item.id}
               activeOpacity={0.75}
               onPress={() => router.push(item.route)}
+              accessibilityRole="button"
+              accessibilityLabel={item.label}
               style={[styles.menuItem, index === menuItems.length - 1 && styles.menuItemLast]}
             >
               <Ionicons name="chevron-back" size={18} color={Colors.textSecondary} />
@@ -109,7 +112,7 @@ function DetailRow({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
@@ -133,8 +136,7 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
   name: {
-    fontSize: 22,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.textPrimary,
     marginTop: Spacing.sm,
   },
@@ -146,7 +148,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
   },
   roleText: {
-    fontSize: 13,
+    ...Typography.caption,
     fontWeight: "700",
     color: Colors.primary,
   },
@@ -154,8 +156,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
     marginBottom: Spacing.xs,
@@ -166,7 +167,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: Spacing.xs,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background,
+    borderBottomColor: Colors.divider,
   },
   detailLabelBlock: {
     flexDirection: "row-reverse",
@@ -174,13 +175,13 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   detailLabel: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
   },
   detailValue: {
-    fontSize: 14,
-    color: Colors.textPrimary,
+    ...Typography.body,
     fontWeight: "700",
+    color: Colors.textPrimary,
     flex: 1,
     textAlign: "left",
   },
@@ -191,9 +192,10 @@ const styles = StyleSheet.create({
     flexDirection: "row-reverse",
     alignItems: "center",
     gap: Spacing.md,
+    minHeight: 44,
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background,
+    borderBottomColor: Colors.divider,
   },
   menuItemLast: {
     borderBottomWidth: 0,
@@ -207,9 +209,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
   },
   menuLabel: {
-    flex: 1,
-    fontSize: 15,
+    ...Typography.body,
     fontWeight: "700",
+    flex: 1,
     color: Colors.textPrimary,
     textAlign: "right",
   },

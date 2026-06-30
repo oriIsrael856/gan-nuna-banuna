@@ -32,6 +32,7 @@ import type { MessageThread } from "../../src/data/mockMessages";
 import { confirmDelete } from "../../src/utils/confirm";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 export default function MessagesScreen() {
   const router = useRouter();
@@ -116,6 +117,8 @@ export default function MessagesScreen() {
             activeOpacity={0.85}
             style={styles.newButton}
             onPress={() => setComposerOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel="הודעה חדשה"
           >
             <Ionicons name="create-outline" size={18} color={Colors.white} />
             <Text style={styles.newButtonText}>הודעה חדשה</Text>
@@ -126,6 +129,8 @@ export default function MessagesScreen() {
             style={styles.newButton}
             disabled={creating}
             onPress={openParentStaffChat}
+            accessibilityRole="button"
+            accessibilityLabel="שליחת הודעה לצוות הגן"
           >
             <Ionicons name="chatbubble-ellipses-outline" size={18} color={Colors.white} />
             <Text style={styles.newButtonText}>
@@ -218,6 +223,8 @@ export default function MessagesScreen() {
               style={styles.modalOption}
               disabled={creating}
               onPress={() => startThread("broadcast")}
+              accessibilityRole="button"
+              accessibilityLabel="הודעה לכל ההורים"
             >
               <Ionicons name="megaphone-outline" size={20} color={Colors.primary} />
               <View style={styles.modalOptionInfo}>
@@ -240,6 +247,8 @@ export default function MessagesScreen() {
                     style={styles.modalOption}
                     disabled={creating}
                     onPress={() => startThread("direct", parent)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`הודעה פרטית ל${parent.name}`}
                   >
                     <View style={styles.parentAvatar}>
                       <Text style={styles.parentAvatarText}>{parent.name.slice(0, 1)}</Text>
@@ -257,6 +266,8 @@ export default function MessagesScreen() {
               activeOpacity={0.85}
               style={styles.modalCancel}
               onPress={() => setComposerOpen(false)}
+              accessibilityRole="button"
+              accessibilityLabel="ביטול"
             >
               <Text style={styles.modalCancelText}>ביטול</Text>
             </TouchableOpacity>
@@ -283,7 +294,13 @@ function ThreadRow({
   onLongPress?: () => void;
 }) {
   return (
-    <TouchableOpacity activeOpacity={0.8} onPress={onPress} onLongPress={onLongPress}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={onPress}
+      onLongPress={onLongPress}
+      accessibilityRole="button"
+      accessibilityLabel={`שיחה עם ${thread.name}`}
+    >
       <AppCard style={styles.threadCard}>
         <MessageAvatar initial={thread.avatarInitial} variant={thread.kind} showBadge />
 
@@ -315,20 +332,19 @@ function ThreadRow({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
   },
   title: {
-    fontSize: 26,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.textPrimary,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
   subtitle: {
-    fontSize: 14,
+    ...Typography.body,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
@@ -338,22 +354,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
+    minHeight: 44,
     backgroundColor: Colors.primary,
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.sm,
     marginTop: Spacing.md,
   },
   newButtonText: {
-    color: Colors.white,
-    fontSize: 15,
+    ...Typography.body,
     fontWeight: "800",
+    color: Colors.white,
   },
   list: {
     gap: Spacing.sm,
     marginTop: Spacing.lg,
   },
   listSectionTitle: {
-    fontSize: 14,
+    ...Typography.captionMedium,
     fontWeight: "800",
     color: Colors.textSecondary,
     textAlign: "right",
@@ -370,20 +387,19 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   threadName: {
-    fontSize: 16,
+    ...Typography.subtitle,
     fontWeight: "800",
     color: Colors.textPrimary,
     textAlign: "right",
   },
   threadSubtitle: {
-    fontSize: 12,
+    ...Typography.labelBold,
     color: Colors.primary,
-    fontWeight: "700",
     textAlign: "right",
     marginTop: 2,
   },
   threadLast: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
@@ -393,7 +409,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   threadTime: {
-    fontSize: 11,
+    ...Typography.label,
     color: Colors.textSecondary,
   },
   unreadBadge: {
@@ -406,13 +422,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
   },
   unreadText: {
+    ...Typography.labelBold,
     color: Colors.white,
-    fontSize: 11,
-    fontWeight: "800",
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: Colors.modalOverlay,
     justifyContent: "flex-end",
   },
   modalCard: {
@@ -424,19 +439,19 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   modalTitle: {
-    fontSize: 20,
+    ...Typography.title,
     fontWeight: "800",
     color: Colors.textPrimary,
     textAlign: "right",
   },
   modalSubtitle: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "right",
     marginBottom: Spacing.sm,
   },
   modalSectionLabel: {
-    fontSize: 13,
+    ...Typography.caption,
     fontWeight: "800",
     color: Colors.textSecondary,
     textAlign: "right",
@@ -449,6 +464,7 @@ const styles = StyleSheet.create({
     flexDirection: "row-reverse",
     alignItems: "center",
     gap: Spacing.md,
+    minHeight: 44,
     backgroundColor: Colors.background,
     borderRadius: BorderRadius.md,
     padding: Spacing.sm,
@@ -458,13 +474,13 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   modalOptionTitle: {
-    fontSize: 15,
+    ...Typography.body,
     fontWeight: "800",
     color: Colors.textPrimary,
     textAlign: "right",
   },
   modalOptionSubtitle: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
@@ -478,7 +494,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
   },
   parentAvatarText: {
-    fontSize: 18,
+    ...Typography.title,
     fontWeight: "800",
     color: Colors.primary,
   },
@@ -486,18 +502,20 @@ const styles = StyleSheet.create({
     marginVertical: Spacing.md,
   },
   modalEmpty: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "center",
     marginVertical: Spacing.md,
   },
   modalCancel: {
     alignItems: "center",
+    minHeight: 44,
+    justifyContent: "center",
     paddingVertical: Spacing.sm,
     marginTop: Spacing.sm,
   },
   modalCancelText: {
-    fontSize: 15,
+    ...Typography.body,
     fontWeight: "800",
     color: Colors.textSecondary,
   },

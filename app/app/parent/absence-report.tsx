@@ -15,6 +15,7 @@ import { getChildById } from "../../src/services/children.service";
 import { submitAbsenceReport } from "../../src/services/absence.service";
 import { Colors } from "../../src/theme/colors";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 const REPORT_OPTIONS = [
   "הילד לא מגיע היום",
@@ -134,15 +135,14 @@ export default function ParentAbsenceReportScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
     gap: Spacing.lg,
   },
   title: {
-    fontSize: 23,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.textPrimary,
     textAlign: "right",
   },
@@ -150,27 +150,24 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
   },
   childName: {
-    fontSize: 20,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
   },
   dateText: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     marginTop: 3,
     textAlign: "right",
   },
   contextText: {
-    fontSize: 14,
-    lineHeight: 21,
+    ...Typography.body,
     color: Colors.textSecondary,
     marginTop: Spacing.sm,
     textAlign: "right",
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
   },
@@ -191,7 +188,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
   },
   optionText: {
-    fontSize: 15,
+    ...Typography.bodyMedium,
     fontWeight: "700",
     color: Colors.textPrimary,
     textAlign: "right",

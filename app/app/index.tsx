@@ -142,7 +142,13 @@ export default function HomeScreen() {
                   onPress={handleSignIn}
                   disabled={submitting}
                 />
-                <TouchableOpacity onPress={handleForgotPassword} activeOpacity={0.7}>
+                <TouchableOpacity
+                  onPress={handleForgotPassword}
+                  activeOpacity={0.7}
+                  style={styles.forgotButton}
+                  accessibilityRole="button"
+                  accessibilityLabel="שכחתי סיסמה"
+                >
                   <AppText variant="bodyMedium" tone="brand" style={styles.forgotText}>
                     שכחתי סיסמה
                   </AppText>
@@ -269,6 +275,10 @@ const styles = StyleSheet.create({
   actions: {
     gap: Spacing.sm,
     marginTop: Spacing.xs,
+  },
+  forgotButton: {
+    minHeight: 44,
+    justifyContent: "center",
   },
   forgotText: {
     textAlign: "center",

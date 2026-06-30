@@ -19,6 +19,7 @@ import { createContract } from "../../src/services/contracts.service";
 import { Colors } from "../../src/theme/colors";
 import { heroOverlayTextStyles } from "../../src/theme/heroOverlay";
 import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 const CONTRACT_TYPES = ["חוזה הרשמה", "חידוש חוזה", "אישור מיוחד", "נספח לחוזה"];
 const STEPS = ["פרטי חוזה", "בחירת הורה", "תצוגה מקדימה", "שליחה"];
@@ -201,6 +202,9 @@ export default function UploadContractScreen() {
                 activeOpacity={0.75}
                 onPress={() => setContractType(type)}
                 style={[styles.typeChip, contractType === type && styles.typeChipActive]}
+                accessibilityRole="radio"
+                accessibilityLabel={type}
+                accessibilityState={{ selected: contractType === type }}
               >
                 <Text
                   style={[
@@ -240,7 +244,13 @@ export default function UploadContractScreen() {
         <AppCard style={styles.formCard}>
           <Text style={styles.sectionTitle}>קובץ החוזה</Text>
 
-          <TouchableOpacity activeOpacity={0.75} onPress={handleChooseFile} style={styles.uploadBox}>
+          <TouchableOpacity
+            activeOpacity={0.75}
+            onPress={handleChooseFile}
+            style={styles.uploadBox}
+            accessibilityRole="button"
+            accessibilityLabel="בחירת קובץ PDF לחוזה"
+          >
             <Ionicons name="cloud-upload-outline" size={34} color={Colors.primary} />
             <Text style={styles.uploadTitle}>
               {fileName ? fileName : "גרור קובץ לכאן או לחץ לבחירה"}
@@ -274,6 +284,9 @@ export default function UploadContractScreen() {
                   activeOpacity={0.8}
                   onPress={() => setSelectedChildId(child.id)}
                   style={[styles.childRow, selected && styles.childRowActive]}
+                  accessibilityRole="radio"
+                  accessibilityLabel={child.name}
+                  accessibilityState={{ selected }}
                 >
                   <View
                     style={[styles.radio, selected && styles.radioActive]}
@@ -350,7 +363,7 @@ function PreviewRow({ label, value }: { label: string; value: string }) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
@@ -362,19 +375,6 @@ const styles = StyleSheet.create({
   titleBlock: {
     alignItems: "center",
     marginTop: Spacing.sm,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: Colors.primary,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 13,
-    color: Colors.primary,
-    fontWeight: "700",
-    marginTop: 2,
-    textAlign: "center",
   },
   body: {
     paddingHorizontal: Spacing.md,
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     color: Colors.white,
   },
   stepLabel: {
-    fontSize: 11,
+    ...Typography.label,
     color: Colors.textSecondary,
     textAlign: "center",
   },
@@ -421,13 +421,12 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.title,
     color: Colors.textPrimary,
     textAlign: "right",
   },
   fieldLabel: {
-    fontSize: 14,
+    ...Typography.bodyMedium,
     fontWeight: "700",
     color: Colors.textPrimary,
     textAlign: "right",
@@ -448,8 +447,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
   },
   typeChipText: {
-    color: Colors.textPrimary,
+    ...Typography.bodyMedium,
     fontWeight: "700",
+    color: Colors.textPrimary,
   },
   typeChipTextActive: {
     color: Colors.white,
@@ -466,14 +466,14 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
   },
   uploadTitle: {
-    fontSize: 15,
-    color: Colors.textPrimary,
+    ...Typography.bodyMedium,
     fontWeight: "800",
+    color: Colors.textPrimary,
     marginTop: Spacing.xs,
     textAlign: "center",
   },
   uploadText: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
     marginTop: 3,
     textAlign: "center",
@@ -484,11 +484,10 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
   },
   securityText: {
-    color: Colors.presentText,
-    fontSize: 13,
-    lineHeight: 20,
-    textAlign: "right",
+    ...Typography.caption,
     fontWeight: "700",
+    color: Colors.presentText,
+    textAlign: "right",
   },
   errorText: {
     color: Colors.error,
@@ -499,7 +498,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   helperText: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "right",
   },
@@ -535,13 +534,13 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   childRowName: {
-    fontSize: 15,
+    ...Typography.bodyMedium,
     fontWeight: "800",
     color: Colors.textPrimary,
     textAlign: "right",
   },
   childRowMeta: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
@@ -552,14 +551,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: Spacing.xs,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background,
+    borderBottomColor: Colors.divider,
   },
   previewLabel: {
-    fontSize: 13,
+    ...Typography.caption,
     color: Colors.textSecondary,
   },
   previewValue: {
-    fontSize: 14,
+    ...Typography.bodyMedium,
     fontWeight: "700",
     color: Colors.textPrimary,
     flex: 1,

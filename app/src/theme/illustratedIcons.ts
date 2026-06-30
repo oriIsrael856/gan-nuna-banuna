@@ -7,29 +7,31 @@ type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
 /**
  * Registry of warm illustrated ("watercolor") icons used across the app.
  *
- * Each entry maps a stable name to its image asset. While the real artwork is
- * being exported from Figma, leave the source as `null` — `IllustratedIcon`
- * will render a branded placeholder (colored tile + the fallback Ionicon) so
- * layout and navigation work today. To switch to the real art later, drop the
- * file into `assets/icons/` and change `null` to `require("../../assets/icons/<file>")`.
+ * Each name maps to its (optimized) image asset, reusing the approved Parent
+ * Home illustrations wherever the same concept appears on another screen — so a
+ * "calendar"/"messages"/"daily summary" card looks identical everywhere via a
+ * single source of truth. Concepts without dedicated art stay `null` and render
+ * a branded placeholder (colored tile + fallback Ionicon). To add art later,
+ * point the entry at the optimized PNG.
  */
 export const IllustratedIcons: Record<string, ImageSource | null> = {
-  calendar: null,
-  documents: null,
-  dailySummary: null,
-  albums: null,
-  cameras: null,
-  photos: null,
-  contact: null,
-  suggestions: null,
-  messages: null,
-  attendance: null,
-  events: null,
-  children: null,
-  profile: null,
-  contracts: null,
+  calendar: require("../../assets/parent/home/quick-actions/action-calendar.png") as ImageSource,
+  documents: require("../../assets/parent/home/quick-actions/action-forms-and-documents.png") as ImageSource,
+  dailySummary: require("../../assets/parent/home/quick-actions/action-daily-summary.png") as ImageSource,
+  albums: require("../../assets/parent/home/quick-actions/action-albums.png") as ImageSource,
+  cameras: require("../../assets/parent/home/quick-actions/action-live-cameras.png") as ImageSource,
+  photos: require("../../assets/parent/home/quick-actions/action-today-photos.png") as ImageSource,
+  contact: require("../../assets/parent/home/quick-actions/action-contact-kindergarten.png") as ImageSource,
+  suggestions: require("../../assets/parent/home/quick-actions/action-kindergarten-suggestions.png") as ImageSource,
+  messages: require("../../assets/parent/home/quick-actions/action-kindergarten-announcements.png") as ImageSource,
+  attendance: require("../../assets/parent/home/summary/summary-monthly-attendance.png") as ImageSource,
+  events: require("../../assets/parent/home/summary/summary-upcoming-events.png") as ImageSource,
+  children: require("../../assets/parent/home/summary/summary-my-children-in-kindergarten.png") as ImageSource,
+  // Concepts without dedicated art yet — render the placeholder tile.
+  contracts: require("../../assets/parent/home/quick-actions/action-forms-and-documents.png") as ImageSource,
   uploadContract: null,
   absence: null,
+  profile: null,
 };
 
 export type IllustratedIconName = keyof typeof IllustratedIcons;

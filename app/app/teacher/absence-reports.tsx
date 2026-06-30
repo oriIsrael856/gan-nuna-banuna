@@ -12,6 +12,7 @@ import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
 import { getAbsenceReports } from "../../src/services/absence.service";
 import { Colors } from "../../src/theme/colors";
 import { Spacing } from "../../src/theme/spacing";
+import { Typography } from "../../src/theme/typography";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleString("he-IL", {
@@ -81,20 +82,19 @@ export default function TeacherAbsenceReportsScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.pageBackground,
   },
   screenContent: {
     paddingBottom: Spacing.xxl,
   },
   title: {
-    fontSize: 26,
-    fontWeight: "800",
+    ...Typography.titleLarge,
     color: Colors.textPrimary,
     textAlign: "right",
     marginTop: Spacing.sm,
   },
   subtitle: {
-    fontSize: 14,
+    ...Typography.body,
     color: Colors.textSecondary,
     textAlign: "right",
     marginTop: 2,
@@ -110,29 +110,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   childName: {
-    fontSize: 16,
-    fontWeight: "800",
+    ...Typography.subtitle,
+    fontWeight: "700",
     color: Colors.primary,
     textAlign: "right",
   },
   date: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
   },
   type: {
-    fontSize: 15,
+    ...Typography.bodyMedium,
     fontWeight: "700",
     color: Colors.textPrimary,
     textAlign: "right",
   },
   meta: {
-    fontSize: 12,
+    ...Typography.label,
     color: Colors.textSecondary,
     textAlign: "right",
   },
   note: {
-    fontSize: 14,
-    lineHeight: 21,
+    ...Typography.body,
     color: Colors.textPrimary,
     textAlign: "right",
   },
