@@ -9,6 +9,7 @@ import {
   View,
 } from "react-native";
 import { Image } from "expo-image";
+import { useIsFocused } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -59,6 +60,7 @@ const FIXED_POSITION = Platform.OS === "web" ? ("fixed" as "absolute") : "absolu
 export default function ParentHomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const isFocused = useIsFocused();
   const { width } = useWindowDimensions();
   const handleBottomNavPress = useBottomNavPress("parent");
   const { profile, setParentChildId } = useAuth();
@@ -102,33 +104,41 @@ export default function ParentHomeScreen() {
 
   return (
     <View style={styles.root}>
-      {/* Pinned Hero (artwork → overlay → corner decor); content scrolls over it */}
-      <View
-        style={[styles.hero, { height: heroHeight }]}
-        pointerEvents="none"
-      >
-        <Image
-          source={PARENT_HOME_HERO}
-          style={StyleSheet.absoluteFill}
-          contentFit="cover"
-          contentPosition="top"
-        />
-        <View style={styles.heroOverlay} pointerEvents="none" />
+      {/*
+        Pinned layers use position:fixed on web. Only render them while focused,
+        otherwise a stacked (still-mounted) home keeps painting its hero over
+        the next screen — which looked like the hero image "changed" on return.
+      */}
+      {isFocused ? (
         <View
-          style={[
-            styles.heroDecor,
-            {
-              width: decorWidth,
-              height: decorHeight,
-              left: decorLeft,
-              top: decorTop,
-            },
-          ]}
+          style={[styles.hero, { height: heroHeight }]}
           pointerEvents="none"
         >
-          <HeroCornerDecor width={decorWidth} height={decorHeight} />
+          <Image
+            source={PARENT_HOME_HERO}
+            style={StyleSheet.absoluteFill}
+            contentFit="cover"
+            contentPosition="top"
+            recyclingKey="parent-home-hero"
+            cachePolicy="memory-disk"
+          />
+          <View style={styles.heroOverlay} pointerEvents="none" />
+          <View
+            style={[
+              styles.heroDecor,
+              {
+                width: decorWidth,
+                height: decorHeight,
+                left: decorLeft,
+                top: decorTop,
+              },
+            ]}
+            pointerEvents="none"
+          >
+            <HeroCornerDecor width={decorWidth} height={decorHeight} />
+          </View>
         </View>
-      </View>
+      ) : null}
 
       <ScrollView
         style={StyleSheet.absoluteFill}
@@ -199,23 +209,27 @@ export default function ParentHomeScreen() {
         )}
       </ScrollView>
 
-      {/* Pinned hero controls (menu + notifications) above the scroll layer */}
-      <View style={styles.heroControlsLayer} pointerEvents="box-none">
-        <HomeHeroControls
-          topInset={insets.top}
-          unreadCount={unreadCount}
-          onMenuPress={() => router.push("/settings")}
-          onNotificationsPress={() => router.push("/notifications")}
-        />
-      </View>
+      {isFocused ? (
+        <>
+          {/* Pinned hero controls (menu + notifications) above the scroll layer */}
+          <View style={styles.heroControlsLayer} pointerEvents="box-none">
+            <HomeHeroControls
+              topInset={insets.top}
+              unreadCount={unreadCount}
+              onMenuPress={() => router.push("/settings")}
+              onNotificationsPress={() => router.push("/notifications")}
+            />
+          </View>
 
-      {/* Fixed Bottom Navigation */}
-      <View
-        style={styles.navWrap}
-        onLayout={(e) => setNavHeight(e.nativeEvent.layout.height)}
-      >
-        <HomeBottomNav activeItem="home" onItemPress={handleBottomNavPress} />
-      </View>
+          {/* Fixed Bottom Navigation */}
+          <View
+            style={styles.navWrap}
+            onLayout={(e) => setNavHeight(e.nativeEvent.layout.height)}
+          >
+            <HomeBottomNav activeItem="home" onItemPress={handleBottomNavPress} />
+          </View>
+        </>
+      ) : null}
     </View>
   );
 }

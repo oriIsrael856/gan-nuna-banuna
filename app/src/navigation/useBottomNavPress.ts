@@ -29,7 +29,9 @@ export function useBottomNavPress(variant: BottomNavVariant) {
     const route = routes[item];
 
     if (route) {
-      router.push(route);
+      // Replace (not push) so tab switches don't stack duplicate home screens —
+      // duplicate homes with position:fixed heroes were leaking the wrong image.
+      router.replace(route);
     }
   };
 }
