@@ -118,7 +118,8 @@ const ILLUSTRATION_H = 84;
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Colors.white,
+    // Same warm card surface as Parent Home's TodaySummaryCard (#FFFBF6).
+    backgroundColor: "#FFFBF6",
     borderRadius: BorderRadius.xl - 4, // 20
     paddingTop: 12,
     paddingHorizontal: 16,

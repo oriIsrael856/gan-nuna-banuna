@@ -19,8 +19,9 @@ import { AppActionGrid } from "../../src/components/AppActionGrid";
 import { AppCard } from "../../src/components/AppCard";
 import { AppStateCard } from "../../src/components/AppStateCard";
 import { AppSummaryCard } from "../../src/components/AppSummaryCard";
-import { BottomNavBar } from "../../src/components/BottomNavBar";
+import { HomeBottomNav } from "../../src/components/parentHome/HomeBottomNav";
 import { HomeHeroControls } from "../../src/components/parentHome/HomeHeroControls";
+import { ParentHomeColors } from "../../src/components/parentHome/homeAssets";
 import { useAsyncData } from "../../src/hooks/useAsyncData";
 import { useNotifications } from "../../src/notifications/NotificationsContext";
 import { useBottomNavPress } from "../../src/navigation/useBottomNavPress";
@@ -248,11 +249,7 @@ export default function TeacherHomeScreen() {
         style={styles.navWrap}
         onLayout={(e) => setNavHeight(e.nativeEvent.layout.height)}
       >
-        <BottomNavBar
-          activeItem="home"
-          variant="teacher"
-          onItemPress={handleBottomNavPress}
-        />
+        <HomeBottomNav activeItem="home" onItemPress={handleBottomNavPress} />
       </View>
     </View>
   );
@@ -261,7 +258,8 @@ export default function TeacherHomeScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.pageBackground,
+    // Same soft-green page surface as Parent Home.
+    backgroundColor: ParentHomeColors.pageBackground,
   },
   scrollContent: {
     paddingHorizontal: Spacing.md,
