@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -51,6 +52,10 @@ const DECOR_TOP_RATIO = -41 / DECOR_VIEWPORT;
 const HERO_HEIGHT_SCALE = 1.02;
 const CARD_OVERLAP = 42;
 
+// On web, pin the hero and bottom nav to the visual viewport so browser
+// toolbar show/hide and scroll chaining don't shift them.
+const FIXED_POSITION = Platform.OS === "web" ? ("fixed" as "absolute") : "absolute";
+
 export default function ParentHomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -91,22 +96,50 @@ export default function ParentHomeScreen() {
   const decorTop = Math.round(width * DECOR_TOP_RATIO);
   const cardTop = heroHeight - CARD_OVERLAP;
 
-  const [cardHeight, setCardHeight] = useState(150);
   const [navHeight, setNavHeight] = useState(84);
 
-  const contentTop = cardTop + cardHeight + Spacing.md;
   const contentBottom = navHeight + Spacing.md;
 
   return (
     <View style={styles.root}>
+      {/* Pinned Hero (artwork → overlay → corner decor); content scrolls over it */}
+      <View
+        style={[styles.hero, { height: heroHeight }]}
+        pointerEvents="none"
+      >
+        <Image
+          source={PARENT_HOME_HERO}
+          style={StyleSheet.absoluteFill}
+          contentFit="cover"
+          contentPosition="top"
+        />
+        <View style={styles.heroOverlay} pointerEvents="none" />
+        <View
+          style={[
+            styles.heroDecor,
+            {
+              width: decorWidth,
+              height: decorHeight,
+              left: decorLeft,
+              top: decorTop,
+            },
+          ]}
+          pointerEvents="none"
+        >
+          <HeroCornerDecor width={decorWidth} height={decorHeight} />
+        </View>
+      </View>
+
       <ScrollView
         style={StyleSheet.absoluteFill}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingTop: contentTop, paddingBottom: contentBottom },
+          { paddingTop: cardTop, paddingBottom: contentBottom },
         ]}
         showsVerticalScrollIndicator={false}
       >
+        <TodaySummaryCard values={summaryValues} />
+
         {hasMultipleChildren && data ? (
           <View style={styles.childPicker}>
             {data.children.map((childOption) => {
@@ -166,47 +199,14 @@ export default function ParentHomeScreen() {
         )}
       </ScrollView>
 
-      {/* Fixed Hero Section (artwork → overlay → corner decor → controls) */}
-      <View
-        style={[styles.hero, { height: heroHeight }]}
-        pointerEvents="box-none"
-      >
-        <Image
-          source={PARENT_HOME_HERO}
-          style={StyleSheet.absoluteFill}
-          contentFit="cover"
-          contentPosition="top"
-        />
-        <View style={styles.heroOverlay} pointerEvents="none" />
-        <View
-          style={[
-            styles.heroDecor,
-            {
-              width: decorWidth,
-              height: decorHeight,
-              left: decorLeft,
-              top: decorTop,
-            },
-          ]}
-          pointerEvents="none"
-        >
-          <HeroCornerDecor width={decorWidth} height={decorHeight} />
-        </View>
+      {/* Pinned hero controls (menu + notifications) above the scroll layer */}
+      <View style={styles.heroControlsLayer} pointerEvents="box-none">
         <HomeHeroControls
           topInset={insets.top}
           unreadCount={unreadCount}
           onMenuPress={() => router.push("/settings")}
           onNotificationsPress={() => router.push("/notifications")}
         />
-      </View>
-
-      {/* Fixed floating Today Summary Card (overlaps Hero → content transition) */}
-      <View
-        style={[styles.summaryWrap, { top: cardTop }]}
-        pointerEvents="box-none"
-        onLayout={(e) => setCardHeight(e.nativeEvent.layout.height)}
-      >
-        <TodaySummaryCard values={summaryValues} />
       </View>
 
       {/* Fixed Bottom Navigation */}
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   hero: {
-    position: "absolute",
+    position: FIXED_POSITION,
     top: 0,
     left: 0,
     right: 0,
@@ -248,16 +248,21 @@ const styles = StyleSheet.create({
   heroDecor: {
     position: "absolute",
   },
-  summaryWrap: {
-    position: "absolute",
-    left: Spacing.md,
-    right: Spacing.md,
+  heroControlsLayer: {
+    position: FIXED_POSITION,
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 0,
+    overflow: "visible",
+    zIndex: 10,
   },
   navWrap: {
-    position: "absolute",
+    position: FIXED_POSITION,
     left: 0,
     right: 0,
     bottom: 0,
+    zIndex: 10,
   },
   bannerWrap: {
     marginTop: 0,
