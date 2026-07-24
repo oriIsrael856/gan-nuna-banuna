@@ -30,6 +30,16 @@ export function ChildProfile({ child, contract }: ChildProfileProps) {
         </View>
       </View>
 
+      {child.allergies ? (
+        <AppCard style={[styles.card, styles.allergyCard]}>
+          <View style={styles.allergyHeader}>
+            <Ionicons name="warning" size={18} color={Colors.expiredText} />
+            <Text style={styles.allergyTitle}>אלרגיות ורגישויות</Text>
+          </View>
+          <Text style={styles.allergyText}>{child.allergies}</Text>
+        </AppCard>
+      ) : null}
+
       <AppCard style={styles.card}>
         <Text style={styles.sectionTitle}>פרטים</Text>
         <DetailRow icon="calendar-outline" label="תאריך לידה" value={child.birthDate} />
@@ -138,6 +148,26 @@ const styles = StyleSheet.create({
   },
   card: {
     gap: Spacing.xs,
+  },
+  allergyCard: {
+    backgroundColor: Colors.expiredBackground,
+  },
+  allergyHeader: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: 6,
+  },
+  allergyTitle: {
+    fontSize: 16,
+    fontWeight: "800",
+    color: Colors.expiredText,
+    textAlign: "right",
+  },
+  allergyText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: Colors.textPrimary,
+    textAlign: "right",
   },
   sectionTitle: {
     fontSize: 18,

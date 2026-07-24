@@ -23,5 +23,6 @@ export interface Child {
   contractStatus?: ContractStatus;
   guardians?: Guardian[];
   notes?: string;
+  allergies?: string;
   avatar?: string;
 }

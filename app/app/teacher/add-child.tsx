@@ -42,6 +42,7 @@ export default function AddChildScreen() {
   const [parentPhone, setParentPhone] = useState("");
   const [parentEmail, setParentEmail] = useState("");
   const [notes, setNotes] = useState("");
+  const [allergies, setAllergies] = useState("");
   const [guardianId, setGuardianId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [saving, setSaving] = useState(false);
@@ -59,6 +60,7 @@ export default function AddChildScreen() {
       setBirthDate(child.birthDate ?? "");
       setGender(child.gender === "female" ? "female" : "male");
       setNotes(child.notes ?? "");
+      setAllergies(child.allergies ?? "");
       const primary = child.guardians?.find((g) => g.isPrimaryContact) ?? child.guardians?.[0];
       if (primary) {
         setGuardianId(primary.id);
@@ -126,6 +128,7 @@ export default function AddChildScreen() {
         birthDate: birthDate.trim() || null,
         gender,
         notes: notes.trim() || null,
+        allergies: allergies.trim() || null,
       });
       if (ok && guardianId) {
         await updateGuardian(guardianId, {
@@ -151,6 +154,7 @@ export default function AddChildScreen() {
       birthDate: birthDate.trim() || undefined,
       gender,
       notes: notes.trim() || undefined,
+      allergies: allergies.trim() || undefined,
       guardians: [
         {
           fullName: parentFullName.trim(),
@@ -299,10 +303,18 @@ export default function AddChildScreen() {
           </View>
 
           <AppTextInput
+            label="אלרגיות ורגישויות"
+            value={allergies}
+            onChangeText={(value) => setAllergies(value.slice(0, 300))}
+            placeholder="לדוגמה: אלרגיה לבוטנים, רגישות ללקטוז"
+            multiline
+          />
+
+          <AppTextInput
             label="הערות חשובות"
             value={notes}
             onChangeText={(value) => setNotes(value.slice(0, 300))}
-            placeholder="לדוגמה: רגישויות, אלרגיות, מידע רפואי חשוב וכו'"
+            placeholder="לדוגמה: מידע רפואי או התנהגותי חשוב"
             multiline
           />
         </AppCard>

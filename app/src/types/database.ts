@@ -128,6 +128,7 @@ export interface Database {
           birth_date: string | null;
           gender: "male" | "female" | null;
           notes: string | null;
+          allergies: string | null;
           created_at: string;
         };
         Insert: {
@@ -137,6 +138,7 @@ export interface Database {
           birth_date?: string | null;
           gender?: "male" | "female" | null;
           notes?: string | null;
+          allergies?: string | null;
           created_at?: string;
         };
         Update: {
@@ -144,6 +146,7 @@ export interface Database {
           birth_date?: string | null;
           gender?: "male" | "female" | null;
           notes?: string | null;
+          allergies?: string | null;
         };
         Relationships: [];
       };

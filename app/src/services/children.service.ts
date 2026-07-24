@@ -20,6 +20,7 @@ export interface NewChildInput {
   birthDate?: string;
   gender?: "male" | "female";
   notes?: string;
+  allergies?: string;
   guardians: NewChildGuardianInput[];
 }
 
@@ -128,6 +129,7 @@ export async function addChild(input: NewChildInput): Promise<AddChildResult> {
       birth_date: input.birthDate || null,
       gender: input.gender ?? null,
       notes: input.notes || null,
+      allergies: input.allergies || null,
     })
     .select("id")
     .single();
@@ -160,6 +162,7 @@ export async function updateChild(
     birthDate?: string | null;
     gender?: "male" | "female" | null;
     notes?: string | null;
+    allergies?: string | null;
   },
 ): Promise<boolean> {
   if (!isSupabaseConfigured || !supabase) {
@@ -173,6 +176,7 @@ export async function updateChild(
       birth_date: input.birthDate ?? null,
       gender: input.gender ?? null,
       notes: input.notes ?? null,
+      allergies: input.allergies ?? null,
     })
     .eq("id", childId);
 

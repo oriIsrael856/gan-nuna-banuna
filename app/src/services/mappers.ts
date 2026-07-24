@@ -107,6 +107,7 @@ export function mapChild(
     contractStatus,
     guardians: guardians.length > 0 ? guardians : undefined,
     notes: row.notes ?? undefined,
+    allergies: row.allergies ?? undefined,
   };
 }
 

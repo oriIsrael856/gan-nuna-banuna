@@ -28,7 +28,7 @@ export const mockChildren: Child[] = [
         isLinked: false,
       },
     ],
-    notes: "אלרגיה לאגוזים",
+    allergies: "אלרגיה לאגוזים",
   },
   {
     id: "child-002",
