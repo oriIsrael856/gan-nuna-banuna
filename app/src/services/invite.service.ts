@@ -27,7 +27,21 @@ export async function inviteParent(input: {
   });
 
   if (error) {
-    return { status: "failed", error: error.message };
+    // FunctionsHttpError hides the response body behind `context`;
+    // extract the real error message the function returned.
+    let detail = error.message;
+    const response = (error as { context?: Response }).context;
+    if (response && typeof response.json === "function") {
+      try {
+        const body = (await response.json()) as { error?: string } | null;
+        if (body?.error) {
+          detail = body.error;
+        }
+      } catch {
+        // keep the generic message
+      }
+    }
+    return { status: "failed", error: detail };
   }
 
   const payload = data as { status?: InviteParentStatus; error?: string } | null;
