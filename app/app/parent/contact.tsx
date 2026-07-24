@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Alert, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -39,13 +40,13 @@ export default function ParentContactScreen() {
 
   function openLink(url: string) {
     Linking.openURL(url).catch(() => {
-      Alert.alert("שגיאה", "לא ניתן לפתוח את היישום המתאים במכשיר.");
+      showAlert("שגיאה", "לא ניתן לפתוח את היישום המתאים במכשיר.");
     });
   }
 
   async function handleSend() {
     if (!message.trim()) {
-      Alert.alert("חסר תוכן", "נא לכתוב הודעה לפני השליחה.");
+      showAlert("חסר תוכן", "נא לכתוב הודעה לפני השליחה.");
       return;
     }
 
@@ -54,11 +55,11 @@ export default function ParentContactScreen() {
     setSending(false);
 
     if (!ok) {
-      Alert.alert("שגיאה", "לא הצלחנו לשלוח את ההודעה. נסו שוב.");
+      showAlert("שגיאה", "לא הצלחנו לשלוח את ההודעה. נסו שוב.");
       return;
     }
 
-    Alert.alert("נשלח", "ההודעה נשלחה לצוות הגן. נחזור אליך בהקדם.");
+    showAlert("נשלח", "ההודעה נשלחה לצוות הגן. נחזור אליך בהקדם.");
     setSubject("");
     setMessage("");
   }

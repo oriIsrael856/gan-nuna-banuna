@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useRouter } from "expo-router";
 
 import { AppButton } from "../../src/components/AppButton";
@@ -81,9 +82,9 @@ export default function AttendanceScreen() {
     const ok = await saveAttendance(attendanceByChildId);
     setSaving(false);
     if (ok) {
-      Alert.alert("הנוכחות נשמרה בהצלחה", "הנתונים עודכנו.");
+      showAlert("הנוכחות נשמרה בהצלחה", "הנתונים עודכנו.");
     } else {
-      Alert.alert("שמירת הנוכחות נכשלה", "אירעה שגיאה. נסו שוב.");
+      showAlert("שמירת הנוכחות נכשלה", "אירעה שגיאה. נסו שוב.");
     }
   }
 

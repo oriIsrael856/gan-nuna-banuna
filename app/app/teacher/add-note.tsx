@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { AppButton } from "../../src/components/AppButton";
@@ -61,7 +62,7 @@ export default function AddNoteScreen() {
 
   async function handleSave() {
     if (!text.trim()) {
-      Alert.alert("חסר תוכן", "נא לכתוב את ההערה.");
+      showAlert("חסר תוכן", "נא לכתוב את ההערה.");
       return;
     }
     setSaving(true);
@@ -70,10 +71,10 @@ export default function AddNoteScreen() {
       : await addDailyNote({ childId, noteType, text: text.trim() });
     setSaving(false);
     if (ok) {
-      Alert.alert("נשמר", isEdit ? "ההערה עודכנה." : "ההערה נוספה לסיכום היום.");
+      showAlert("נשמר", isEdit ? "ההערה עודכנה." : "ההערה נוספה לסיכום היום.");
       handleBack();
     } else {
-      Alert.alert("השמירה נכשלה", "אירעה שגיאה. נסו שוב.");
+      showAlert("השמירה נכשלה", "אירעה שגיאה. נסו שוב.");
     }
   }
 

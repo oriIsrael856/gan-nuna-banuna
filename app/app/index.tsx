@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import type { Href } from "expo-router";
-import { ActivityIndicator, Alert, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../src/utils/alert";
 import { Image } from "expo-image";
 
 import { AppButton } from "../src/components/AppButton";
@@ -50,14 +51,14 @@ export default function HomeScreen() {
 
   async function handleForgotPassword() {
     if (!email.trim()) {
-      Alert.alert("אימייל חסר", "הזינו את כתובת האימייל ואז לחצו שכחתי סיסמה.");
+      showAlert("אימייל חסר", "הזינו את כתובת האימייל ואז לחצו שכחתי סיסמה.");
       return;
     }
     const result = await resetPassword(email);
     if (result.ok) {
-      Alert.alert("נשלח מייל", "קישור לאיפוס סיסמה נשלח לכתובת האימייל שלכם.");
+      showAlert("נשלח מייל", "קישור לאיפוס סיסמה נשלח לכתובת האימייל שלכם.");
     } else {
-      Alert.alert("שגיאה", result.error ?? "לא הצלחנו לשלוח מייל לאיפוס.");
+      showAlert("שגיאה", result.error ?? "לא הצלחנו לשלוח מייל לאיפוס.");
     }
   }
 

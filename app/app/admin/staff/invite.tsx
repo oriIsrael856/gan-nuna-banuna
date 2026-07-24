@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import { showAlert } from "../../../src/utils/alert";
 import { useRouter } from "expo-router";
 
 import { AppButton } from "../../../src/components/AppButton";
@@ -25,15 +26,15 @@ export default function AdminInviteTeacherScreen() {
   async function handleInvite() {
     const daycareId = getCurrentDaycareId();
     if (!daycareId) {
-      Alert.alert("שגיאה", "לא נמצא גן.");
+      showAlert("שגיאה", "לא נמצא גן.");
       return;
     }
     if (isBlank(fullName) || isBlank(email)) {
-      Alert.alert("שדות חסרים", "שם ואימייל הם שדות חובה.");
+      showAlert("שדות חסרים", "שם ואימייל הם שדות חובה.");
       return;
     }
     if (!isValidEmail(email)) {
-      Alert.alert("אימייל לא תקין", "בדקו את כתובת האימייל.");
+      showAlert("אימייל לא תקין", "בדקו את כתובת האימייל.");
       return;
     }
 
@@ -47,11 +48,11 @@ export default function AdminInviteTeacherScreen() {
     setSaving(false);
 
     if (!result.ok) {
-      Alert.alert("שגיאה", result.error ?? "ההזמנה נכשלה.");
+      showAlert("שגיאה", result.error ?? "ההזמנה נכשלה.");
       return;
     }
 
-    Alert.alert(
+    showAlert(
       "נשלח",
       result.status === "already_exists"
         ? "המשתמש כבר קיים — שויך לגן כמורה."

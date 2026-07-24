@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useRouter } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
 
@@ -9,6 +10,7 @@ import { AppButton } from "../../src/components/AppButton";
 import { AppCard } from "../../src/components/AppCard";
 import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
+import { AppDateInput } from "../../src/components/AppDateInput";
 import { AppTextInput } from "../../src/components/AppTextInput";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
 import { BrandedHeroBanner } from "../../src/components/BrandedHeroBanner";
@@ -132,7 +134,7 @@ export default function UploadContractScreen() {
     }
 
     setCurrentStep(3);
-    Alert.alert(
+    showAlert(
       "החוזה נשלח",
       `החוזה "${contractName}" נשלח אל ${selectedGuardian?.fullName ?? "ההורה"} לחתימה דיגיטלית.`,
       [{ text: "סגירה", onPress: () => router.push("/teacher/contracts") }],
@@ -218,17 +220,17 @@ export default function UploadContractScreen() {
             ))}
           </View>
 
-          <AppTextInput
+          <AppDateInput
             label="תאריך החוזה *"
             value={contractDate}
-            onChangeText={setContractDate}
+            onChange={setContractDate}
             placeholder="בחר תאריך"
           />
 
-          <AppTextInput
+          <AppDateInput
             label="תאריך תפוגה (אופציונלי)"
             value={expiryDate}
-            onChangeText={setExpiryDate}
+            onChange={setExpiryDate}
             placeholder="בחר תאריך תפוגה"
           />
 

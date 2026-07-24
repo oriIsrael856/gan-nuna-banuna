@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Alert, StyleSheet, Text } from "react-native";
+import { StyleSheet, Text } from "react-native";
+import { showAlert } from "../src/utils/alert";
 import { useRouter } from "expo-router";
 
 import { AppButton } from "../src/components/AppButton";
@@ -44,7 +45,7 @@ export default function ResetPasswordScreen() {
       return;
     }
 
-    Alert.alert("הסיסמה עודכנה", "אפשר להתחבר עם הסיסמה החדשה.", [
+    showAlert("הסיסמה עודכנה", "אפשר להתחבר עם הסיסמה החדשה.", [
       { text: "המשך", onPress: () => router.replace("/") },
     ]);
   }

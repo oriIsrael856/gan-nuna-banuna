@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { AppButton } from "../../src/components/AppButton";
@@ -62,7 +63,7 @@ export default function AddMealScreen() {
 
   async function handleSave() {
     if (!title.trim()) {
-      Alert.alert("חסר שם", "נא להזין שם לארוחה.");
+      showAlert("חסר שם", "נא להזין שם לארוחה.");
       return;
     }
     setSaving(true);
@@ -81,10 +82,10 @@ export default function AddMealScreen() {
         });
     setSaving(false);
     if (ok) {
-      Alert.alert("נשמר", isEdit ? "הארוחה עודכנה." : "הארוחה נוספה לסיכום היום.");
+      showAlert("נשמר", isEdit ? "הארוחה עודכנה." : "הארוחה נוספה לסיכום היום.");
       handleBack();
     } else {
-      Alert.alert("השמירה נכשלה", "אירעה שגיאה. נסו שוב.");
+      showAlert("השמירה נכשלה", "אירעה שגיאה. נסו שוב.");
     }
   }
 

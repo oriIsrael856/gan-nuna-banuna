@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import DateTimePicker from "@react-native-community/datetimepicker";
 
 import { Ionicons } from "@expo/vector-icons";
 
 import { AppButton } from "../../src/components/AppButton";
 import { AppCard } from "../../src/components/AppCard";
+import { AppDateInput } from "../../src/components/AppDateInput";
 import { AppHeader } from "../../src/components/AppHeader";
 import { AppScreen } from "../../src/components/AppScreen";
 import { AppTextInput } from "../../src/components/AppTextInput";
@@ -35,7 +36,6 @@ export default function AddChildScreen() {
   const handleBottomNavPress = useBottomNavPress("teacher");
   const [childName, setChildName] = useState("");
   const [birthDate, setBirthDate] = useState("");
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [gender, setGender] = useState<Gender>("male");
   const [relationshipType, setRelationshipType] = useState("אמא");
   const [parentFullName, setParentFullName] = useState("");
@@ -140,7 +140,7 @@ export default function AddChildScreen() {
       }
       setSaving(false);
       if (ok) {
-        Alert.alert("הפרטים עודכנו", "הפרטים נשמרו.", [
+        showAlert("הפרטים עודכנו", "הפרטים נשמרו.", [
           { text: "אישור", onPress: () => router.push("/teacher/children") },
         ]);
       } else {
@@ -181,7 +181,7 @@ export default function AddChildScreen() {
       message = `הילד נוסף, אך שליחת ההזמנה נכשלה: ${result.invite.error ?? "שגיאה"}.`;
     }
 
-    Alert.alert("נשמר בהצלחה", message, [
+    showAlert("נשמר בהצלחה", message, [
       { text: "אישור", onPress: () => router.push("/teacher/children") },
     ]);
   }
@@ -215,32 +215,13 @@ export default function AddChildScreen() {
             placeholder="הזן שם הילד"
           />
 
-          <Text style={styles.fieldLabel}>תאריך לידה *</Text>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.dateButton}
-            onPress={() => setShowDatePicker(true)}
-            accessibilityRole="button"
-            accessibilityLabel={birthDate ? `תאריך לידה: ${birthDate}` : "בחירת תאריך לידה"}
-          >
-            <Text style={styles.dateButtonText}>
-              {birthDate || "בחר תאריך לידה"}
-            </Text>
-          </TouchableOpacity>
-          {showDatePicker ? (
-            <DateTimePicker
-              value={birthDate ? new Date(birthDate) : new Date()}
-              mode="date"
-              display={Platform.OS === "ios" ? "spinner" : "default"}
-              maximumDate={new Date()}
-              onChange={(_event, date) => {
-                setShowDatePicker(Platform.OS === "ios");
-                if (date) {
-                  setBirthDate(date.toISOString().slice(0, 10));
-                }
-              }}
-            />
-          ) : null}
+          <AppDateInput
+            label="תאריך לידה *"
+            value={birthDate}
+            onChange={setBirthDate}
+            placeholder="בחר תאריך לידה"
+            maximumDate={new Date()}
+          />
 
           <Text style={styles.fieldLabel}>מין</Text>
           <View style={styles.optionRow}>

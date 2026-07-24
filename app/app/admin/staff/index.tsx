@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../../../src/utils/alert";
 import { useRouter } from "expo-router";
 import type { Href } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
@@ -40,13 +41,13 @@ export default function AdminStaffScreen() {
 
   function handleRemove(member: StaffMember) {
     if (member.role === "admin") {
-      Alert.alert("לא ניתן", "לא ניתן להסיר את מנהל/ת הגן.");
+      showAlert("לא ניתן", "לא ניתן להסיר את מנהל/ת הגן.");
       return;
     }
     confirmDelete(`להסיר את ${member.fullName} מהצוות?`, async () => {
       const ok = await removeStaffMember(member.id);
       if (!ok) {
-        Alert.alert("שגיאה", "לא הצלחנו להסיר את המורה.");
+        showAlert("שגיאה", "לא הצלחנו להסיר את המורה.");
         return;
       }
       load();

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import {  } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useRouter } from "expo-router";
 import type { Href } from "expo-router";
 
@@ -41,7 +42,7 @@ export default function SetupDaycareDetailsScreen() {
     });
     setSaving(false);
     if (!result.ok) {
-      Alert.alert(
+      showAlert(
         "לא הצלחנו לשמור",
         result.error ??
           "בדקו שיש לכם הרשאות admin/teacher. הריצו migration 0010 ב-Supabase אם עדיין לא.",

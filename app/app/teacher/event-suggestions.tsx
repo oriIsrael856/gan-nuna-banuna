@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useRouter } from "expo-router";
 
 import { AppButton } from "../../src/components/AppButton";
@@ -38,7 +39,7 @@ export default function TeacherEventSuggestionsScreen() {
 
   async function handleCreate() {
     if (!title.trim() || !body.trim()) {
-      Alert.alert("חסר מידע", "יש למלא כותרת ותוכן.");
+      showAlert("חסר מידע", "יש למלא כותרת ותוכן.");
       return;
     }
 
@@ -59,9 +60,9 @@ export default function TeacherEventSuggestionsScreen() {
       setBody("");
       setEventDate("");
       reload();
-      Alert.alert("נשלח", notifyParents ? "ההצעה נשלחה להורים עם התראה." : "ההצעה נשמרה.");
+      showAlert("נשלח", notifyParents ? "ההצעה נשלחה להורים עם התראה." : "ההצעה נשמרה.");
     } else {
-      Alert.alert("שגיאה", "לא הצלחנו לשמור.");
+      showAlert("שגיאה", "לא הצלחנו לשמור.");
     }
   }
 

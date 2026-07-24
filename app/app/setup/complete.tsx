@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Alert, StyleSheet, Text } from "react-native";
+import { StyleSheet, Text } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useRouter } from "expo-router";
 
 import { useAuth } from "../../src/auth/AuthContext";
@@ -27,7 +28,7 @@ export default function SetupCompleteScreen() {
       await refreshProfile();
       router.replace("/teacher/home");
     } else {
-      Alert.alert("לא הצלחנו לסיים", result.error ?? "נסו שוב.");
+      showAlert("לא הצלחנו לסיים", result.error ?? "נסו שוב.");
     }
     setSaving(false);
   }

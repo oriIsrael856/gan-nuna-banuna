@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useRouter } from "expo-router";
 
 import { AppButton } from "../../src/components/AppButton";
@@ -39,11 +40,11 @@ export default function AdminBrandingScreen() {
     });
     setSaving(false);
     if (!result.ok) {
-      Alert.alert("שגיאה", result.error ?? "לא הצלחנו לשמור.");
+      showAlert("שגיאה", result.error ?? "לא הצלחנו לשמור.");
       return;
     }
     await refresh();
-    Alert.alert("נשמר", "המיתוג עודכן.");
+    showAlert("נשמר", "המיתוג עודכן.");
   }
 
   return (

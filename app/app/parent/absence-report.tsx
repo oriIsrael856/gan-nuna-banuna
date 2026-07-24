@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useRouter } from "expo-router";
 
 import { AppButton } from "../../src/components/AppButton";
@@ -42,7 +43,7 @@ export default function ParentAbsenceReportScreen() {
   async function handleSend() {
     const childId = getCurrentParentChildId();
     if (!childId) {
-      Alert.alert("שגיאה", "לא נמצא ילד מקושר לחשבון.");
+      showAlert("שגיאה", "לא נמצא ילד מקושר לחשבון.");
       return;
     }
 
@@ -55,11 +56,11 @@ export default function ParentAbsenceReportScreen() {
     setSending(false);
 
     if (!ok) {
-      Alert.alert("שגיאה", "לא הצלחנו לשלוח את הדיווח. נסו שוב.");
+      showAlert("שגיאה", "לא הצלחנו לשלוח את הדיווח. נסו שוב.");
       return;
     }
 
-    Alert.alert("הדיווח נשלח לגננת", "הגננת תקבל התראה ותעדכן את הנוכחות.", [
+    showAlert("הדיווח נשלח לגננת", "הגננת תקבל התראה ותעדכן את הנוכחות.", [
       { text: "חזרה לבית", onPress: () => router.push("/parent/home") },
     ]);
   }

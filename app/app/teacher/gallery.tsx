@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { StyleSheet, Text, TouchableOpacity, View, Alert } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useRouter } from "expo-router";
 import type { Href } from "expo-router";
 
@@ -46,7 +47,7 @@ export default function TeacherGalleryScreen() {
         setSelectedPhoto(null);
         reload();
       } else {
-        Alert.alert("שגיאה", "לא הצלחנו למחוק. נסו שוב.");
+        showAlert("שגיאה", "לא הצלחנו למחוק. נסו שוב.");
       }
     });
   }

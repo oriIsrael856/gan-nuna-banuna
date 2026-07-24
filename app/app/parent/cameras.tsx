@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Alert, Linking, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import { Linking, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -73,7 +74,7 @@ export default function ParentCamerasScreen() {
 
   async function handleConsentSubmit() {
     if (!consentChecked) {
-      Alert.alert("נדרש אישור", "יש לאשר את תנאי הצפייה במצלמות.");
+      showAlert("נדרש אישור", "יש לאשר את תנאי הצפייה במצלמות.");
       return;
     }
 
@@ -84,7 +85,7 @@ export default function ParentCamerasScreen() {
     if (ok) {
       reloadConsent();
     } else {
-      Alert.alert("שגיאה", "לא הצלחנו לשמור את האישור.");
+      showAlert("שגיאה", "לא הצלחנו לשמור את האישור.");
     }
   }
 

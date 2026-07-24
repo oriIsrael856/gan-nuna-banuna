@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Linking, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import { Linking, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../src/utils/alert";
 import { useRouter } from "expo-router";
 import type { Href } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -57,7 +58,7 @@ export default function SettingsScreen() {
 
   async function handlePushToggle(next: boolean) {
     if (next && !isPushAvailableInCurrentRuntime()) {
-      Alert.alert(
+      showAlert(
         "לא זמין ב-Expo Go",
         "התראות פוש דורשות development build (לא Expo Go). שאר האפליקציה עובדת כרגיל.",
       );
@@ -80,7 +81,7 @@ export default function SettingsScreen() {
     if (ok) {
       setCameraConsentState(next);
     } else {
-      Alert.alert("שגיאה", "לא הצלחנו לעדכן את האישור.");
+      showAlert("שגיאה", "לא הצלחנו לעדכן את האישור.");
     }
   }
 

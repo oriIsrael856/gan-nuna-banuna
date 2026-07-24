@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Alert, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useRouter } from "expo-router";
 import type { Href } from "expo-router";
-import DateTimePicker from "@react-native-community/datetimepicker";
 
 import { AppCard } from "../../src/components/AppCard";
+import { AppDateInput } from "../../src/components/AppDateInput";
 import { AppTextInput } from "../../src/components/AppTextInput";
 import { SetupStepLayout } from "../../src/components/SetupStepLayout";
 import { useDaycareColors } from "../../src/daycare/DaycareBrandingContext";
@@ -24,7 +25,6 @@ export default function SetupFirstChildScreen() {
   const colors = useDaycareColors();
   const [childName, setChildName] = useState("");
   const [birthDate, setBirthDate] = useState("");
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [gender, setGender] = useState<Gender>("male");
   const [relationshipType, setRelationshipType] = useState("אמא");
   const [parentFullName, setParentFullName] = useState("");
@@ -35,15 +35,15 @@ export default function SetupFirstChildScreen() {
 
   async function saveAndContinue() {
     if (isBlank(childName) || isBlank(parentFullName)) {
-      Alert.alert("שדות חסרים", "יש למלא שם ילד ושם הורה.");
+      showAlert("שדות חסרים", "יש למלא שם ילד ושם הורה.");
       return;
     }
     if (parentPhone && !isValidPhone(parentPhone)) {
-      Alert.alert("טלפון לא תקין", "בדקו את מספר הטלפון.");
+      showAlert("טלפון לא תקין", "בדקו את מספר הטלפון.");
       return;
     }
     if (parentEmail && !isValidEmail(parentEmail)) {
-      Alert.alert("אימייל לא תקין", "בדקו את כתובת האימייל.");
+      showAlert("אימייל לא תקין", "בדקו את כתובת האימייל.");
       return;
     }
 
@@ -66,12 +66,12 @@ export default function SetupFirstChildScreen() {
     setSaving(false);
 
     if (!result.ok) {
-      Alert.alert("שגיאה", "לא הצלחנו לשמור את הילד.");
+      showAlert("שגיאה", "לא הצלחנו לשמור את הילד.");
       return;
     }
 
     if (result.invite?.status === "failed") {
-      Alert.alert("הילד נשמר", "הזמנת ההורה נכשלה — אפשר לנסות שוב מניהול הגן.");
+      showAlert("הילד נשמר", "הזמנת ההורה נכשלה — אפשר לנסות שוב מניהול הגן.");
     }
 
     router.push("/setup/first-contract" as Href);
@@ -90,29 +90,13 @@ export default function SetupFirstChildScreen() {
     >
       <AppCard>
         <AppTextInput label="שם הילד/ה" value={childName} onChangeText={setChildName} />
-        <TouchableOpacity
-          onPress={() => setShowDatePicker(true)}
-          style={styles.dateBtn}
-          accessibilityRole="button"
-          accessibilityLabel={birthDate ? `תאריך לידה: ${birthDate}` : "בחירת תאריך לידה"}
-        >
-          <Text style={[styles.dateText, { color: colors.textPrimary }]}>
-            {birthDate ? `תאריך לידה: ${birthDate}` : "בחירת תאריך לידה (אופציונלי)"}
-          </Text>
-        </TouchableOpacity>
-        {showDatePicker ? (
-          <DateTimePicker
-            value={birthDate ? new Date(birthDate) : new Date()}
-            mode="date"
-            display={Platform.OS === "ios" ? "spinner" : "default"}
-            onChange={(_, date) => {
-              setShowDatePicker(Platform.OS === "ios");
-              if (date) {
-                setBirthDate(date.toISOString().slice(0, 10));
-              }
-            }}
-          />
-        ) : null}
+        <AppDateInput
+          label="תאריך לידה (אופציונלי)"
+          value={birthDate}
+          onChange={setBirthDate}
+          placeholder="בחירת תאריך לידה"
+          maximumDate={new Date()}
+        />
         <View style={styles.chipsRow}>
           {(["male", "female"] as Gender[]).map((value) => (
             <TouchableOpacity

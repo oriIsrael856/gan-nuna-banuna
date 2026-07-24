@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useRouter } from "expo-router";
 
 import { AppButton } from "../../src/components/AppButton";
@@ -32,7 +33,7 @@ export default function AdminDaycareDetailsScreen() {
 
   async function handleSave() {
     if (isBlank(daycareName) || isBlank(ownerName)) {
-      Alert.alert("שדות חסרים", "שם הגן ושם הגננת הם שדות חובה.");
+      showAlert("שדות חסרים", "שם הגן ושם הגננת הם שדות חובה.");
       return;
     }
     setSaving(true);
@@ -44,11 +45,11 @@ export default function AdminDaycareDetailsScreen() {
     });
     setSaving(false);
     if (!result.ok) {
-      Alert.alert("שגיאה", result.error ?? "לא הצלחנו לשמור.");
+      showAlert("שגיאה", result.error ?? "לא הצלחנו לשמור.");
       return;
     }
     await refresh();
-    Alert.alert("נשמר", "פרטי הגן עודכנו.");
+    showAlert("נשמר", "פרטי הגן עודכנו.");
   }
 
   return (

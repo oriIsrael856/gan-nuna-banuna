@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Alert, Linking, StyleSheet, Text, View } from "react-native";
+import { Linking, StyleSheet, Text, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useRouter } from "expo-router";
 
 import { AppButton } from "../../src/components/AppButton";
@@ -49,7 +50,7 @@ export default function ParentContractRenewalScreen() {
       return;
     }
 
-    Alert.alert(
+    showAlert(
       "אישור חתימה",
       "לאחר שקראתם את החוזה, לאשר שאתם מסכימים לתנאיו?",
       [
@@ -61,10 +62,10 @@ export default function ParentContractRenewalScreen() {
             const ok = await setContractStatus(contract.id, "signed");
             setSigning(false);
             if (ok) {
-              Alert.alert("החוזה נחתם", "תודה! החוזה סומן כחתום.");
+              showAlert("החוזה נחתם", "תודה! החוזה סומן כחתום.");
               reload();
             } else {
-              Alert.alert("שגיאה", "לא הצלחנו לעדכן את סטטוס החוזה.");
+              showAlert("שגיאה", "לא הצלחנו לעדכן את סטטוס החוזה.");
             }
           },
         },
@@ -74,7 +75,7 @@ export default function ParentContractRenewalScreen() {
 
   async function handleViewDocument() {
     if (!contract?.filePath) {
-      Alert.alert("אין מסמך לצפייה", "המסמך עדיין לא הועלה על ידי הגן.");
+      showAlert("אין מסמך לצפייה", "המסמך עדיין לא הועלה על ידי הגן.");
       return;
     }
 
@@ -83,7 +84,7 @@ export default function ParentContractRenewalScreen() {
     setOpening(false);
 
     if (!url) {
-      Alert.alert("שגיאה", "לא הצלחנו לפתוח את המסמך. נסו שוב מאוחר יותר.");
+      showAlert("שגיאה", "לא הצלחנו לפתוח את המסמך. נסו שוב מאוחר יותר.");
       return;
     }
 

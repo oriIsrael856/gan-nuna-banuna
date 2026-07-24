@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -48,11 +49,11 @@ export default function TeacherAlbumsScreen() {
 
   async function handleCreate() {
     if (!title.trim()) {
-      Alert.alert("חסר כותרת", "יש להזין שם לאלבום.");
+      showAlert("חסר כותרת", "יש להזין שם לאלבום.");
       return;
     }
     if (!selectedPhotoIds.length) {
-      Alert.alert("בחרו תמונות", "יש לבחור לפחות תמונה אחת לקולאז.");
+      showAlert("בחרו תמונות", "יש לבחור לפחות תמונה אחת לקולאז.");
       return;
     }
 
@@ -71,9 +72,9 @@ export default function TeacherAlbumsScreen() {
       setDescription("");
       setSelectedPhotoIds([]);
       reload();
-      Alert.alert("נוצר", "האלבום נוסף לגלריה.");
+      showAlert("נוצר", "האלבום נוסף לגלריה.");
     } else {
-      Alert.alert("שגיאה", "לא הצלחנו ליצור את האלבום.");
+      showAlert("שגיאה", "לא הצלחנו ליצור את האלבום.");
     }
   }
 

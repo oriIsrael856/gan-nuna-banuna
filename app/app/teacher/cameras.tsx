@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Alert, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -63,7 +64,7 @@ export default function TeacherCamerasScreen() {
 
   async function handleSave() {
     if (!name.trim()) {
-      Alert.alert("חסר שם", "יש להזין שם למצלמה.");
+      showAlert("חסר שם", "יש להזין שם למצלמה.");
       return;
     }
 
@@ -94,15 +95,15 @@ export default function TeacherCamerasScreen() {
     if (ok) {
       resetForm();
       reload();
-      Alert.alert("נשמר", "פרטי המצלמה עודכנו.");
+      showAlert("נשמר", "פרטי המצלמה עודכנו.");
     } else {
-      Alert.alert("שגיאה", "לא הצלחנו לשמור. נסו שוב.");
+      showAlert("שגיאה", "לא הצלחנו לשמור. נסו שוב.");
     }
   }
 
   async function handleToggle(camera: Camera, enabled: boolean) {
     if (enabled && !camera.streamExternalId?.trim()) {
-      Alert.alert("חסרה כתובת שידור", "הגדירו כתובת HLS לפני הפעלת המצלמה.");
+      showAlert("חסרה כתובת שידור", "הגדירו כתובת HLS לפני הפעלת המצלמה.");
       return;
     }
     await toggleCameraEnabled(camera.id, enabled);

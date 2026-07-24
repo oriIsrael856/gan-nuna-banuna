@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { showAlert } from "../../src/utils/alert";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -86,7 +87,7 @@ export default function AddActivityScreen() {
 
   async function handleSave() {
     if (!title.trim()) {
-      Alert.alert("חסר שם", "נא להזין שם לפעילות.");
+      showAlert("חסר שם", "נא להזין שם לפעילות.");
       return;
     }
     setSaving(true);
@@ -106,10 +107,10 @@ export default function AddActivityScreen() {
         });
     setSaving(false);
     if (ok) {
-      Alert.alert("נשמר", isEdit ? "הפעילות עודכנה." : "הפעילות נוספה לסיכום היום.");
+      showAlert("נשמר", isEdit ? "הפעילות עודכנה." : "הפעילות נוספה לסיכום היום.");
       handleBack();
     } else {
-      Alert.alert("השמירה נכשלה", "אירעה שגיאה. נסו שוב.");
+      showAlert("השמירה נכשלה", "אירעה שגיאה. נסו שוב.");
     }
   }
 
