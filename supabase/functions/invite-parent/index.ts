@@ -83,6 +83,25 @@ Deno.serve(async (req) => {
     );
 
     if (existingUser) {
+      // Never repurpose a staff account as a parent profile.
+      const { data: existingProfile } = await admin
+        .from("profiles")
+        .select("role")
+        .eq("id", existingUser.id)
+        .maybeSingle();
+
+      if (existingProfile && existingProfile.role !== "parent") {
+        return new Response(
+          JSON.stringify({
+            error: "כתובת האימייל שייכת לחשבון צוות קיים. יש להזין אימייל אחר עבור ההורה.",
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
       userId = existingUser.id;
       status = "already_exists";
     } else {
