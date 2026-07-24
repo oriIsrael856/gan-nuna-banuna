@@ -56,7 +56,7 @@ export default function SetupCompleteScreen() {
           </Text>
         ) : null}
         <Text style={[styles.hint, { color: colors.textSecondary }]}>
-          מ"ניהול הגן" בהגדרות תוכלי להוסיף מורים, ילדים, הורים ולעדכן תמונות.
+          {'מ"ניהול הגן" בהגדרות תוכלי להוסיף מורים, ילדים, הורים ולעדכן תמונות.'}
         </Text>
       </AppCard>
     </SetupStepLayout>

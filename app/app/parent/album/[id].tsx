@@ -22,7 +22,7 @@ export default function ParentAlbumDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const handleBottomNavPress = useBottomNavPress("parent");
 
-  const { data: album, loading, error, reload } = useAsyncData(
+  const { data: album, loading, error } = useAsyncData(
     () => (id ? getGalleryAlbumDetail(id) : Promise.resolve(null)),
     [id],
   );

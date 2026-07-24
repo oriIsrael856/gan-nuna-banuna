@@ -101,23 +101,27 @@ export function DaycareBrandingProvider({ children }: { children: React.ReactNod
     void refresh();
   }, [refresh]);
 
-  const resolvedSettings = settings ?? {
-    daycareId: "",
-    daycareName: CLIENT_CONFIG.daycareName,
-    ownerName: CLIENT_CONFIG.ownerName,
-    tagline: CLIENT_CONFIG.homeTagline,
-    subtitle: CLIENT_CONFIG.homeSubtitle,
-    primaryColor: CLIENT_CONFIG.primaryColor,
-    secondaryColor: CLIENT_CONFIG.secondaryColor,
-    backgroundColor: CLIENT_CONFIG.backgroundColor,
-    cardBackgroundColor: CLIENT_CONFIG.cardBackgroundColor,
-    textPrimaryColor: CLIENT_CONFIG.textPrimary,
-    textSecondaryColor: CLIENT_CONFIG.textSecondary,
-    supportPhone: CLIENT_CONFIG.supportPhone,
-    supportEmail: CLIENT_CONFIG.supportEmail,
-    logoUrl: null,
-    setupCompleted: true,
-  };
+  const resolvedSettings = useMemo(
+    () =>
+      settings ?? {
+        daycareId: "",
+        daycareName: CLIENT_CONFIG.daycareName,
+        ownerName: CLIENT_CONFIG.ownerName,
+        tagline: CLIENT_CONFIG.homeTagline,
+        subtitle: CLIENT_CONFIG.homeSubtitle,
+        primaryColor: CLIENT_CONFIG.primaryColor,
+        secondaryColor: CLIENT_CONFIG.secondaryColor,
+        backgroundColor: CLIENT_CONFIG.backgroundColor,
+        cardBackgroundColor: CLIENT_CONFIG.cardBackgroundColor,
+        textPrimaryColor: CLIENT_CONFIG.textPrimary,
+        textSecondaryColor: CLIENT_CONFIG.textSecondary,
+        supportPhone: CLIENT_CONFIG.supportPhone,
+        supportEmail: CLIENT_CONFIG.supportEmail,
+        logoUrl: null,
+        setupCompleted: true,
+      },
+    [settings],
+  );
 
   const getHeroSource = useCallback(
     (key: HeroKey): ImageSource => {

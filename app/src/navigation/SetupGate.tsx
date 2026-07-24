@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { usePathname, useRouter } from "expo-router";
 import type { Href } from "expo-router";
 

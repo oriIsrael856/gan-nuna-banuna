@@ -23,7 +23,7 @@ import {
 import { confirmDelete } from "../../src/utils/confirm";
 import { parseCameraSchedule } from "../../src/utils/cameraSchedule";
 import { Colors } from "../../src/theme/colors";
-import { BorderRadius, Spacing } from "../../src/theme/spacing";
+import { Spacing } from "../../src/theme/spacing";
 import { Typography } from "../../src/theme/typography";
 
 export default function TeacherCamerasScreen() {

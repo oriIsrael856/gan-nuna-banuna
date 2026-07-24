@@ -56,7 +56,7 @@ export default function CalendarScreen() {
   const variant = isTeacher ? "teacher" : "parent";
   const handleBottomNavPress = useBottomNavPress(variant);
   const { data, loading, error, reload } = useAsyncData(() => getCalendarEvents(), []);
-  const events = data ?? [];
+  const events = useMemo(() => data ?? [], [data]);
 
   const today = todayIso();
   const initialMonth = useMemo(() => {
