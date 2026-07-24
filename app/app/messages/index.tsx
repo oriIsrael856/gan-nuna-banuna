@@ -276,7 +276,7 @@ export default function MessagesScreen() {
       </Modal>
 
       <BottomNavBar
-        activeItem="home"
+        activeItem="messages"
         variant={variant}
         onItemPress={handleBottomNavPress}
       />

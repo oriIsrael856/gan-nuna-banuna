@@ -268,7 +268,7 @@ export default function DailySummaryScreen() {
       </AppScreen>
 
       <BottomNavBar
-        activeItem="daily"
+        activeItem="home"
         variant="parent"
         onItemPress={handleBottomNavPress}
       />

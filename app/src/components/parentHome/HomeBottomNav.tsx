@@ -19,9 +19,14 @@ interface NavTab {
  * and the onItemPress contract, so routing behavior is unchanged. The shared
  * BottomNavBar is intentionally untouched.
  *
- * Order L→R: Settings, Daily Log, Home (raised), Calendar, Profile.
+ * Order L→R: Settings, Messages (parent) / Daily Log (teacher), Home (raised),
+ * Calendar, Profile.
  */
-const SIDE_LEFT: NavTab[] = [
+const PARENT_SIDE_LEFT: NavTab[] = [
+  { key: "settings", label: "הגדרות", icon: "settings-outline" },
+  { key: "messages", label: "הודעות", icon: "chatbubbles-outline" },
+];
+const TEACHER_SIDE_LEFT: NavTab[] = [
   { key: "settings", label: "הגדרות", icon: "settings-outline" },
   { key: "daily", label: "תיעוד", icon: "camera-outline" },
 ];
@@ -32,11 +37,13 @@ const SIDE_RIGHT: NavTab[] = [
 
 interface HomeBottomNavProps {
   activeItem?: BottomNavItem;
+  variant?: "parent" | "teacher";
   onItemPress?: (item: BottomNavItem) => void;
 }
 
 export function HomeBottomNav({
   activeItem = "home",
+  variant = "parent",
   onItemPress,
 }: HomeBottomNavProps) {
   const insets = useSafeAreaInsets();
@@ -71,7 +78,7 @@ export function HomeBottomNav({
   return (
     <View style={[styles.surface, { paddingBottom: insets.bottom }]}>
       <View style={styles.row}>
-        {SIDE_LEFT.map(renderTab)}
+        {(variant === "teacher" ? TEACHER_SIDE_LEFT : PARENT_SIDE_LEFT).map(renderTab)}
 
         <View style={styles.homeSlot}>
           <TouchableOpacity

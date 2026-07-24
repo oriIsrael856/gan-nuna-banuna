@@ -26,6 +26,7 @@ const NAV_BODY_HEIGHT = 72;
 export type BottomNavItem =
   | "home"
   | "daily"
+  | "messages"
   | "calendar"
   | "profile"
   | "settings";
@@ -48,7 +49,7 @@ interface NavItemConfig {
 
 const PARENT_NAV_ITEMS: NavItemConfig[] = [
   { key: "settings", label: "הגדרות", icon: "settings-outline" },
-  { key: "daily", label: "תיעוד יומי", icon: "camera-outline" },
+  { key: "messages", label: "הודעות", icon: "chatbubbles-outline" },
   { key: "home", label: "בית", icon: "home" },
   { key: "calendar", label: "לוח שנה", icon: "calendar-outline" },
   { key: "profile", label: "פרופיל", icon: "person-outline" },

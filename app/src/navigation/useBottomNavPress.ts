@@ -8,6 +8,7 @@ type BottomNavVariant = "parent" | "teacher";
 const PARENT_ROUTES: Partial<Record<BottomNavItem, Href>> = {
   home: "/parent/home",
   daily: "/parent/daily-summary",
+  messages: "/messages",
   calendar: "/calendar",
   profile: "/profile",
   settings: "/settings",

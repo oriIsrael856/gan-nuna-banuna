@@ -261,7 +261,7 @@ export default function TeacherHomeScreen() {
             style={styles.navWrap}
             onLayout={(e) => setNavHeight(e.nativeEvent.layout.height)}
           >
-            <HomeBottomNav activeItem="home" onItemPress={handleBottomNavPress} />
+            <HomeBottomNav activeItem="home" variant="teacher" onItemPress={handleBottomNavPress} />
           </View>
         </>
       ) : null}
