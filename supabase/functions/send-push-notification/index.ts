@@ -1,6 +1,6 @@
-# Edge Function template: send push when a notification is created.
-# Deploy with: supabase functions deploy send-push-notification
-# Set secrets: EXPO_ACCESS_TOKEN
+// Edge Function: send push when a notification is created.
+// Deploy with: supabase functions deploy send-push-notification
+// Set secrets: EXPO_ACCESS_TOKEN
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
