@@ -27,10 +27,11 @@ export const IllustratedIcons: Record<string, ImageSource | null> = {
   attendance: require("../../assets/parent/home/summary/summary-monthly-attendance.png") as ImageSource,
   events: require("../../assets/parent/home/summary/summary-upcoming-events.png") as ImageSource,
   children: require("../../assets/parent/home/summary/summary-my-children-in-kindergarten.png") as ImageSource,
-  // Concepts without dedicated art yet — render the placeholder tile.
+  // Concepts without dedicated art reuse the closest approved illustration so
+  // no action tile ever renders as an empty placeholder.
   contracts: require("../../assets/parent/home/quick-actions/action-forms-and-documents.png") as ImageSource,
-  uploadContract: null,
-  absence: null,
+  uploadContract: require("../../assets/parent/home/quick-actions/action-forms-and-documents.png") as ImageSource,
+  absence: require("../../assets/parent/home/summary/summary-monthly-attendance.png") as ImageSource,
   profile: null,
 };
 
