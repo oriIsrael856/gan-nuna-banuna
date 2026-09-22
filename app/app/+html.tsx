@@ -23,6 +23,24 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="apple-mobile-web-app-title" content="נונה בנונה" />
         <meta name="theme-color" content="#7A9A72" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        {/*
+          Icon font served statically and declared up front, so icons render
+          from the first paint in every browser instead of depending on a
+          runtime font injection (which showed empty boxes on some devices).
+        */}
+        <link
+          rel="preload"
+          href="/fonts/Ionicons.ttf"
+          as="font"
+          type="font/ttf"
+          crossOrigin="anonymous"
+        />
+        <style
+          dangerouslySetInnerHTML={{
+            __html:
+              "@font-face{font-family:ionicons;src:url(/fonts/Ionicons.ttf) format('truetype');font-display:block;}",
+          }}
+        />
         <ScrollViewStyleReset />
       </head>
       <body>{children}</body>

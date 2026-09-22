@@ -6,8 +6,6 @@ import * as Linking from 'expo-linking';
 import { isRunningInExpoGo } from 'expo';
 import { I18nManager } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { useFonts } from 'expo-font';
-import { Ionicons } from '@expo/vector-icons';
 import 'react-native-reanimated';
 
 import { AuthProvider } from '../src/auth/AuthContext';
@@ -74,13 +72,6 @@ function AppEffects() {
 }
 
 export default function RootLayout() {
-  // Load the icon font before first paint: on iOS Safari (especially when
-  // installed to the home screen) icons otherwise render blank until reload.
-  const [fontsLoaded] = useFonts(Ionicons.font);
-  if (!fontsLoaded) {
-    return null;
-  }
-
   return (
     <SafeAreaProvider>
       <AuthProvider>
