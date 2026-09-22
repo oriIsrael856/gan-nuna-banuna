@@ -1,6 +1,6 @@
 import 'react-native-url-polyfill/auto';
-import { useEffect } from 'react';
-import { Stack, useRouter } from 'expo-router';
+import { useEffect, useRef } from 'react';
+import { Stack, usePathname, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as Linking from 'expo-linking';
 import { isRunningInExpoGo } from 'expo';
@@ -18,22 +18,36 @@ I18nManager.forceRTL(true);
 
 function AppEffects() {
   const router = useRouter();
+  const pathname = usePathname();
   const { refresh } = useNotifications();
+
+  // Latest pathname for the listeners below, without re-subscribing on route change.
+  const pathnameRef = useRef(pathname);
+  useEffect(() => {
+    pathnameRef.current = pathname;
+  }, [pathname]);
 
   useEffect(() => {
     if (!supabase) {
       return;
     }
 
+    // Pushing while already on the screen remounts it mid-typing and wipes input.
+    const goToResetPassword = () => {
+      if (pathnameRef.current !== '/reset-password') {
+        router.push('/reset-password');
+      }
+    };
+
     const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
-        router.push('/reset-password');
+        goToResetPassword();
       }
     });
 
     const urlListener = Linking.addEventListener('url', ({ url }) => {
       if (url.includes('reset-password') || url.includes('type=recovery')) {
-        router.push('/reset-password');
+        goToResetPassword();
       }
     });
 
