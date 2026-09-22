@@ -4,8 +4,10 @@ import { Stack, usePathname, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as Linking from 'expo-linking';
 import { isRunningInExpoGo } from 'expo';
-import { I18nManager } from 'react-native';
+import { I18nManager, Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useFonts } from 'expo-font';
+import type { FontSource } from 'expo-font';
 import 'react-native-reanimated';
 
 import { AuthProvider } from '../src/auth/AuthContext';
@@ -71,7 +73,19 @@ function AppEffects() {
   return null;
 }
 
+// On web the bundled icon font lands under assets/node_modules/, which the
+// hosting strips from deployments (404). Registering the family from the
+// statically served copy first makes @expo/vector-icons skip its own
+// injection of the broken URL. Native keeps the bundled asset.
+const WEB_ICON_FONTS: Record<string, FontSource> =
+  Platform.OS === 'web' ? { ionicons: { uri: '/fonts/Ionicons.ttf' } } : {};
+
 export default function RootLayout() {
+  const [iconFontReady] = useFonts(WEB_ICON_FONTS);
+  if (!iconFontReady) {
+    return null;
+  }
+
   return (
     <SafeAreaProvider>
       <AuthProvider>
