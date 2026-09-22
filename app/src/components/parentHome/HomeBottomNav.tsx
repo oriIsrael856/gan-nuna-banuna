@@ -28,7 +28,7 @@ const PARENT_SIDE_LEFT: NavTab[] = [
 ];
 const TEACHER_SIDE_LEFT: NavTab[] = [
   { key: "settings", label: "הגדרות", icon: "settings-outline" },
-  { key: "daily", label: "תיעוד", icon: "camera-outline" },
+  { key: "clock", label: "כניסה/יציאה", icon: "time-outline" },
 ];
 const SIDE_RIGHT: NavTab[] = [
   { key: "calendar", label: "לוח שנה", icon: "calendar-outline" },

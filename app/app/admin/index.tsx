@@ -40,6 +40,12 @@ const MENU_ITEMS: { href: Href; icon: IoniconName; label: string; subtitle: stri
     subtitle: "מורים והזמנות",
   },
   {
+    href: "/admin/staff-hours" as Href,
+    icon: "time-outline",
+    label: "דוח שעות צוות",
+    subtitle: "כניסות ויציאות לפי עובד",
+  },
+  {
     href: "/teacher/children",
     icon: "happy-outline",
     label: "ילדים והורים",

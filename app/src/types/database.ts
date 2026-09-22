@@ -523,6 +523,77 @@ export interface Database {
         Update: Record<string, never>;
         Relationships: [];
       };
+      child_daily_updates: {
+        Row: {
+          id: string;
+          daycare_id: string;
+          child_id: string;
+          update_date: string;
+          meal_breakfast: string | null;
+          meal_lunch: string | null;
+          meal_snack: string | null;
+          nap_start: string | null;
+          nap_end: string | null;
+          mood: string | null;
+          diaper_count: number | null;
+          note: string | null;
+          updated_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          daycare_id: string;
+          child_id: string;
+          update_date?: string;
+          meal_breakfast?: string | null;
+          meal_lunch?: string | null;
+          meal_snack?: string | null;
+          nap_start?: string | null;
+          nap_end?: string | null;
+          mood?: string | null;
+          diaper_count?: number | null;
+          note?: string | null;
+          updated_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          meal_breakfast?: string | null;
+          meal_lunch?: string | null;
+          meal_snack?: string | null;
+          nap_start?: string | null;
+          nap_end?: string | null;
+          mood?: string | null;
+          diaper_count?: number | null;
+          note?: string | null;
+          updated_by?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      staff_time_entries: {
+        Row: {
+          id: string;
+          daycare_id: string;
+          profile_id: string;
+          clock_in: string;
+          clock_out: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          daycare_id: string;
+          profile_id: string;
+          clock_in?: string;
+          clock_out?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          clock_out?: string | null;
+        };
+        Relationships: [];
+      };
       contact_messages: {
         Row: {
           id: string;

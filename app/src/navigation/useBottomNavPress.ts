@@ -17,6 +17,7 @@ const PARENT_ROUTES: Partial<Record<BottomNavItem, Href>> = {
 const TEACHER_ROUTES: Partial<Record<BottomNavItem, Href>> = {
   home: "/teacher/home",
   daily: "/teacher/daily-report",
+  clock: "/teacher/time-clock" as Href,
   calendar: "/calendar",
   profile: "/profile",
   settings: "/settings",
