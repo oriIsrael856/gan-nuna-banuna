@@ -16,7 +16,11 @@ import { AppScreen } from "../../src/components/AppScreen";
 import { AppStateCard } from "../../src/components/AppStateCard";
 import { BottomNavBar } from "../../src/components/BottomNavBar";
 import { BrandedHeroBanner } from "../../src/components/BrandedHeroBanner";
+import { ChildDailyUpdateCard } from "../../src/components/ChildDailyUpdateCard";
 import { useAsyncData } from "../../src/hooks/useAsyncData";
+import { getCurrentParentChildId } from "../../src/services/auth.service";
+import { getChildDailyUpdate } from "../../src/services/childDailyUpdates.service";
+import { getChildById } from "../../src/services/children.service";
 import {
   getDailyActivities,
   getDailyMeals,
@@ -51,14 +55,17 @@ export default function DailySummaryScreen() {
   const router = useRouter();
   const handleBottomNavPress = useBottomNavPress("parent");
   const { data, loading, error, reload } = useAsyncData(async () => {
-    const [summary, activities, meals, messages, notes] = await Promise.all([
+    const childId = getCurrentParentChildId();
+    const [summary, activities, meals, messages, notes, child, childUpdate] = await Promise.all([
       getDailyReportSummary(),
       getDailyActivities(),
       getDailyMeals(),
       getDailyMessages(),
       getDailyNotes(),
+      getChildById(childId),
+      getChildDailyUpdate(childId),
     ]);
-    return { summary, activities, meals, messages, notes };
+    return { summary, activities, meals, messages, notes, child, childUpdate };
   }, []);
 
   const summary = data?.summary;
@@ -129,7 +136,11 @@ export default function DailySummaryScreen() {
             />
           ) : (
             <>
-          <View style={styles.statsGrid}>
+          {data.child ? (
+            <ChildDailyUpdateCard childName={data.child.name} update={data.childUpdate} />
+          ) : null}
+
+          <View style={[styles.statsGrid, data.child && styles.statsGridAfterCard]}>
             {stats.map((stat) => (
               <AppCard key={stat.label} style={styles.statCard}>
                 <Text style={styles.statLabel}>{stat.label}</Text>
@@ -300,6 +311,9 @@ const styles = StyleSheet.create({
     flexDirection: "row-reverse",
     flexWrap: "wrap",
     gap: Spacing.sm,
+  },
+  statsGridAfterCard: {
+    marginTop: Spacing.md,
   },
   statCard: {
     width: "48%",

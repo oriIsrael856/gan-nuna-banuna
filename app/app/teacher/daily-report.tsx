@@ -1,6 +1,7 @@
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
+import type { Href } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 import { AppCard } from "../../src/components/AppCard";
@@ -162,6 +163,25 @@ export default function TeacherDailyReportScreen() {
             text="נשלחו"
           />
         </View>
+
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => router.push("/teacher/child-updates" as Href)}
+          style={styles.childUpdatesCard}
+          accessibilityRole="button"
+          accessibilityLabel="עדכון אישי לילדים"
+        >
+          <Ionicons name="chevron-back" size={20} color={Colors.primary} />
+          <View style={styles.childUpdatesText}>
+            <Text style={styles.childUpdatesTitle}>עדכון אישי לילדים</Text>
+            <Text style={styles.childUpdatesHint}>
+              ארוחות, שינה, מצב רוח והערה — רק ההורים של כל ילד רואים
+            </Text>
+          </View>
+          <View style={styles.childUpdatesIcon}>
+            <Ionicons name="heart" size={22} color={Colors.primary} />
+          </View>
+        </TouchableOpacity>
 
         <SectionHeader
           title="פעילויות מרכזיות"
@@ -439,6 +459,37 @@ const styles = StyleSheet.create({
   },
   contentCard: {
     marginBottom: Spacing.sm,
+  },
+  childUpdatesCard: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: Spacing.md,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+    marginTop: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.secondary,
+  },
+  childUpdatesIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: BorderRadius.full,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.secondary,
+  },
+  childUpdatesText: { flex: 1, alignItems: "flex-end" },
+  childUpdatesTitle: {
+    ...Typography.subtitle,
+    fontWeight: "700",
+    color: Colors.textPrimary,
+  },
+  childUpdatesHint: {
+    ...Typography.caption,
+    color: Colors.textSecondary,
+    textAlign: "right",
+    marginTop: 2,
   },
   captureSection: {
     backgroundColor: Colors.cardBackground,
